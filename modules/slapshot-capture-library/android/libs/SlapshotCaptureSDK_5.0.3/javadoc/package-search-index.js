@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.sciometrics.android.slapshot.api.capture"},{"l":"com.sciometrics.android.slapshot.api.capture.impl"}];updateSearchResults();

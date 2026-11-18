@@ -1,0 +1,260 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "SlapshotCaptureSDKVisionFacePlugin",
+    "printedName": "SlapshotCaptureSDKVisionFacePlugin",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "AVFoundation",
+        "printedName": "AVFoundation",
+        "declKind": "Import",
+        "moduleName": "SlapshotCaptureSDKVisionFacePlugin"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "SlapshotCaptureSDKVisionFacePlugin"
+      },
+      {
+        "kind": "Import",
+        "name": "SlapshotCaptureSDK",
+        "printedName": "SlapshotCaptureSDK",
+        "declKind": "Import",
+        "moduleName": "SlapshotCaptureSDKVisionFacePlugin"
+      },
+      {
+        "kind": "Import",
+        "name": "Vision",
+        "printedName": "Vision",
+        "declKind": "Import",
+        "moduleName": "SlapshotCaptureSDKVisionFacePlugin"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "VisionFaceDetector",
+        "printedName": "VisionFaceDetector",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "configure",
+            "printedName": "configure(fast:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC9configure4fastySb_tF",
+            "mangledName": "$s34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC9configure4fastySb_tF",
+            "moduleName": "SlapshotCaptureSDKVisionFacePlugin",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "canDetectFace",
+            "printedName": "canDetectFace",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC09canDetectD0Sbvp",
+            "mangledName": "$s34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC09canDetectD0Sbvp",
+            "moduleName": "SlapshotCaptureSDKVisionFacePlugin",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC09canDetectD0Sbvg",
+                "mangledName": "$s34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC09canDetectD0Sbvg",
+                "moduleName": "SlapshotCaptureSDKVisionFacePlugin",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "detectFace",
+            "printedName": "detectFace(sampleBuffer:captureContext:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DetectedFace",
+                "printedName": "any SlapshotCaptureSDK.DetectedFace",
+                "usr": "s:18SlapshotCaptureSDK12DetectedFaceP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CMSampleBuffer",
+                "printedName": "CoreMedia.CMSampleBuffer",
+                "usr": "c:@T@CMSampleBufferRef"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CaptureContext",
+                "printedName": "SlapshotCaptureSDK.CaptureContext",
+                "usr": "s:18SlapshotCaptureSDK0B7ContextC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC06detectD012sampleBuffer14captureContext0aB3SDK08DetectedD0_pSo08CMSampleJ3Refa_AG0bL0CtF",
+            "mangledName": "$s34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC06detectD012sampleBuffer14captureContext0aB3SDK08DetectedD0_pSo08CMSampleJ3Refa_AG0bL0CtF",
+            "moduleName": "SlapshotCaptureSDKVisionFacePlugin",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "detectFace",
+            "printedName": "detectFace(image:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DetectedFace",
+                "printedName": "any SlapshotCaptureSDK.DetectedFace",
+                "usr": "s:18SlapshotCaptureSDK12DetectedFaceP"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UIImage",
+                "printedName": "UIKit.UIImage",
+                "usr": "c:objc(cs)UIImage"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC06detectD05image0aB3SDK08DetectedD0_pSo7UIImageC_tF",
+            "mangledName": "$s34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC06detectD05image0aB3SDK08DetectedD0_pSo7UIImageC_tF",
+            "moduleName": "SlapshotCaptureSDKVisionFacePlugin",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@SlapshotCaptureSDKVisionFacePlugin@objc(cs)VisionFaceDetector",
+        "mangledName": "$s34SlapshotCaptureSDKVisionFacePlugin06VisionD8DetectorC",
+        "moduleName": "SlapshotCaptureSDKVisionFacePlugin",
+        "objc_name": "VisionFaceDetector",
+        "declAttributes": [
+          "AccessControl",
+          "ObjC"
+        ],
+        "superclassUsr": "c:@M@SlapshotCaptureSDK@objc(cs)FaceDetectorPluginBase",
+        "hasMissingDesignatedInitializers": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "SlapshotCaptureSDK.FaceDetectorPluginBase",
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "FaceDetector",
+            "printedName": "FaceDetector",
+            "usr": "s:18SlapshotCaptureSDK12FaceDetectorP",
+            "mangledName": "$s18SlapshotCaptureSDK12FaceDetectorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": []
+}

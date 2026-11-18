@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios"],
+  "ios": {
+    "modules": ["ExpoIdentifiModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.identifi.ExpoIdentifiModule"]
+  }
+}

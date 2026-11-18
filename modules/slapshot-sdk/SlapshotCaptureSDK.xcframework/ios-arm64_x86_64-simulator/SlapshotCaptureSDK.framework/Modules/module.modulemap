@@ -1,0 +1,11 @@
+framework module SlapshotCaptureSDK {
+  umbrella header "SlapshotCaptureSDK.h"
+  export *
+
+  module * { export * }
+}
+
+module SlapshotCaptureSDK.Swift {
+  header "SlapshotCaptureSDK-Swift.h"
+  requires objc
+}

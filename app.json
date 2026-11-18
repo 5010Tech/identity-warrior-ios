@@ -1,0 +1,99 @@
+{
+  "expo": {
+    "name": "Identity Warrior",
+    "slug": "identity-warrior",
+    "version": "1.5.0",
+    "icon": "./assets/images/icon.png",
+    "scheme": "identitywarrior",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "bundleIdentifier": "com.fiftyten.identitywarrior",
+      "appleTeamId": "BL87FB4TZW",
+      "buildNumber": "4",
+      "entitlements": {
+        "com.apple.developer.networking.HotspotConfiguration": true
+      },
+      "infoPlist": {
+        "UISupportedExternalAccessoryProtocols": [
+          "com.nec.NeoScan"
+        ],
+        "NSCameraUsageDescription": "Identity Warrior uses the camera to capture biometrics",
+        "NSLocalNetworkUsageDescription": "Identity Warrior requires access to your local network to connect to devices over Wi-Fi for seamless functionality.",
+        "NSLocationWhenInUseUsageDescription": "Identity Warrior requires access to your location while it is in use to provide location-based features."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.fiftyten.identitywarrior"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-camera",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "17.0",
+            "buildReactNativeFromSource": true,
+            "buildSettings": {
+              "OTHER_LDFLAGS": [
+                "$(inherited)",
+                "-ObjC"
+              ]
+            }
+          }
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": [
+              "en",
+              "es"
+            ]
+          }
+        }
+      ],
+      [
+        "expo-video"
+      ],
+      "react-native-wifi-reborn",
+      // "./modules/expo-identifi/withBridgingHeader.js",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Identity Warrior needs access to your photos to upload images for face compare."
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "expo": {
+        "userInterfaceStyle": "automatic"
+      }
+    }
+  }
+}

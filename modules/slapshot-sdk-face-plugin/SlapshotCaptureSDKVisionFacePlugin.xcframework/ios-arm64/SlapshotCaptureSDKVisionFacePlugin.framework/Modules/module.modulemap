@@ -1,0 +1,6 @@
+framework module SlapshotCaptureSDKVisionFacePlugin {
+  umbrella header "SlapshotCaptureSDKVisionFacePlugin.h"
+  export *
+
+  module * { export * }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "react-native-slapshot-capture-library",
+  "version": "5.0.3",
+  "description": "Sciometrics' Reactive Native Library For Slapshot Captures",
+  "main": "src/index",
+  "author": " <> ()",
+  "license": "UNLICENSED",
+  "homepage": "#readme",
+  "devDependencies": {
+    "react": "19.1.0",
+    "react-native": "0.81.5"
+  }
+}

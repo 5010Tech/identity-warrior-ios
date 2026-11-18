@@ -1,0 +1,12 @@
+# Git LFS: large vendor binaries and media. Requires `git lfs install` on each machine.
+# Slapshot iOS framework binaries (extensionless Mach-O files inside .framework bundles)
+**/SlapshotCaptureSDK.framework/SlapshotCaptureSDK filter=lfs diff=lfs merge=lfs -text
+**/SlapshotCaptureSDKVisionFacePlugin.framework/SlapshotCaptureSDKVisionFacePlugin filter=lfs diff=lfs merge=lfs -text
+# Compiled asset catalogs, static libraries, Android libraries
+*.car filter=lfs diff=lfs merge=lfs -text
+*.a filter=lfs diff=lfs merge=lfs -text
+*.aar filter=lfs diff=lfs merge=lfs -text
+modules/**/*.jar filter=lfs diff=lfs merge=lfs -text
+# Video (for future training videos)
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text

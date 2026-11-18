@@ -1,0 +1,24 @@
+diff --git a/node_modules/@react-native-ml-kit/barcode-scanning/index.ts b/node_modules/@react-native-ml-kit/barcode-scanning/index.ts
+index d0bd38d..e550300 100644
+--- a/node_modules/@react-native-ml-kit/barcode-scanning/index.ts
++++ b/node_modules/@react-native-ml-kit/barcode-scanning/index.ts
+@@ -21,6 +21,7 @@ export enum BarcodeFormat {
+ export interface Barcode {
+   format: BarcodeFormat;
+   value: string;
++  rawValue: string;
+ }
+ 
+ interface IBarcodeScanning {
+diff --git a/node_modules/@react-native-ml-kit/barcode-scanning/ios/BarcodeScanning.m b/node_modules/@react-native-ml-kit/barcode-scanning/ios/BarcodeScanning.m
+index 6ce5445..0da1c96 100644
+--- a/node_modules/@react-native-ml-kit/barcode-scanning/ios/BarcodeScanning.m
++++ b/node_modules/@react-native-ml-kit/barcode-scanning/ios/BarcodeScanning.m
+@@ -43,6 +43,7 @@ @implementation BarcodeScanning
+               
+             [result addObject:@{
+               @"value": barcode.displayValue,
++              @"rawValue": barcode.rawValue,
+               @"format": format
+             }];
+           }

@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoDocumentReaderModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.documentreader.ExpoDocumentReaderModule"]
+  }
+}
