@@ -260,6 +260,8 @@ PODS:
     - Yoga
   - ExpoAsset (12.0.12):
     - ExpoModulesCore
+  - ExpoAudio (1.1.1):
+    - ExpoModulesCore
   - ExpoCamera (17.0.10):
     - ExpoModulesCore
     - ZXingObjC/OneD
@@ -275,6 +277,7 @@ PODS:
     - RNScreens
   - ExpoIdentifi (1.0.0):
     - ExpoModulesCore
+    - slapshot-sdk
   - ExpoImageManipulator (14.0.8):
     - EXImageLoader
     - ExpoModulesCore
@@ -382,6 +385,8 @@ PODS:
   - hermes-engine (0.81.5):
     - hermes-engine/Pre-built (= 0.81.5)
   - hermes-engine/Pre-built (0.81.5)
+  - IwNetwork (1.0.0):
+    - ExpoModulesCore
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -3271,10 +3276,10 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
-  - slapshot-sdk (2.2.1):
+  - slapshot-sdk (3.0.0):
     - CocoaLumberjack/Swift (= 3.8.0)
     - DeviceKit (= 5.4.0)
-  - slapshot-sdk-face-plugin (2.2.1):
+  - slapshot-sdk-face-plugin (3.0.0):
     - slapshot-sdk
   - SocketRocket (0.7.1)
   - VisionCamera (4.7.3):
@@ -3304,6 +3309,7 @@ DEPENDENCIES:
   - expo-dev-menu (from `../node_modules/expo-dev-menu`)
   - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
+  - ExpoAudio (from `../node_modules/expo-audio/ios`)
   - ExpoCamera (from `../node_modules/expo-camera/ios`)
   - ExpoDocumentReader (from `../modules/expo-document-reader/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
@@ -3328,6 +3334,7 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - IwNetwork (from `../modules/iw-network/ios`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../node_modules/react-native/Libraries/Required`)
@@ -3475,6 +3482,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-dev-menu-interface/ios"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
+  ExpoAudio:
+    :path: "../node_modules/expo-audio/ios"
   ExpoCamera:
     :path: "../node_modules/expo-camera/ios"
   ExpoDocumentReader:
@@ -3524,6 +3533,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-07-07-RNv0.81.0-e0fc67142ec0763c6b6153ca2bf96df815539782
+  IwNetwork:
+    :path: "../modules/iw-network/ios"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -3713,12 +3724,13 @@ SPEC CHECKSUMS:
   expo-dev-menu: eb3063f6fa7c008cfcc485ff9758da5763723646
   expo-dev-menu-interface: 600df12ea01efecdd822daaf13cc0ac091775533
   ExpoAsset: f867e55ceb428aab99e1e8c082b5aee7c159ea18
+  ExpoAudio: e4cfe3a2f3317b8487460685385a9867a07fb4fb
   ExpoCamera: 6a326deb45ba840749652e4c15198317aa78497e
   ExpoDocumentReader: bbfd0ed38519b2835a210f8c7ee8c9f365e34026
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
   ExpoFont: f543ce20a228dd702813668b1a07b46f51878d47
   ExpoHead: 7e19b2272edf492262acf8afb391a295198a6b23
-  ExpoIdentifi: 134056f557639f23d9a21992e79bed7100ff79bd
+  ExpoIdentifi: 99c516cc5c1fd87a1be9b8b7e73db19539fa2243
   ExpoImageManipulator: 607a5c8c88085381639458a46cc55fb9d3869148
   ExpoImagePicker: 1af3e4e31512d2f34c95c2a3018a3edc40aee748
   ExpoKeepAwake: 55f75eca6499bb9e4231ebad6f3e9cb8f99c0296
@@ -3743,6 +3755,7 @@ SPEC CHECKSUMS:
   GoogleUtilitiesComponents: 679b2c881db3b615a2777504623df6122dd20afe
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   hermes-engine: 9f4dfe93326146a1c99eb535b1cb0b857a3cd172
+  IwNetwork: 20e8c695b61207e1bb158d5459a3e6fb29a5fb2a
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   MLImage: 1824212150da33ef225fbd3dc49f184cf611046c
   MLKitBarcodeScanning: 10ca0845a6d15f2f6e911f682a1998b68b973e8b
@@ -3843,8 +3856,8 @@ SPEC CHECKSUMS:
   RNWorklets: ad0606bee2a8103c14adb412149789c60b72bfb2
   SDWebImage: 16309af6d214ba3f77a7c6f6fdda888cb313a50a
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
-  slapshot-sdk: 1f5f9c5e6a2adf90bd3854009a80c1a69799b187
-  slapshot-sdk-face-plugin: 56fe33eb65bf6d7ebe28fa03551b83ee8b919b00
+  slapshot-sdk: 61d465171d5d16ed7b2ad26c1e4d79a91922c810
+  slapshot-sdk-face-plugin: c872119475021dd9c024dcb5fbb5e170a4707204
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 7187b3dac1ff3071234ead959ce311875748e14f
   Yoga: 728df40394d49f3f471688747cf558158b3a3bd1

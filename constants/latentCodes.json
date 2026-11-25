@@ -1,0 +1,699 @@
+{
+ "impressionTypes": [
+  {
+   "value": "07",
+   "labels": [
+    "Latent Lift",
+    "Levantamiento Latente",
+    "Levage Latent",
+    "Levantamento Latente"
+   ]
+  },
+  {
+   "value": "04",
+   "labels": [
+    "Latent Impression",
+    "Impresión Latente",
+    "Impression Latente",
+    "Impressão Latente"
+   ]
+  },
+  {
+   "value": "05",
+   "labels": [
+    "Latent Tracing",
+    "Trazado Latente",
+    "Traçage Latent",
+    "Rastreio Latente"
+   ]
+  },
+  {
+   "value": "06",
+   "labels": [
+    "Latent Photo",
+    "Foto Latente",
+    "Photo Latente",
+    "Foto Latente"
+   ]
+  },
+  {
+   "value": "12",
+   "labels": [
+    "Latent Palm Impression",
+    "Impresión Latente de la Palma",
+    "Impression Palmaire Latente",
+    "Impressão Latente do Palm"
+   ]
+  },
+  {
+   "value": "13",
+   "labels": [
+    "Latent Palm Tracing",
+    "Trazado Latente de la Palma",
+    "Traçage Palmaire Latent",
+    "Rastreio de Palma Latente"
+   ]
+  },
+  {
+   "value": "14",
+   "labels": [
+    "Latent Palm Photo",
+    "Foto Latente de la Palma",
+    "Photo Palmaire Latente",
+    "Foto Latente da Palma"
+   ]
+  },
+  {
+   "value": "15",
+   "labels": [
+    "Latent Palm Lift",
+    "Levantamiento latente de la palma",
+    "Levage Palmaire Latent",
+    "Elevação Latente da Palma"
+   ]
+  },
+  {
+   "value": "28",
+   "labels": [
+    "Other",
+    "Otro",
+    "Autre",
+    "Outro"
+   ]
+  },
+  {
+   "value": "32",
+   "labels": [
+    "Latent Plantar Impression",
+    "Impresión Plantar Latente",
+    "Impression Plantaire Latente",
+    "Impressão Plantar Latente"
+   ]
+  },
+  {
+   "value": "33",
+   "labels": [
+    "Latent Plantar Tracing",
+    "Trazado Plantar Latente",
+    "Traçage Plantaire Latent",
+    "Traçado Plantar Latente"
+   ]
+  },
+  {
+   "value": "34",
+   "labels": [
+    "Latent Plantar Photo",
+    "Foto Plantar Latente",
+    "Photo Plantaire Latente",
+    "Foto Plantar Latente"
+   ]
+  },
+  {
+   "value": "35",
+   "labels": [
+    "Latent Plantar Lift",
+    "Elevación Plantar Latente",
+    "Lift Plantaire Latent",
+    "Elevação Plantar Latente"
+   ]
+  },
+  {
+   "value": "36",
+   "labels": [
+    "Latent Unknown Impression",
+    "Impresión Latente Desconocida",
+    "Impression Latente Inconnue",
+    "Impressão Latente Desconhecida"
+   ]
+  },
+  {
+   "value": "37",
+   "labels": [
+    "Latent Unknown Tracing",
+    "Trazado Latente Desconocido",
+    "Traçage Latent Inconnu",
+    "Rastreio Latente Desconhecido"
+   ]
+  },
+  {
+   "value": "38",
+   "labels": [
+    "Latent Unknown Photo",
+    "Foto Latente Desconocida",
+    "Photo Latente Inconnue",
+    "Foto Latente Desconhecida"
+   ]
+  },
+  {
+   "value": "39",
+   "labels": [
+    "Latent Unknown Lift",
+    "Elevación Latente Desconocida",
+    "Lift Latent Inconnu",
+    "Levantamento Latente Desconhecido"
+   ]
+  }
+ ],
+ "positions": [
+  {
+   "value": "0",
+   "labels": [
+    "Unknown",
+    "Desconocido",
+    "Inconnu",
+    "Desconhecido"
+   ]
+  },
+  {
+   "value": "1",
+   "labels": [
+    "Right Thumb",
+    "Pulgar Derecho",
+    "Pouce Droit",
+    "Polegar Direito"
+   ]
+  },
+  {
+   "value": "2",
+   "labels": [
+    "Right Index Finger",
+    "Dedo Índice Derecho",
+    "Index Droit",
+    "Dedo Iola Direito"
+   ]
+  },
+  {
+   "value": "3",
+   "labels": [
+    "Right Middle Finger",
+    "Dedo Medio Derecho",
+    "Major Droit",
+    "Dedo Médio Direito"
+   ]
+  },
+  {
+   "value": "4",
+   "labels": [
+    "Right Ring Finger",
+    "Dedo Anular Derecho",
+    "Annulaire Droit",
+    "Dedo Anelar Direito"
+   ]
+  },
+  {
+   "value": "5",
+   "labels": [
+    "Right Little Finger",
+    "Dedo Meñique Derecho",
+    "Auriculaire Droit",
+    "Dedo Mindinho Direito"
+   ]
+  },
+  {
+   "value": "6",
+   "labels": [
+    "Left Thumb",
+    "Pulgar Izquierdo",
+    "Pouce Gauche",
+    "Polegar Esquerdo"
+   ]
+  },
+  {
+   "value": "7",
+   "labels": [
+    "Left Index Finger",
+    "Dedo Índice Izquierdo",
+    "Index Gauche",
+    "Dedo Iola Esquerdo"
+   ]
+  },
+  {
+   "value": "8",
+   "labels": [
+    "Left Middle Finger",
+    "Dedo Medio Izquierdo",
+    "Major Gauche",
+    "Dedo Médio Esquerdo"
+   ]
+  },
+  {
+   "value": "9",
+   "labels": [
+    "Left Ring Finger",
+    "Dedo Anular Izquierdo",
+    "Annulaire Gauche",
+    "Dedo Anelar Esquerdo"
+   ]
+  },
+  {
+   "value": "10",
+   "labels": [
+    "Left Little Finger",
+    "Dedo Meñique Izquierdo",
+    "Auriculaire Gauche",
+    "Dedo Mindinho Esquerdo"
+   ]
+  },
+  {
+   "value": "16",
+   "labels": [
+    "Right Extra Digit (Future Capability)",
+    "Dígito Adicional Derecho (Capacidad Futura)",
+    "Doigt Supplémentaire Droit (Future Capacité)",
+    "Dígito Extra Direito (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "17",
+   "labels": [
+    "Left Extra Digit (Future Capability)",
+    "Dígito Adicional Izquierdo (Capacidad Futura)",
+    "Doigt Supplémentaire Gauche (Future Capacité)",
+    "Dígito Extra Esquerdo (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "18",
+   "labels": [
+    "Unknown Friction Ridge",
+    "Cresta de Fricción Desconocida",
+    "Crête de Friction Inconnue",
+    "Crista de fricção desconhecida"
+   ]
+  },
+  {
+   "value": "19",
+   "labels": [
+    "EJI or Tip",
+    "EJI o Punta",
+    "EJI ou Pointe",
+    "EJI ou Dica"
+   ]
+  },
+  {
+   "value": "20",
+   "labels": [
+    "Unknown Palm",
+    "Palma Desconocida",
+    "Paume Inconnue",
+    "Palm Desconhecido"
+   ]
+  },
+  {
+   "value": "21",
+   "labels": [
+    "Right Full Palm",
+    "Palma Completa Derecha",
+    "Paume Droite Entière",
+    "Palm Completo Direito"
+   ]
+  },
+  {
+   "value": "22",
+   "labels": [
+    "Right Writer's Palm",
+    "Palma de Escritor Derecha",
+    "Paume Droite de l'Écrivain",
+    "Palm do Escritor Direito"
+   ]
+  },
+  {
+   "value": "23",
+   "labels": [
+    "Left Full Palm",
+    "Palma Completa Izquierda",
+    "Paume Gauche Entière",
+    "Palm Esquerdo Inteiro"
+   ]
+  },
+  {
+   "value": "24",
+   "labels": [
+    "Left Writer's Palm",
+    "Palma de Escritor Izquierda",
+    "Paume Gauche de l'Écrivain",
+    "Palm Esquerdo do Escritor"
+   ]
+  },
+  {
+   "value": "25",
+   "labels": [
+    "Right Lower Palm",
+    "Palma Inferior Derecha",
+    "Paume Inférieure Droite",
+    "Palm Inferior Direito"
+   ]
+  },
+  {
+   "value": "26",
+   "labels": [
+    "Right Upper Palm",
+    "Palma Superior Derecha",
+    "Paume Supérieure Droite",
+    "Palm Superior Direito"
+   ]
+  },
+  {
+   "value": "27",
+   "labels": [
+    "Left Lower Palm",
+    "Palma Inferior Izquierda",
+    "Paume Inférieure Gauche",
+    "Palm Inferior Esquerdo"
+   ]
+  },
+  {
+   "value": "28",
+   "labels": [
+    "Left Upper Palm",
+    "Palma Superior Izquierda",
+    "Paume Supérieure Gauche",
+    "Palm Superior Esquerdo"
+   ]
+  },
+  {
+   "value": "29",
+   "labels": [
+    "Right Other (Unknown Right hand)",
+    "Otra Derecha (Mano Derecha Desconocida)",
+    "Autre Droit (Main Droite Inconnue)",
+    "Outro Direito (Mão Direita Desconhecida)"
+   ]
+  },
+  {
+   "value": "30",
+   "labels": [
+    "Left Other (Unknown Left hand)",
+    "Otro Izquierdo (Mano Izquierda Desconocida)",
+    "Autre Gauche (Main Gauche Inconnue)",
+    "Esquerda Outra (Mão Esquerda Desconhecida)"
+   ]
+  },
+  {
+   "value": "31",
+   "labels": [
+    "Right Interdigital",
+    "Interdigital Derecho",
+    "Interdigital Droit",
+    "Interdigital Direita"
+   ]
+  },
+  {
+   "value": "32",
+   "labels": [
+    "Right Thenar",
+    "Tenar Derecho",
+    "Thénar Droit",
+    "Tenar Direito"
+   ]
+  },
+  {
+   "value": "33",
+   "labels": [
+    "Right Hypothenar",
+    "Hipotenar Derecho",
+    "Hypothénar Droit",
+    "Hipotenar à Direita"
+   ]
+  },
+  {
+   "value": "34",
+   "labels": [
+    "Left Interdigital",
+    "Interdigital Izquierdo",
+    "Interdigital Gauche",
+    "Interdigital Esquerdo"
+   ]
+  },
+  {
+   "value": "35",
+   "labels": [
+    "Left Thenar",
+    "Tenar Izquierdo",
+    "Thénar Gauche",
+    "Tenar Esquerdo"
+   ]
+  },
+  {
+   "value": "36",
+   "labels": [
+    "Left Hypothenar",
+    "Hipotenar Izquierdo",
+    "Hypothénar Gauche",
+    "Hipotenar Esquerda"
+   ]
+  },
+  {
+   "value": "37",
+   "labels": [
+    "Right Grasp (Future Capability)",
+    "Agarre Derecho (Capacidad Futura)",
+    "Prise Droite (Capacité Future)",
+    "Right Grasp (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "38",
+   "labels": [
+    "Left Grasp (Future Capability)",
+    "Agarre Izquierdo (Capacidad Futura)",
+    "Prise Gauche (Capacité Future)",
+    "Agarrar à Esquerda (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "60",
+   "labels": [
+    "Unknown Sole",
+    "Suela Desconocida",
+    "Semelle Inconnue",
+    "Solado Desconhecido"
+   ]
+  },
+  {
+   "value": "61",
+   "labels": [
+    "Sole - Right Foot",
+    "Suela: Pie Derecho",
+    "Semelle - Pied Droit",
+    "Sola - Pé Direito"
+   ]
+  },
+  {
+   "value": "62",
+   "labels": [
+    "Sole - Left Foot",
+    "Suela: Pie Izquierdo",
+    "Semelle - Pied Gauche",
+    "Sola - Pé Esquerdo"
+   ]
+  },
+  {
+   "value": "63",
+   "labels": [
+    "Unknown Toe",
+    "Dedo del Pie Desconocido",
+    "Orteil Inconnu",
+    "Dedo do pé Desconhecido"
+   ]
+  },
+  {
+   "value": "64",
+   "labels": [
+    "Right Big Toe",
+    "Dedo Gordo del Pie Derecho",
+    "Gros Orteil Droit",
+    "Dedo Grande do pé Direito"
+   ]
+  },
+  {
+   "value": "65",
+   "labels": [
+    "Right Second Toe",
+    "Segundo Dedo del Pie Derecho",
+    "Deuxième Orteil Droit",
+    "Segundo Dedo do pé Direito"
+   ]
+  },
+  {
+   "value": "66",
+   "labels": [
+    "Right Middle Toe",
+    "Dedo Medio del Pie Derecho",
+    "Orteil Moyen Droit",
+    "Dedo do pé Médio Direito"
+   ]
+  },
+  {
+   "value": "67",
+   "labels": [
+    "Right Fourth Toe",
+    "Cuarto Dedo del Pie Derecho",
+    "Quatrième Orteil Droit",
+    "Quarto Dedo do pé Direito"
+   ]
+  },
+  {
+   "value": "68",
+   "labels": [
+    "Right Little Toe",
+    "Dedo Meñique del Pie Derecho",
+    "Petit Orteil Droit",
+    "Dedo Mindinho do pé Direito"
+   ]
+  },
+  {
+   "value": "69",
+   "labels": [
+    "Left Big Toe",
+    "Dedo Gordo del Pie Izquierdo",
+    "Gros Orteil Gauche",
+    "Dedo Grande do pé Esquerdo"
+   ]
+  },
+  {
+   "value": "70",
+   "labels": [
+    "Left Second Toe",
+    "Segundo Dedo del Pie Izquierdo",
+    "Deuxième Orteil Gauche",
+    "Segundo Dedo do pé Esquerdo"
+   ]
+  },
+  {
+   "value": "71",
+   "labels": [
+    "Left Middle Toe",
+    "Dedo Medio del Pie Izquierdo",
+    "Orteil Moyen Gauche",
+    "Dedo Médio Esquerdo"
+   ]
+  },
+  {
+   "value": "72",
+   "labels": [
+    "Left Fourth Toe",
+    "Cuarto Dedo del Pie Izquierdo",
+    "Quatrième Orteil Gauche",
+    "Quarto Dedo do pé Esquerdo"
+   ]
+  },
+  {
+   "value": "73",
+   "labels": [
+    "Left Little Toe",
+    "Dedo Meñique del Pie Izquierdo",
+    "Petit Orteil Gauche",
+    "Dedo Mindinho do pé Esquerdo"
+   ]
+  },
+  {
+   "value": "74",
+   "labels": [
+    "Front / Ball of Right Foot",
+    "Parte Delantera/Bola del Pie Derecho",
+    "Avant/Boule du Pied Droit Pied",
+    "Frente / Bola do pé Direito"
+   ]
+  },
+  {
+   "value": "75",
+   "labels": [
+    "Back / Heel of Right Foot",
+    "Parte Trasera/Talón del Pie Derecho Pie",
+    "Arrière/Talon du Pied Droit",
+    "Costas / Calcanhar do pé Direito"
+   ]
+  },
+  {
+   "value": "76",
+   "labels": [
+    "Front / Ball of Left Foot",
+    "Parte Delantera/Bola del Pie Izquierdo",
+    "Avant/Boule du Pied Gauche",
+    "Frente / Bola do pé Esquerdo"
+   ]
+  },
+  {
+   "value": "77",
+   "labels": [
+    "Back / Heel of Left Foot",
+    "Parte Trasera/Talón del Pie Izquierdo",
+    "Arrière/Talon du Pied Gauche",
+    "Costas / Calcanhar do pé Esquerdo"
+   ]
+  },
+  {
+   "value": "78",
+   "labels": [
+    "Right Middle of Foot",
+    "Parte Media del Pie Derecho",
+    "Milieu Droit du Pied",
+    "Meio do pé Direito"
+   ]
+  },
+  {
+   "value": "79",
+   "labels": [
+    "Left Middle of Foot",
+    "Parte Media del Pie Izquierdo",
+    "Milieu Gauche du Pied",
+    "Meio Esquerdo do pé"
+   ]
+  },
+  {
+   "value": "81",
+   "labels": [
+    "Right Carpal Delta Area",
+    "Área del Delta Carpiano Derecho",
+    "Zone du Delta Carpien Droit",
+    "Área Delta do Carpo Direito"
+   ]
+  },
+  {
+   "value": "82",
+   "labels": [
+    "Left Carpal Delta Area (Future Capability)",
+    "Área del Delta Carpiano Izquierdo (Capacidad Futura)",
+    "Zone du Delta Carpien Gauche (Capacité Future)",
+    "Área Delta do Carpo Esquerdo (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "83",
+   "labels": [
+    "Right Full Palm, Including Writer' Palm (Future Capability)",
+    "Palma Derecha Completa, Incluida la Palma de Escritor (Capacidad Futura)",
+    "Paume Droite Entière, y Compris la Paume de l'Écrivain (Capacité Future)",
+    "Palm Completo Direito, Incluindo Esquerdo do Escritor (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "84",
+   "labels": [
+    "Left Full Palm, Including Writer' Palm (Future Capability)",
+    "Palma Izquierda Completa, Incluida la Palma de Escritor (Capacidad Futura)",
+    "Paume Gauche Entière, y Compris la Paume de l'Écrivain (Capacité Future)",
+    "Palm Esquerdo Completo, Incluindo Esquerdo do Escritor (Capacidade Futura)"
+   ]
+  },
+  {
+   "value": "85",
+   "labels": [
+    "Right Wrist Bracelet",
+    "Pulsera para Muñeca Derecha",
+    "Bracelet pour Poignet Droit",
+    "Pulseira Direita"
+   ]
+  },
+  {
+   "value": "86",
+   "labels": [
+    "Left Wrist Bracelet",
+    "Pulsera para la Muñeca Izquierda",
+    "Bracelet pour Poignet Gauche",
+    "Pulseira Esquerda"
+   ]
+  }
+ ]
+}

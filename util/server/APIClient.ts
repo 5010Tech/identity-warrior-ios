@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { tHelper } from "@/translations/translationHelper";
+import { getSavedCollectionMode } from "@/util/collectionMode";
 
 export class APIClient {
   // Base URL from environment variable
@@ -252,7 +253,9 @@ export class APIClient {
     SecureStore.setItemAsync("accessToken", accessToken);
   }
 
-  static #authFailedAlert(): void {
+  static async #authFailedAlert(): Promise<void> {
+    // IXM authentication is a DHS concern; stay quiet in DoD mode.
+    if ((await getSavedCollectionMode()) !== "DHS") return;
     Alert.alert(
       tHelper("authError"),
       tHelper("authErrorDesc"),

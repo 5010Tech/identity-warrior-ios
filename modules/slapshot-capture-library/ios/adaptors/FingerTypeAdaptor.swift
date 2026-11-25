@@ -44,6 +44,14 @@ extension FingerType {
             newFingerType = FingerType.l4fs
         case .ts:
             newFingerType = FingerType.ts
+        case .rightFullPalm:
+            newFingerType = FingerType.rfp
+        case .rightWritersPalm:
+            newFingerType = FingerType.rwp
+        case .leftFullPalm:
+            newFingerType = FingerType.lfp
+        case .leftWritersPalm:
+            newFingerType = FingerType.lwp
         case .some(_):
             newFingerType = FingerType.unknown
         }
@@ -87,6 +95,14 @@ extension FingerType {
             sdkFingerType = SlapshotCaptureSDK.FingerType.l4fs
         case .ts:
             sdkFingerType = SlapshotCaptureSDK.FingerType.ts
+        case .rfp:
+            sdkFingerType = SlapshotCaptureSDK.FingerType.rightFullPalm
+        case .rwp:
+            sdkFingerType = SlapshotCaptureSDK.FingerType.rightWritersPalm
+        case .lfp:
+            sdkFingerType = SlapshotCaptureSDK.FingerType.leftFullPalm
+        case .lwp:
+            sdkFingerType = SlapshotCaptureSDK.FingerType.leftWritersPalm
         }
 
         return sdkFingerType

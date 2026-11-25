@@ -18,30 +18,69 @@ function Label({
 }) {
   const [displayDesc, setDisplayDesc] = useState(false);
   const sourceRef = useRef<DefaultView>(null);
+  const infoColor = useThemeColor({}, "textStrong");
+  const bodyColor = useThemeColor({}, "text");
+  const cardColor = useThemeColor({}, "surface");
+  const strokeColor = useThemeColor({}, "strokeStrong");
+  const dividerColor = useThemeColor({}, "divider");
   return (
     <View>
       <View style={styles.valueRow}>
         <Text style={styles.labelText}>{label}</Text>
         <TouchableOpacity onPress={setDisplayDesc.bind(null, true)}>
           <DefaultView ref={sourceRef}>
-            <FontAwesome style={styles.infoIcon} name="info-circle" size={30} />
+            {/* Text color, so it shows in dark mode too (it used to be black). */}
+            <FontAwesome
+              style={styles.infoIcon}
+              name="info-circle"
+              size={30}
+              color={infoColor}
+            />
           </DefaultView>
         </TouchableOpacity>
         <Popover
           isVisible={displayDesc}
           onRequestClose={setDisplayDesc.bind(null, false)}
-          placement={PopoverPlacement.TOP}
+          placement={PopoverPlacement.AUTO}
           from={sourceRef}
+          arrowSize={{ width: 18, height: 10 }}
+          backgroundStyle={styles.popoverBackdrop}
+          popoverStyle={[
+            styles.popover,
+            { backgroundColor: cardColor, borderColor: strokeColor },
+          ]}
         >
-          <View>
-            <Text>{description}</Text>
+          {/* A titled card: the measure's name, a divider, then what it means. */}
+          <DefaultView style={styles.popoverBody}>
+            <DefaultView style={styles.popoverHeader}>
+              <FontAwesome name="info-circle" size={20} color={infoColor} />
+              <Text style={[styles.popoverTitle, { color: infoColor }]}>
+                {label}
+              </Text>
+            </DefaultView>
+            <DefaultView
+              style={[styles.popoverDivider, { backgroundColor: dividerColor }]}
+            />
+            <Text style={[styles.popoverText, { color: bodyColor }]}>
+              {description}
+            </Text>
             {image && (
-              <Image
-                style={styles.image}
-                source={require("@/assets/images/face_pose.png")}
-              />
+              <DefaultView style={styles.popoverImageFrame}>
+                <Image
+                  style={styles.image}
+                  source={require("@/assets/images/face_pose.png")}
+                />
+              </DefaultView>
             )}
-          </View>
+            <TouchableOpacity
+              onPress={setDisplayDesc.bind(null, false)}
+              style={[styles.popoverClose, { borderColor: strokeColor }]}
+            >
+              <Text style={[styles.popoverCloseText, { color: infoColor }]}>
+                {tHelper("close")}
+              </Text>
+            </TouchableOpacity>
+          </DefaultView>
         </Popover>
       </View>
     </View>
@@ -266,4 +305,29 @@ const styles = StyleSheet.create({
     width: "100%",
     objectFit: "contain",
   },
+  popoverBackdrop: { backgroundColor: "#00000099" },
+  popover: {
+    borderRadius: 16,
+    borderWidth: 1,
+    width: 300,
+  },
+  popoverBody: { padding: 16, gap: 12 },
+  popoverHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
+  popoverTitle: { flex: 1, fontSize: 18, fontWeight: "700" },
+  popoverDivider: { height: 1 },
+  popoverText: { fontSize: 16, lineHeight: 23 },
+  // The pose diagram is drawn on white, so it gets a white frame of its own.
+  popoverImageFrame: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 8,
+  },
+  popoverClose: {
+    alignSelf: "flex-end",
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1.5,
+  },
+  popoverCloseText: { fontSize: 15, fontWeight: "700" },
 });

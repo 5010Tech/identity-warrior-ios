@@ -1,4 +1,12 @@
-import { DocumentType, fingerprintCaptureSequence, SexCode } from "@/types";
+import {
+  CollectionMode,
+  DodFingerCaptureMode,
+  DodFingerSequence,
+  DocumentType,
+  fingerprintCaptureSequence,
+  SexCode,
+  StartingHand,
+} from "@/types";
 import { tHelper } from "@/translations/translationHelper";
 
 interface SelectOption<T> {
@@ -94,6 +102,7 @@ export const raceOptions = [
   { value: "U", label: tHelper("unknRace") },
 ];
 
+/** Countries, in alphabetical order of their name in the current language. */
 export const countryOptions = [
   { value: "USA", label: tHelper("USA") },
   { value: "ABW", label: tHelper("ABW") },
@@ -367,7 +376,7 @@ export const countryOptions = [
   { value: "ZMB", label: tHelper("ZMB") },
   { value: "ZWE", label: tHelper("ZWE") },
   { value: "XXX", label: tHelper("XXX") },
-];
+].sort((a, b) => a.label.localeCompare(b.label));
 
 export const activityCategories = [
   { value: "Absconder", label: tHelper("Absconder") },
@@ -401,3 +410,105 @@ export const fingerprintCaptureSequences: SelectOption<fingerprintCaptureSequenc
     { value: "twoFlat", label: tHelper("twoFlat") },
     { value: "tenRolled", label: tHelper("tenRolled") },
   ];
+
+export const collectionModes: SelectOption<CollectionMode>[] = [
+  { value: "DOD", label: tHelper("collectionModeDod") },
+  { value: "DHS", label: tHelper("collectionModeDhs") },
+];
+
+export const dodFingerSequences: SelectOption<DodFingerSequence>[] = [
+  { value: "4-4-2", label: "4-4-2" },
+  { value: "4-1-4-1", label: "4-1-4-1" },
+];
+
+export const dodFingerCaptureModes: SelectOption<DodFingerCaptureMode>[] = [
+  { value: "manual", label: tHelper("manual") },
+  { value: "automatic", label: tHelper("automatic") },
+];
+
+export const startingHands: SelectOption<StartingHand>[] = [
+  { value: "Left", label: tHelper("handLeft") },
+  { value: "Right", label: tHelper("handRight") },
+];
+
+/** DoD Type-2 choices, same codes as the Android app (SpinnerManager). */
+export const dodSexOptions = [
+  { value: "M", label: tHelper("dodSex_M") },
+  { value: "F", label: tHelper("dodSex_F") },
+  { value: "G", label: tHelper("dodSex_G") },
+  { value: "N", label: tHelper("dodSex_N") },
+  { value: "Y", label: tHelper("dodSex_Y") },
+  { value: "Z", label: tHelper("dodSex_Z") },
+  { value: "X", label: tHelper("dodSex_X") },
+];
+
+export const dodRaceOptions = [
+  { value: "AR", label: tHelper("dodRace_AR") },
+  { value: "AS", label: tHelper("dodRace_AS") },
+  { value: "AI", label: tHelper("dodRace_AI") },
+  { value: "B", label: tHelper("dodRace_B") },
+  { value: "W", label: tHelper("dodRace_W") },
+  { value: "HL", label: tHelper("dodRace_HL") },
+  { value: "NA", label: tHelper("dodRace_NA") },
+  { value: "PI", label: tHelper("dodRace_PI") },
+  { value: "U", label: tHelper("dodRace_U") },
+];
+
+export const personnelTypes = [
+  { value: "ADGR", label: tHelper("personnel_ADGR") },
+  { value: "AD_OR_GUARD_OR_RESERVER_ON_ADFM", label: tHelper("personnel_AD_OR_GUARD_OR_RESERVER_ON_ADFM") },
+  { value: "CIVILIAN_ASSOCIATE", label: tHelper("personnel_CIVILIAN_ASSOCIATE") },
+  { value: "CIVILIAN_INTERNEE", label: tHelper("personnel_CIVILIAN_INTERNEE") },
+  { value: "COM", label: tHelper("personnel_COM") },
+  { value: "CONVEYANCE_OPERATOR", label: tHelper("personnel_CONVEYANCE_OPERATOR") },
+  { value: "CRIMINAL", label: tHelper("personnel_CRIMINAL") },
+  { value: "DETAINEE", label: tHelper("personnel_DETAINEE") },
+  { value: "DISTIGUISHED_CIVILIAN", label: tHelper("personnel_DISTIGUISHED_CIVILIAN") },
+  { value: "DOD_BENEFICIARY", label: tHelper("personnel_DOD_BENEFICIARY") },
+  { value: "DOD_CIVIL_SERVICE_OR_NAF", label: tHelper("personnel_DOD_CIVIL_SERVICE_OR_NAF") },
+  { value: "DOD_CONTRACTOR", label: tHelper("personnel_DOD_CONTRACTOR") },
+  { value: "DOD_OR_USCS_OR_NAF_FAMILY_MEMBER", label: tHelper("personnel_DOD_OR_USCS_OR_NAF_FAMILY_MEMBER") },
+  { value: "DOD_OR_USC_FAMILY_MEMBER", label: tHelper("personnel_DOD_OR_USC_FAMILY_MEMBER") },
+  { value: "ELIMINATION", label: tHelper("personnel_ELIMINATION") },
+  { value: "ENEMY_COMBATANT", label: tHelper("personnel_ENEMY_COMBATANT") },
+  { value: "EPW", label: tHelper("personnel_EPW") },
+  { value: "FACILITIES_SERVICE_PERSON", label: tHelper("personnel_FACILITIES_SERVICE_PERSON") },
+  { value: "FEDERAL_ASSOCIATE", label: tHelper("personnel_FEDERAL_ASSOCIATE") },
+  { value: "FOREIGN_MILITARY", label: tHelper("personnel_FOREIGN_MILITARY") },
+  { value: "FOREIGN_NATION_HIRE_CONTRACTOR_OCONUS", label: tHelper("personnel_FOREIGN_NATION_HIRE_CONTRACTOR_OCONUS") },
+  { value: "HOST_NATION_CONTRACTOR", label: tHelper("personnel_HOST_NATION_CONTRACTOR") },
+  { value: "HOST_NATION_MILITARY_OCONUS", label: tHelper("personnel_HOST_NATION_MILITARY_OCONUS") },
+  { value: "HIGH_VALUE_DETAINEE", label: tHelper("personnel_HIGH_VALUE_DETAINEE") },
+  { value: "IDENTI_KID", label: tHelper("personnel_IDENTI_KID") },
+  { value: "LAWFUL_ENEMY_COMBATANT", label: tHelper("personnel_LAWFUL_ENEMY_COMBATANT") },
+  { value: "LOCAL_NATIONAL_EMPLOYEE", label: tHelper("personnel_LOCAL_NATIONAL_EMPLOYEE") },
+  { value: "MIO", label: tHelper("personnel_MIO") },
+  { value: "NATION_HIRE_OCONUS", label: tHelper("personnel_NATION_HIRE_OCONUS") },
+  { value: "NATIONAL_GUARD", label: tHelper("personnel_NATIONAL_GUARD") },
+  { value: "NATIONAL_GUARD_FAMILY_MEMBER", label: tHelper("personnel_NATIONAL_GUARD_FAMILY_MEMBER") },
+  { value: "NON_GOVERNMENT_CIVILIAN", label: tHelper("personnel_NON_GOVERNMENT_CIVILIAN") },
+  { value: "OEN", label: tHelper("personnel_OEN") },
+  { value: "OTHER", label: tHelper("personnel_OTHER") },
+  { value: "OTHER_DETAINEE", label: tHelper("personnel_OTHER_DETAINEE") },
+  { value: "PEN", label: tHelper("personnel_PEN") },
+  { value: "PERSONAL_SERVICES_OR_DOMESTIC", label: tHelper("personnel_PERSONAL_SERVICES_OR_DOMESTIC") },
+  { value: "PROTECTED_PERSON", label: tHelper("personnel_PROTECTED_PERSON") },
+  { value: "RESERVE", label: tHelper("personnel_RESERVE") },
+  { value: "RESERVE_FAMILY_MEMBER", label: tHelper("personnel_RESERVE_FAMILY_MEMBER") },
+  { value: "RETAINED_PERSONNEL", label: tHelper("personnel_RETAINED_PERSONNEL") },
+  { value: "SECURITY_INTERNEE", label: tHelper("personnel_SECURITY_INTERNEE") },
+  { value: "SUSPECT", label: tHelper("personnel_SUSPECT") },
+  { value: "TCN", label: tHelper("personnel_TCN") },
+  { value: "TCN_CONTRACTOR", label: tHelper("personnel_TCN_CONTRACTOR") },
+  { value: "TCN_EMPLOYEE", label: tHelper("personnel_TCN_EMPLOYEE") },
+  { value: "UNLAWFUL_ENEMY_COMBATANT", label: tHelper("personnel_UNLAWFUL_ENEMY_COMBATANT") },
+  { value: "US_PER_CIT", label: tHelper("personnel_US_PER_CIT") },
+  { value: "VICTIM", label: tHelper("personnel_VICTIM") },
+  { value: "VOLUNTEER_AGENCY", label: tHelper("personnel_VOLUNTEER_AGENCY") },
+  { value: "XXX", label: tHelper("personnel_XXX") },
+];
+
+export const ebtsVersions = [
+  { value: "4.1", label: tHelper("ebts41") },
+  { value: "NATO", label: tHelper("natoStanag") },
+];

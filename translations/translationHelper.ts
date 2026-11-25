@@ -14,6 +14,12 @@ const i18n = new I18n({
 
 i18n.locale = getLocales()[0].languageCode || "en";
 
+/** Index of the current language in data files that carry [en, es, fr, pt] labels. */
+export const languageIndex = Math.max(
+  0,
+  ["en", "es", "fr", "pt"].indexOf(i18n.locale),
+);
+
 export type translationKey = keyof typeof en;
 
 export function tHelper(key: translationKey) {

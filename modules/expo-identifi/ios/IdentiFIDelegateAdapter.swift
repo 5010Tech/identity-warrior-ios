@@ -5,26 +5,32 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
   public weak var module: ExpoIdentifiModule?
 
   public func onConnection() {
+    module?.debug("got onConnection")
     module?.handleConnection()
   }
 
   public func onConnectionError(_ errorDescription: String) {
+    module?.debug("got onConnectionError")
     module?.handleConnectionError(errorDescription)
   }
 
   public func onConnectionTimeOut() {
+    module?.debug("got onConnectionTimeOut")
     module?.handleConnectionTimeOut()
   }
 
   public func onDisconnection() {
+    module?.debug("got onDisconnection")
     module?.handleDisconnection()
   }
 
   public func onCancelFpCapture() {
+    module?.debug("got onCancelFpCapture")
     module?.handleCancelFpCapture()
   }
 
   public func onFpCaptureStatus(_ fpCaptureStatus: Int32) {
+    module?.debug("got onFpCaptureStatus \(fpCaptureStatus)")
     module?.handleCaptureStatus(fpCaptureStatus)
   }
 
@@ -39,26 +45,25 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
   }
 
   public func onLastFrame(_ fpImage: UIImage!, fpImageSavedAt savedAtIndex: Int32) {
-    guard let fpImage else { return }
-    module?.handleLastFrame(fpImage, savedAtIndex: savedAtIndex)
+    module?.debug("got onLastFrame")
+    // The frame arriving is what matters, with or without a usable picture.
+    module?.handleLastFrame(fpImage ?? UIImage(), savedAtIndex: savedAtIndex)
   }
 
   public func onLastFrame_RAW(_ rawFpImageData: Data!, fpImageSavedAt savedAtIndex: Int32) {
-    guard let rawFpImageData else { return }
-    module?.handleLastFrame_RAW(rawFpImageData, savedAtIndex: savedAtIndex)
+    module?.handleLastFrame_RAW(rawFpImageData ?? Data(), savedAtIndex: savedAtIndex)
   }
 
   public func onLastFrameRolledFp(_ fpImage: UIImage!, fpImageSavedAt savedAtIndex: Int32) {
-    guard let fpImage else { return }
-    module?.handleLastFrame(fpImage, savedAtIndex: savedAtIndex)
+    module?.handleLastFrame(fpImage ?? UIImage(), savedAtIndex: savedAtIndex)
   }
 
   public func onLastFrameRolledFp_RAW(_ rawFpImageData: Data!, fpImageSavedAt savedAtIndex: Int32) {
-    guard let rawFpImageData else { return }
-    module?.handleLastFrame_RAW(rawFpImageData, savedAtIndex: savedAtIndex)
+    module?.handleLastFrame_RAW(rawFpImageData ?? Data(), savedAtIndex: savedAtIndex)
   }
 
   public func onCancelIrisCapture() {
+    module?.debug("got onCancelIrisCapture")
     module?.handleCancelIrisCapture()
   }
 
@@ -80,6 +85,7 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
     rightIrisTotalScore rightTotalScore: Int32,
     rightIrisUsableArea rightUsabeArea: Int32
   ) {
+    module?.debug("got onLastFrameLeftIris")
     guard let leftIrisImage, let rightIrisImage else { return }
     module?.handleLastFrameLeftIris(
       leftIrisImage,
@@ -104,17 +110,21 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
   }
 
   public func onGetSegmentedFpImage_RAW(_ rawFpImageData: Data!, fromImageSavedAt savedAtIndex: Int32) {
-    guard let rawData = rawFpImageData else {
-      return
-    }
-
     let width = 800
     let height = 750
+    // The scanner answers with no data when there is no finger at this index
+    // (it found fewer fingers than were asked for). Say so, rather than leave
+    // the request waiting until it times out.
+    guard let rawData = rawFpImageData, rawData.count >= width * height else {
+      module?.handleGetSegmentedFpImageMissing()
+      return
+    }
     let bitsPerComponent = 8
     let bytesPerRow = width
     let colorSpace = CGColorSpaceCreateDeviceGray()
 
     guard let providerRef = CGDataProvider(data: rawData as CFData) else {
+      module?.handleGetSegmentedFpImageMissing()
       return
     }
 
@@ -131,6 +141,7 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
       shouldInterpolate: false,
       intent: .defaultIntent
     ) else {
+      module?.handleGetSegmentedFpImageMissing()
       return
     }
 
@@ -153,21 +164,31 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
 
   public func onSetPowerOffMode(_ secondsToPowerOff: Int32) {}
 
-  public func onGetFpPowerStatus(_ irisPowerStatus: Bool) {}
+  public func onGetFpPowerStatus(_ irisPowerStatus: Bool) {
+    module?.handleFpPower(irisPowerStatus, forKey: "getFpPowerStatus")
+  }
 
-  public func onSetFpPower(on irisPowerStatus: Bool) {}
+  public func onSetFpPower(on irisPowerStatus: Bool) {
+    module?.handleFpPower(irisPowerStatus, forKey: "setFpPowerOn")
+  }
 
-  public func onSetFpPowerOff() {}
+  public func onSetFpPowerOff() {
+    module?.debug("got onSetFpPowerOff")
+    module?.handleFpPower(false, forKey: "setFpPowerOff")
+  }
 
   public func onGetIrisPowerStatus(_ irisPowerStatus: Bool) {
+    module?.debug("got onGetIrisPowerStatus \(irisPowerStatus)")
     module?.handleGetIrisPowerStatus(irisPowerStatus)
   }
 
   public func onSetIrisPower(on irisPowerStatus: Bool) {
+    module?.debug("got onSetIrisPowerOn \(irisPowerStatus)")
     module?.handleSetIrisPowerOn(irisPowerStatus)
   }
 
   public func onSetIrisPowerOff() {
+    module?.debug("got onSetIrisPowerOff")
     module?.handleSetIrisPowerOff()
   }
 
@@ -180,7 +201,9 @@ public class IdentiFIDelegateAdapter: NSObject, IdentiFI_Delegate {
     module?.handleGetDeviceSerialNumber(serialNumber)
   }
 
-  public func onGetFirmwareVersion(_ version: String!) {}
+  public func onGetFirmwareVersion(_ version: String!) {
+    module?.handleGetFirmwareVersion(version ?? "")
+  }
 
   public func onGetModelNumber(_ model: String!) {
     guard let model else { return }

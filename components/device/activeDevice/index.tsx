@@ -10,7 +10,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { AppState } from "react-native";
 import WifiManager from "react-native-wifi-reborn";
+import { logEvent } from "@/util/fieldLog";
 import { useDevices } from "../devices";
 import { ExpoNeoScanModule } from "@/modules/expo-neo-scan";
 
@@ -44,7 +46,146 @@ const ActiveDeviceContext = createContext<ActiveDeviceContextProps>({
 export const ActiveDeviceProvider = ({ children }: PropsWithChildren) => {
   const [connecting, setConnecting] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
-  const { activeDevice } = useDevices();
+  const {
+    activeDevice: selectedDevice,
+    devices,
+    addDevice,
+    setActiveDevice,
+  } = useDevices();
+
+  // The Wi-Fi network the phone is on right now. An IdentiFI scanner is its
+  // own Wi-Fi network, so this is how one is detected.
+  const [currentSsid, setCurrentSsid] = useState<string | null>(null);
+  // Networks already looked at for a scanner, so each is only tried once.
+  const probed = useRef(new Set<string>());
+  const probing = useRef(false);
+
+  /**
+   * As on Android, the scanner in use is the one that is detected: a Wi-Fi
+   * (IdentiFI) scanner counts only while the phone is on its network. With
+   * none detected the app collects with the camera (contactless). A Bluetooth
+   * scanner is used when it is the selected device, as before.
+   */
+  const activeDevice = useMemo(() => {
+    const onNetwork = currentSsid
+      ? devices.find(
+          (device) =>
+            device.connectionType === "wifi" && device.ssid === currentSsid,
+        )
+      : undefined;
+    if (onNetwork) return onNetwork;
+    return selectedDevice?.connectionType === "bluetooth"
+      ? selectedDevice
+      : null;
+  }, [currentSsid, devices, selectedDevice]);
+
+  // Keep an eye on which network the phone is on: when the app comes to the
+  // front (back from joining the scanner's Wi-Fi in Settings) and every few
+  // seconds while it is open.
+  useEffect(() => {
+    let stopped = false;
+    // A single reading can come back empty for a moment while the phone is
+    // still on the network. Dropping the scanner on that would cut off a
+    // capture in progress, so the network only counts as gone after several
+    // empty readings in a row.
+    let misses = 0;
+    const check = async () => {
+      const ssid = await WifiManager.getCurrentWifiSSID().catch(() => null);
+      if (stopped) return;
+      if (ssid) {
+        misses = 0;
+        setCurrentSsid((current) => {
+          if (current !== ssid) logEvent("scanner", "Wi-Fi network changed");
+          return ssid;
+        });
+        return;
+      }
+      misses += 1;
+      if (misses >= 4) {
+        setCurrentSsid((current) => {
+          if (current) logEvent("scanner", "no Wi-Fi network for a while");
+          return null;
+        });
+      }
+    };
+    check();
+    const timer = setInterval(() => {
+      if (AppState.currentState === "active") check();
+    }, 4000);
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") check();
+    });
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+      subscription.remove();
+    };
+  }, []);
+
+  // Off the scanner's network: a connection held to it is gone, so the next
+  // capture connects afresh.
+  useEffect(() => {
+    // Not while a capture is in flight: the capture's own error handling
+    // closes the link, and dropping it here cuts off a capture that the
+    // scanner may still finish.
+    if (
+      !activeDevice &&
+      ExpoIdentifi.isConnected() &&
+      !ExpoIdentifi.isCapturing()
+    ) {
+      ExpoIdentifi.disconnect().catch(() => undefined);
+    }
+  }, [activeDevice]);
+
+  // On a known scanner's network: make it the selected device as well, so the
+  // Devices screen shows what is in use.
+  useEffect(() => {
+    if (!currentSsid) return;
+    const index = devices.findIndex(
+      (device) =>
+        device.connectionType === "wifi" && device.ssid === currentSsid,
+    );
+    if (index >= 0 && !devices[index].selected) {
+      logEvent("scanner", "known scanner detected; now the device in use");
+      setActiveDevice(index);
+    }
+  }, [currentSsid, devices, setActiveDevice]);
+
+  // On a network that is not a known scanner: see, once, whether a scanner
+  // answers there. If one does it is added and used, with nothing to set up.
+  useEffect(() => {
+    const ssid = currentSsid;
+    if (!ssid || probing.current || probed.current.has(ssid)) return;
+    if (devices.some((d) => d.connectionType === "wifi" && d.ssid === ssid)) {
+      return;
+    }
+    probed.current.add(ssid);
+    probing.current = true;
+    (async () => {
+      try {
+        await ExpoIdentifi.connect(true);
+        const { modelNumber, serialNumber } =
+          await ExpoIdentifi.getDeviceInfo();
+        await ExpoIdentifi.disconnect().catch(() => undefined);
+        // Still on that network? Then this is its scanner.
+        const now = await WifiManager.getCurrentWifiSSID().catch(() => null);
+        if (now === ssid) {
+          logEvent("scanner", `scanner detected and added: model ${modelNumber}`);
+          addDevice({
+            ssid,
+            modelNumber,
+            serialNumber,
+            selected: true,
+            connectionType: "wifi",
+          });
+        }
+      } catch {
+        // No scanner on this network: contactless it is.
+      } finally {
+        probing.current = false;
+      }
+    })();
+  }, [currentSsid, devices, addDevice]);
 
   const mounted = useRef(true);
 
@@ -105,6 +246,9 @@ export const ActiveDeviceProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const disconnectFromDevice = useCallback(async () => {
+    // Nothing to close (a contactless collection, say): don't ask a scanner
+    // that isn't there.
+    if (!ExpoIdentifi.isConnected()) return;
     try {
       await ExpoIdentifi.disconnect();
     } catch (error) {

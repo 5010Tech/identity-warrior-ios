@@ -5,7 +5,8 @@ enum CaptureRequestType {
     SingleFingerCapture = "SingleFingerCapture",
     Face = "Face",
     Calibration = "Calibration",
-    DigitalLift = "DigitalLift"
+    DigitalLift = "DigitalLift",
+    PalmCapture = "PalmCapture"
   }
 
 export default CaptureRequestType;

@@ -12,6 +12,13 @@ import {
   useRef,
 } from "react";
 import { CaptureState } from "../types";
+import {
+  hasCollected,
+  loadRecovery,
+  saveRecovery,
+  suspendRecovery,
+  takeRequestedRecovery,
+} from "../recovery";
 import { captureReducer } from "./reducer";
 import { useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -57,6 +64,9 @@ const initializer = (tot: TransactionType): CaptureState => ({
     activitySiteId: "",
     activityCategory: "",
   },
+  rolledFingers: [],
+  slaps: {},
+  pngRolledFingers: {},
   pngFingers: {
     [FingerType.UNKNOWN]: "",
     [FingerType.RT]: "",
@@ -74,7 +84,13 @@ const initializer = (tot: TransactionType): CaptureState => ({
     [FingerType.R4FS]: "",
     [FingerType.L4FS]: "",
     [FingerType.TS]: "",
+    [FingerType.RFP]: "",
+    [FingerType.RWP]: "",
+    [FingerType.LFP]: "",
+    [FingerType.LWP]: "",
   },
+  smts: [],
+  palms: [],
   biographicsEnabled: true,
   faceEnabled: true,
   fingersEnabled: true,
@@ -197,6 +213,44 @@ export const CaptureProvider = ({ children }: PropsWithChildren) => {
     },
     [getValue, setValue],
   );
+
+  // The collection the operator chose to recover: its data replaces the
+  // empty state these screens start with.
+  useEffect(() => {
+    // A new collection: saving is on again (it stops once one is submitted).
+    suspendRecovery(false);
+    if (!takeRequestedRecovery()) return;
+    let alive = true;
+    dispatch({ name: "restoring", method: "setValue", args: [true] });
+    // Each part lands as soon as it is unsealed: the collection screen shows
+    // what has been collected without waiting for every image.
+    loadRecovery((name, value) => {
+      if (!alive) return;
+      dispatch({
+        name: name as NestedKeyOf<CaptureState>,
+        method: "setValue",
+        args: [value],
+      });
+    }).finally(() => {
+      if (alive) {
+        dispatch({ name: "restoring", method: "setValue", args: [false] });
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Everything collected is kept on the phone as it comes in, so a crash or
+  // an operator who leaves the app does not lose it (Android's
+  // saveForRecovery). Saving waits for a pause in the collection.
+  useEffect(() => {
+    if (!hasCollected(state)) return;
+    const timer = setTimeout(() => {
+      void saveRecovery(state, state.transaction?.tot ?? transactionType);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [state, transactionType]);
 
   useEffect(() => {
     const fetchEnabled = async () => {

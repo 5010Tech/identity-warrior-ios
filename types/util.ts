@@ -19,6 +19,11 @@ export const mapToFGP = (fingerType: FingerType): FGP => {
     [FingerType.R4FS]: "PLAIN_RIGHT_FOUR_FINGERS",
     [FingerType.L4FS]: "PLAIN_LEFT_FOUR_FINGERS",
     [FingerType.TS]: "PLAIN_LEFT_AND_RIGHT_THUMBS",
+    // Palms are not finger positions; they are kept separately (CaptureState.palms).
+    [FingerType.RFP]: "UNKNOWN",
+    [FingerType.RWP]: "UNKNOWN",
+    [FingerType.LFP]: "UNKNOWN",
+    [FingerType.LWP]: "UNKNOWN",
   };
 
   return FGP[fingerTypeMap[fingerType]];

@@ -1,10 +1,14 @@
-import { Text, useThemeColor, View } from "@/components/themed";
-import { themeColors } from "@/constants/style/Colors";
+import { Text, useThemeColor } from "@/components/themed";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Href, Link } from "expo-router";
 import React, { useMemo } from "react";
-import { Pressable, StyleSheet, TouchableOpacity } from "react-native";
-import { Switch } from "react-native-gesture-handler";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { tHelper } from "@/translations/translationHelper";
 
 interface CaptureStepButtonProps {
@@ -15,23 +19,66 @@ interface CaptureStepButtonProps {
   title: string;
   completed: boolean;
   enabled?: boolean;
-  onEnabledChange: (enabled: boolean) => void;
+  onEnabledChange?: (enabled: boolean) => void;
   canToggle?: boolean;
+  /** Optional step: no status mark until something has been collected. */
+  optional?: boolean;
+  /** Tighter row (smaller icon and title) for screens with many steps. */
+  compact?: boolean;
+  /**
+   * The step cannot be opened yet (its scanner is still connecting): greyed,
+   * not pressable, with a wheel where the status mark goes.
+   */
+  busy?: boolean;
 }
 
+const FRAME = 56;
+const CORNER = 12;
+
+/** Icon inside four corner brackets, like the Android capture rows. */
+function BracketIcon({
+  color,
+  compact,
+  children,
+}: React.PropsWithChildren<{ color: string; compact?: boolean }>) {
+  const corner = { borderColor: color };
+  return (
+    <View style={[styles.frame, compact && styles.frameCompact]}>
+      <View style={[styles.corner, styles.tl, corner]} />
+      <View style={[styles.corner, styles.tr, corner]} />
+      <View style={[styles.corner, styles.bl, corner]} />
+      <View style={[styles.corner, styles.br, corner]} />
+      {children}
+    </View>
+  );
+}
+
+/**
+ * A capture step on the transaction screen, styled like the Android app:
+ * large outlined row, bracketed icon, uppercase title and a status mark
+ * (green double-check when complete, red alert when still required).
+ */
 export const CaptureStepButton = ({
   icon,
   path,
   title,
   completed,
-  enabled,
+  enabled = true,
   onEnabledChange,
   canToggle,
+  optional,
+  compact,
+  busy,
 }: CaptureStepButtonProps) => {
-  const handleEnabledChange = () => {
-    onEnabledChange(!enabled);
-  };
-  const primary = useThemeColor({}, "primary");
+  const stroke = useThemeColor({}, "textStrong");
+  const disabledStroke = useThemeColor({}, "strokeStrong");
+  const surface = useThemeColor({}, "surface");
+  const toggleOn = useThemeColor({}, "toggleOn");
+  const success = useThemeColor({}, "success");
+  const danger = useThemeColor({}, "danger");
+  const muted = useThemeColor({}, "textSecondary");
+
+  const color = enabled && !busy ? stroke : disabledStroke;
 
   const iconComponent = useMemo(() => {
     const faGlyphs = FontAwesome.getRawGlyphMap
@@ -42,8 +89,8 @@ export const CaptureStepButton = ({
       return (
         <FontAwesome
           name={icon as React.ComponentProps<typeof FontAwesome>["name"]}
-          size={32}
-          color={"#fff"}
+          size={compact ? 22 : 28}
+          color={color}
         />
       );
     }
@@ -53,64 +100,64 @@ export const CaptureStepButton = ({
         name={
           icon as React.ComponentProps<typeof MaterialCommunityIcons>["name"]
         }
-        size={32}
-        color={"#fff"}
+        size={compact ? 26 : 32}
+        color={color}
       />
     );
-  }, [icon]);
+  }, [icon, color, compact]);
 
   return (
-    <View style={styles.container}>
-      <Link disabled={!enabled} href={path} asChild>
-        <TouchableOpacity disabled={!enabled} style={styles.button}>
-          <View
-            style={[
-              styles.iconContainer,
-              {
-                backgroundColor: primary,
-                opacity: enabled ? 1 : 0.7,
-              },
-            ]}
-          >
+    <View
+      style={[
+        styles.container,
+        compact && styles.containerCompact,
+        { borderColor: color, backgroundColor: surface },
+      ]}
+    >
+      <Link disabled={!enabled || busy} href={path} asChild>
+        <TouchableOpacity disabled={!enabled || busy} style={styles.button}>
+          <BracketIcon color={color} compact={compact}>
             {iconComponent}
-          </View>
-          <Text style={[styles.title, { opacity: enabled ? 1 : 0.7 }]}>
+          </BracketIcon>
+          <Text
+            style={[styles.title, compact && styles.titleCompact, { color }]}
+            numberOfLines={2}
+            adjustsFontSizeToFit
+            minimumFontScale={0.8}
+          >
             {title}
           </Text>
         </TouchableOpacity>
       </Link>
       <View style={styles.rightCol}>
         {canToggle && (
-          <Pressable
-            hitSlop={5}
-            style={styles.switchContainer}
-            onPress={handleEnabledChange}
-          >
-            <Text>{tHelper("enabled")}</Text>
-            <Switch
-              onValueChange={onEnabledChange}
-              value={enabled}
-              trackColor={{ true: primary }}
-            />
-          </Pressable>
+          <Switch
+            onValueChange={onEnabledChange}
+            value={enabled}
+            trackColor={{ true: toggleOn }}
+            accessibilityLabel={tHelper("enabled")}
+          />
         )}
-        <FontAwesome
-          name={
-            enabled
-              ? completed
-                ? "check-circle"
-                : "exclamation-circle"
-              : "minus-circle"
-          }
-          color={
-            enabled
-              ? completed
-                ? themeColors.green
-                : themeColors.red
-              : themeColors.gray
-          }
-          size={28}
-        />
+        {busy && enabled ? (
+          <ActivityIndicator
+            size="small"
+            color={muted}
+            style={styles.wheel}
+            accessibilityLabel={tHelper("connectingToDevice")}
+          />
+        ) : optional && !completed ? null : (
+          <MaterialCommunityIcons
+            name={
+              enabled
+                ? completed
+                  ? "check-all"
+                  : "alert-circle-outline"
+                : "minus-circle-outline"
+            }
+            color={enabled ? (completed ? success : danger) : muted}
+            size={34}
+          />
+        )}
       </View>
     </View>
   );
@@ -119,28 +166,58 @@ export const CaptureStepButton = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
+    alignItems: "center",
     width: "100%",
-    gap: 10,
+    // Rows share the available height: as tall as 82pt when there is room.
+    flex: 1,
+    minHeight: 66,
+    maxHeight: 82,
+    borderWidth: 2,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    gap: 8,
+  },
+  containerCompact: {
+    minHeight: 50,
+    borderRadius: 14,
+  },
+  frameCompact: {
+    width: 44,
+    height: 44,
+  },
+  titleCompact: {
+    fontSize: 16,
+    letterSpacing: 1,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    flexGrow: 1,
-    gap: 10,
-    paddingVertical: 5,
+    flex: 1,
+    gap: 14,
+    paddingVertical: 4,
   },
-  iconContainer: {
-    borderRadius: 4,
-    padding: 7,
-    minWidth: 50,
-    justifyContent: "center",
+  frame: {
+    width: FRAME,
+    height: FRAME,
     alignItems: "center",
+    justifyContent: "center",
   },
+  corner: {
+    position: "absolute",
+    width: CORNER,
+    height: CORNER,
+  },
+  tl: { top: 0, left: 0, borderTopWidth: 3, borderLeftWidth: 3 },
+  tr: { top: 0, right: 0, borderTopWidth: 3, borderRightWidth: 3 },
+  bl: { bottom: 0, left: 0, borderBottomWidth: 3, borderLeftWidth: 3 },
+  br: { bottom: 0, right: 0, borderBottomWidth: 3, borderRightWidth: 3 },
   title: {
-    fontSize: 20,
-    fontWeight: 500,
-    flexGrow: 1,
+    flex: 1,
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
   },
-  rightCol: { gap: 10, flexDirection: "row", alignItems: "center" },
-  switchContainer: { gap: 5 },
+  wheel: { width: 34, height: 34 },
+  rightCol: { gap: 8, flexDirection: "row", alignItems: "center" },
 });

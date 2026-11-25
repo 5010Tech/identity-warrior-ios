@@ -1,6 +1,7 @@
 import DigitalLift from './DigitalLift';
 import Face from './Face';
 import Fingerprint from './Fingerprint';
+import Palm from './Palm';
 import SlapshotCaptureIdentity from './SlapshotCaptureIdentity';
 
 export default class BiometricPayload {
@@ -8,8 +9,9 @@ export default class BiometricPayload {
     fingerprints: Fingerprint[] = [];
     faces: Face[] = [];
     digitalLifts: DigitalLift[] = [];
+    palms: Palm[] = [];
 
-    constructor(obj: {captureIdentity: SlapshotCaptureIdentity, fingerprints: Fingerprint[], faces: Face[], digitalLifts: DigitalLift[]}) {
+    constructor(obj: {captureIdentity: SlapshotCaptureIdentity, fingerprints: Fingerprint[], faces: Face[], digitalLifts: DigitalLift[], palms?: Palm[]}) {
         this.captureIdentity = obj.captureIdentity;
         
         this.fingerprints = [];
@@ -25,6 +27,11 @@ export default class BiometricPayload {
         this.digitalLifts = [];
         obj.digitalLifts?.forEach((next) => {
             this.digitalLifts.push(new DigitalLift(next));
+        });
+
+        this.palms = [];
+        obj.palms?.forEach((next) => {
+            this.palms.push(new Palm(next));
         });
     }
 }

@@ -34,12 +34,9 @@ public class ExpoIdentifiView: ExpoView {
     lineLayer.anchorPoint = CGPoint(x: 0.5, y: 0.0)
     layer.addSublayer(lineLayer)
 
-    imageView.backgroundColor = UIColor(
-      red: CGFloat(0xF8) / 255.0,
-      green: CGFloat(0xF8) / 255.0,
-      blue: CGFloat(0xF8) / 255.0,
-      alpha: CGFloat(0xFF) / 255.0
-    )
+    // Clear, so the colour around the picture is the one the screen gives
+    // this view (black in DoD mode, the light grey it always was in DHS).
+    imageView.backgroundColor = .clear
 
     ExpoIdentifiModule.registerView(self, for: streamType)
     registeredStreamType = streamType

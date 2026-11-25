@@ -46,4 +46,16 @@ enum FingerType: String, Codable {
     
     /// Thumbs slap
     case ts = "TS"
+
+    /// Right full palm
+    case rfp = "RFP"
+
+    /// Right writer's palm
+    case rwp = "RWP"
+
+    /// Left full palm
+    case lfp = "LFP"
+
+    /// Left writer's palm
+    case lwp = "LWP"
 }

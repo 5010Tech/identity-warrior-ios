@@ -10,7 +10,9 @@ export default function PlaceholderLogo({ text }: PlaceholderLogoProps) {
       <H2>{text}</H2>
       <Image
         style={styles.logo}
-        source={require("@/assets/images/logo-200.png")}
+        // The logo is wider than it is tall; "contain" keeps it from being cropped.
+        resizeMode="contain"
+        source={require("@/assets/images/logo-600.png")}
       />
     </View>
   );
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     margin: 20,
-    height: 150,
-    width: 150,
+    height: 230,
+    width: 230,
   },
 });

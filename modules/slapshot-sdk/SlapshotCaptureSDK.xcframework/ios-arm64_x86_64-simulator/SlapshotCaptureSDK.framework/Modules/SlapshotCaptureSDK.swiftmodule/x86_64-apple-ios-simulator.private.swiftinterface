@@ -1,13 +1,11 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.2.1 effective-5.10 (swiftlang-6.2.1.4.8 clang-1700.4.4.1)
-// swift-module-flags: -target x86_64-apple-ios17.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name SlapshotCaptureSDK
-// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.1
+// swift-compiler-version: Apple Swift version 6.3.2 effective-5.10 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+// swift-module-flags: -target x86_64-apple-ios14.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name SlapshotCaptureSDK
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.2
 import AVFoundation
 import Accelerate
-import CocoaLumberjack
 import Combine
 import DeveloperToolsSupport
-import DeviceKit
 import Foundation
 import Photos
 @_exported import SlapshotCaptureSDK
@@ -17,71 +15,196 @@ import UIKit
 import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
-
 extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func rotated(radians: Swift.Float) -> UIKit.UIImage?
-  #endif
+  public func createImage(encodingType: SlapshotCaptureSDK.EncodingType, dpi: Swift.Int? = nil) -> (any SlapshotCaptureSDK.EncodedImage)?
 }
-extension ImageIO.CGImagePropertyOrientation {
-  public init(_ uiOrientation: UIKit.UIImage.Orientation)
-}
-extension UIKit.UIImage.Orientation {
-  public init(_ cgOrientation: UIKit.UIImage.Orientation)
-}
-public class RegionOfInterest : Swift.Codable {
+public class CaptureRequestBuilderImpl : SlapshotCaptureSDK.CaptureRequestBuilder {
   public init()
-  public init(copy: SlapshotCaptureSDK.RegionOfInterest)
-  public var captureType: SlapshotCaptureSDK.CaptureType
-  public var strokeCircles: [[SlapshotCaptureSDK.RegionOfInterest.Circle]]
-  public var numberOfStrokes: Swift.Int {
-    get
-  }
-  public var isStrokeStarted: Swift.Bool {
-    get
-  }
-  public func addRegion(x: Swift.Double, y: Swift.Double, r: Swift.Double)
-  public func finishRegion()
-  public func removeLastStroke()
-  public func clear()
-  public struct Circle : Swift.Codable {
-    public var x: Swift.Double
-    public var y: Swift.Double
-    public var r: Swift.Double
-    public func encode(to encoder: any Swift.Encoder) throws
-    public init(from decoder: any Swift.Decoder) throws
-  }
-  @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
-}
-@_hasMissingDesignatedInitializers public class AlertHelper {
-  public static func showAlert(alertTitle: Swift.String, message: Swift.String)
+  public func build() -> any SlapshotCaptureSDK.CaptureRequest
+  public func setCaptureRequestType(captureRequestType: SlapshotCaptureSDK.CaptureRequestType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setReviewCapture(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setShowCaptureImageInReview(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setSingleFingerCaptureExplicitType(_ value: SlapshotCaptureSDK.FingerType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setMissingFingerMapping(_ value: [SlapshotCaptureSDK.FingerType : SlapshotCaptureSDK.FpCondition]) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setAllowUserToChangeToTorchSetting(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setDefaultTorchSetting(_ value: SlapshotCaptureSDK.TorchSetting) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setShowNativeCapturePpiInReview(_ show: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func setAllowUncalibratedCapture(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
   @objc deinit
 }
-public class Bounds {
-  final public let left: Swift.Double
-  final public let top: Swift.Double
-  final public let right: Swift.Double
-  final public let bottom: Swift.Double
-  public var midX: Swift.Double {
-    get
-  }
-  public var midY: Swift.Double {
-    get
-  }
-  public var width: Swift.Double {
-    get
-  }
-  public var height: Swift.Double {
-    get
-  }
-  public var isEmpty: Swift.Bool {
-    get
-  }
-  public init(left: Swift.Double, top: Swift.Double, right: Swift.Double, bottom: Swift.Double)
-  public static func empty() -> SlapshotCaptureSDK.Bounds
+public class CaptureRequestSequenceBuilderImpl : SlapshotCaptureSDK.CaptureRequestSequenceBuilder {
+  public init()
+  public func build() -> any SlapshotCaptureSDK.CaptureRequestSequence
+  public func addCaptureRequest(captureRequest: any SlapshotCaptureSDK.CaptureRequest) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+  public func setUserMode(userMode: SlapshotCaptureSDK.UserMode) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+  public func setExistingCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
   @objc deinit
+}
+public class CaptureRequestSequenceImpl : SlapshotCaptureSDK.CaptureRequestSequence {
+  public var captureRequests: [any SlapshotCaptureSDK.CaptureRequest]
+  public var userMode: SlapshotCaptureSDK.UserMode
+  public var existingCaptureIdentity: (any SlapshotCaptureSDK.CaptureIdentity)?
+  public init(captureRequests: [any SlapshotCaptureSDK.CaptureRequest], userMode: SlapshotCaptureSDK.UserMode, existingCaptureIdentity: (any SlapshotCaptureSDK.CaptureIdentity)?)
+  @objc deinit
+}
+public class SlapshotCaptureEngineImpl : SlapshotCaptureSDK.SlapshotCaptureEngine, SlapshotCaptureSDK._SlapshotCaptureEngine {
+  public var version: Swift.String
+  public var isLicensed: Swift.Bool {
+    get
+  }
+  @available(*, deprecated, message: "Not used by LicenseSpring licensing. Use createOfflineLicenseRequest(licenseKey:) for offline activation.")
+  public var licensingHardwareId: Swift.String {
+    get
+  }
+  public var isCalibrated: Swift.Bool {
+    get
+  }
+  public init()
+  public func initialize() throws
+  public func installLicense(license: Foundation.Data) throws
+  public func activateLicenseKey(licenseKey: Swift.String) throws
+  public func createOfflineLicenseRequest(licenseKey: Swift.String) throws -> Swift.String
+  @available(*, deprecated, message: "Not used by LicenseSpring licensing. Use activateLicenseKey(licenseKey:) or installLicense(license:).")
+  public func setLicenseEntitlement(entitlementId: Swift.String) throws
+  public func configure(config: any SlapshotCaptureSDK.CaptureEngineConfig)
+  public func runCalibration(onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  public func runCalibration(tryModelBasedCalibration: Swift.Bool, onSuccess: @escaping () -> Swift.Void, onError: @escaping (SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  public func runCalibrationValidation(numberOfValidationCaptures: Swift.Int, onSuccess: @escaping () -> Swift.Void, onError: @escaping (SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  public func runCaptureSequence(captureRequestSequence: any SlapshotCaptureSDK.CaptureRequestSequence, onSuccess: @escaping (_ identity: any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  public func runReviewCapturedModality(reviewRequest: any SlapshotCaptureSDK.ReviewRequest, onSuccess: @escaping (any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  public func exportCaptureIdentity(exportCaptureRequest: any SlapshotCaptureSDK.ExportCaptureRequest, cancelToken: SlapshotCaptureSDK.CancelToken) throws -> any SlapshotCaptureSDK.BiometricPayload
+  public func createNewCaptureEngineConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  public func createNewCaptureEngineFaceConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  public func createNewExportCaptureRequestBuilder(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+  public func createNewCaptureRequestSequenceBuilder() -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+  public func createNewCaptureRequestBuilder() -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  public func createNewFaceCaptureRequestBuilder() -> any SlapshotCaptureSDK.FaceCaptureRequestBuilder
+  public func createNewDigitalLiftCaptureRequestBuilder() -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
+  public func createNewReviewRequestBuilder(identityId: Swift.String, capturedModalityId: Swift.String) -> any SlapshotCaptureSDK.ReviewRequestBuilder
+  public func exportCalibration()
+  public func resetCalibration() throws
+  public func addModelBasedCalibration(calibrationBytes: [Swift.UInt8]) throws -> Swift.Bool
+  public func addModelBasedCalibration(calibrationBytes: [Swift.UInt8], matchingFunction: ((SlapshotCaptureSDK.DeviceInfo) -> Swift.Bool)?) throws -> Swift.Bool
+  public func getCaptureIdentity(id: Swift.String) throws -> any SlapshotCaptureSDK.CaptureIdentity
+  public func getAllCaptureIdentities() throws -> [any SlapshotCaptureSDK.CaptureIdentity]
+  public func deleteCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) throws
+  public func deleteAllCaptureIdentities() throws
+  public func resetDirectionPrompts() throws
+  public func close()
+  public func createCaptureIdentity(id: Swift.String, captureModalities: [any SlapshotCaptureSDK.CapturedModality]) -> any SlapshotCaptureSDK.CaptureIdentity
+  public func createCapturedModality(id: Swift.String, captureRequestType: SlapshotCaptureSDK.CaptureRequestType, fingerType: SlapshotCaptureSDK.FingerType?) -> any SlapshotCaptureSDK.CapturedModality
+  public func setCalibration(calibrationBytes: [Swift.UInt8]) throws
+  @objc deinit
+}
+public protocol _SlapshotCaptureEngine {
+  func createCaptureIdentity(id: Swift.String, captureModalities: [any SlapshotCaptureSDK.CapturedModality]) -> any SlapshotCaptureSDK.CaptureIdentity
+  func createCapturedModality(id: Swift.String, captureRequestType: SlapshotCaptureSDK.CaptureRequestType, fingerType: SlapshotCaptureSDK.FingerType?) -> any SlapshotCaptureSDK.CapturedModality
+  func setCalibration(calibrationBytes: [Swift.UInt8]) throws
+}
+public protocol BiometricMetadata {
+  var notes: Swift.String? { get }
+}
+public protocol BiometricPayload {
+  var captureIdentity: any SlapshotCaptureSDK.CaptureIdentity { get }
+  var fingerprints: [any SlapshotCaptureSDK.Fingerprint] { get }
+  var faces: [any SlapshotCaptureSDK.Face] { get }
+  var digitalLifts: [any SlapshotCaptureSDK.DigitalLift] { get }
+  var palms: [any SlapshotCaptureSDK.Palm] { get }
+}
+public protocol CalibrationRequest : SlapshotCaptureSDK.CaptureRequest {
+  var useModelCalibration: Swift.Bool { get }
+  var isValidation: Swift.Bool { get }
+  var numberOfValidationSteps: Swift.Int { get }
+}
+public protocol CalibrationRequestBuilder : SlapshotCaptureSDK.CaptureRequestBuilder {
+  func setUseModelCalibration(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setIsValidation(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setNumberOfValidationSlaps(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+}
+public protocol CapturedModality {
+  var id: Swift.String { get }
+  var captureRequestType: SlapshotCaptureSDK.CaptureRequestType { get }
+}
+public protocol CaptureEngineConfig {
+  var captureEngineMode: SlapshotCaptureSDK.CaptureEngineMode { get }
+  var numberOfRetriesForSlapCapture: Swift.Int { get }
+  var inclusiveFingerprintQualityThreshold: Swift.Int { get }
+  var numberOfValidFingersRequiredToAccept4Slap: Swift.Int { get }
+  var numberOfValidFingersRequiredToAccept2Slap: Swift.Int { get }
+  var fpQualityPluginClass: (any SlapshotCaptureSDK.FingerprintQualityScorer.Type)? { get }
+  var fpQualityScorerType: SlapshotCaptureSDK.FpQualityScorerType { get }
+  var showFpQualityNames: Swift.Bool { get }
+  var useQualityLevelColors: Swift.Bool { get }
+  var fpInclusiveQualityMapForScoreTypes: [Swift.String : [Swift.Int : SlapshotCaptureSDK.QualityLevel]] { get }
+  var enforceFingerSpreadingForSlapCapture: Swift.Bool { get }
+  var showFingerSpread: Swift.Bool { get }
+  var enforceFingerValidationOnReview: Swift.Bool { get }
+  var allowFingerPositionSizeAndEditing: Swift.Bool { get }
+  var allowCaptureInitByTap: Swift.Bool { get }
+  var useModelBasedCalibrationByDefault: Swift.Bool { get }
+  var validationCapturesForModelBasedCalibration: Swift.Int { get }
+  var faceConfig: any SlapshotCaptureSDK.CaptureEngineFaceConfig { get }
+  var allowSetMissingFingersDuringCapture: Swift.Bool { get }
+  var supportEmailAddress: Swift.String { get }
+  var enableExperimentalBuild: Swift.Bool { get }
+  var enableLegacyBuild: Swift.Bool { get }
+}
+public protocol CaptureEngineConfigBuilder {
+  func build() -> any SlapshotCaptureSDK.CaptureEngineConfig
+  func setMode(_ captureEngineMode: SlapshotCaptureSDK.CaptureEngineMode) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setNumberOfRetriesForSlapCapture(_ retries: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setInclusiveFingerprintQualityThreshold(_ threshold: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setNumberOfValidFingersRequiredToAccept4Slap(_ numberOfFps: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setNumberOfValidFingersRequiredToAccept2Slap(_ numberOfFps: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setFpQualityPluginClass(_ pluginClass: (any SlapshotCaptureSDK.FingerprintQualityScorer.Type)?) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setFpQualityScorerType(_ fpQualityScorerType: SlapshotCaptureSDK.FpQualityScorerType) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setShowFpQualityNames(_ show: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setUseQualityLevelColors(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setFpInclusiveQualityMapForScoreTypes(_ value: [Swift.String : [Swift.Int : SlapshotCaptureSDK.QualityLevel]]) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setEnforceFingerSpreadingForSlapCapture(_ enforce: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setShowFingersSpreadForSlapCapture(_ showSpread: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setEnforceFingerValidationOnReview(_ enforce: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setAllowFingerPositionAndSizeEditing(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setAllowCapturInitByTap(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setFaceConfig(_ config: any SlapshotCaptureSDK.CaptureEngineFaceConfig) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setUseModelBasedCalibrationByDefault(_ use: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setValidationCapturesForModelBasedCalibration(_ numberOfValidationCaptures: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setAllowSetMissingFingersDuringCapture(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setSupportEmailAddress(_ email: Swift.String) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setEnableExperimentalBuild(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func setEnableLegacyBuild(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+}
+public protocol CaptureEngineFaceConfig {
+  var autoCaptureFaceAfterValidation: Swift.Bool { get }
+  var minFaceWidthInPixels: Swift.Int { get }
+  var minFaceWidthToMinorImageAxisRatio: Swift.Double { get }
+  var maxFaceWidthInPixels: Swift.Int { get }
+  var maxFaceWidthToMinorImageAxisRatio: Swift.Double { get }
+  var requiredMillisecondsOfValidFacesBeforeCapture: Swift.Int { get }
+  var faceExportPaddingFactor: Swift.Double { get }
+  var faceExportHeightToWidthFactor: Swift.Double { get }
+  var showDebugFaceCaptureOverlays: Swift.Bool { get }
+}
+public protocol CaptureEngineFaceConfigBuilder {
+  func build() -> any SlapshotCaptureSDK.CaptureEngineFaceConfig
+  func setAutoCaptureFaceAfterValidation(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setMinFaceWidthInPixels(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setMinFaceWidthToMinorImageAxisRatio(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setMaxFaceWithInPixels(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setMaxFaceWidthToMinorImageAxisRatio(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setRequiredMillisecondsOfValidFacesBeforeCapture(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setFaceExportPaddingFactor(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setFaceExportHeightToWidthFactor(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func setShowDebugFaceCaptureOverlays(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+}
+public enum CaptureEngineMode : Swift.Int {
+  case selfCapture
+  case administeredCapture
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
 }
 public enum CaptureError {
   case cancelled
@@ -92,509 +215,52 @@ public enum CaptureError {
     get
   }
 }
-public enum CalibrationError {
-  case errorCalibrationInaccurate(inaccuracyInPpi: Swift.Int)
-  case errorCoinNotDetected
-  case notEnoughData
-  case invalidInputData
-  case doesNotMeetMinimumMaxDpiRequirement
-  case noValidPointsFound
-  case calibratedZoneTooSmall
-  case unknownError
-}
-@_hasMissingDesignatedInitializers final public class FileHelper {
-  public static let shared: SlapshotCaptureSDK.FileHelper
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var debugInfoDirectory: Foundation.URL? {
-    get
-  }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func getIdentityDirectory(identityID: Swift.String) -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func getCaptureGroupDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func getCapturesDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func getFingertipImagesDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func getFingertipRidgeDetailImagesDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
-  #endif
-  @objc deinit
-}
-public enum SlapshotCaptureError : Swift.Error {
-  case none
-  case error(message: Swift.String)
-  case licensingNoActivationsAvailable
-  case licensingNoNetwork
-  case licenseExpired
-  case licenseRevoked
-  case identityDoesntExist
-  case capturedModalityDoesntExist
-  case cancelled
-}
-public enum WindowOrientation {
-  case allOrientations
-  case portrait
-  case landscape
-  #if compiler(>=5.3) && $NonescapableTypes
-  public var interfaceOrientation: UIKit.UIInterfaceOrientation? {
-    get
-  }
-  #endif
-  public var interfaceOrientationMask: UIKit.UIInterfaceOrientationMask {
-    get
-  }
-  public static func == (a: SlapshotCaptureSDK.WindowOrientation, b: SlapshotCaptureSDK.WindowOrientation) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum IdentitySex : Swift.String {
-  case male, female, unknown
-  public static let abbreviationsToCases: [SlapshotCaptureSDK.IdentitySex : Swift.String]
-  public var abbreviation: Swift.String {
-    get
-  }
-  public var text: Swift.String {
-    get
-  }
-  public init(abbreviation: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public enum FingerprintQualityScorerType {
-  case nfiq
-  case contactless
-  public static func == (a: SlapshotCaptureSDK.FingerprintQualityScorerType, b: SlapshotCaptureSDK.FingerprintQualityScorerType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-
-
-public struct WindowNavStackElement : Swift.Equatable {
-  public let windowOrientation: SlapshotCaptureSDK.WindowOrientation
-  public var vc: UIKit.UIViewController?
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(windowOrientation: SlapshotCaptureSDK.WindowOrientation, vc: UIKit.UIViewController?)
-  #endif
-  public static func == (a: SlapshotCaptureSDK.WindowNavStackElement, b: SlapshotCaptureSDK.WindowNavStackElement) -> Swift.Bool
-}
-
-public enum FpQualityScorerType : Swift.Int {
-  case nfiq
-  case contactless
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
-}
-@objc public class DetectedCircle : ObjectiveC.NSObject {
-  final public let x: Swift.Int, y: Swift.Int, r: Swift.Int
-  final public let isValid: Swift.Bool
-  @objc public init(x: Swift.Int, y: Swift.Int, r: Swift.Int, isValid: Swift.Bool = true)
-  public func getDPI(coinDiameterInMm: Swift.Float) -> Swift.Double
-  public func doesMatch(_ circle: SlapshotCaptureSDK.DetectedCircle) -> Swift.Bool
-  @objc deinit
-}
-public enum CaptureEngineMode : Swift.Int {
-  case selfCapture
-  case administeredCapture
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
-}
-public protocol EncodedImage {
-  var width: Swift.Int { get }
-  var height: Swift.Int { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  var data: Foundation.Data? { get }
-  #endif
-  var encodingType: SlapshotCaptureSDK.EncodingType { get }
-}
-public class CaptureRequestSequenceImpl : SlapshotCaptureSDK.CaptureRequestSequence {
-  public var captureRequests: [any SlapshotCaptureSDK.CaptureRequest]
-  public var userMode: SlapshotCaptureSDK.UserMode
-  public var existingCaptureIdentity: (any SlapshotCaptureSDK.CaptureIdentity)?
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(captureRequests: [any SlapshotCaptureSDK.CaptureRequest], userMode: SlapshotCaptureSDK.UserMode, existingCaptureIdentity: (any SlapshotCaptureSDK.CaptureIdentity)?)
-  #endif
-  @objc deinit
-}
-public enum ActivityType {
-  case calibration
-  case capture(captureType: SlapshotCaptureSDK.CaptureType, fingerType: SlapshotCaptureSDK.FingerType?, isAdministered: Swift.Bool)
-}
-public class DeviceInfo {
-  final public let manufacturer: Swift.String
-  final public let model: Swift.String
-  public init(manufacturer: Swift.String, model: Swift.String)
-  @objc deinit
-}
-public protocol WindowNavSwiftUIViewProtocol : SwiftUICore.View {
-  #if compiler(>=5.3) && $NonescapableTypes
-  var hostingVC: SwiftUI.UIHostingController<Self>? { get set }
-  #endif
-}
-extension SlapshotCaptureSDK.WindowNavSwiftUIViewProtocol {
-  public var size: CoreFoundation.CGSize {
-    get
-  }
-  public var safeAreaInsets: UIKit.UIEdgeInsets {
-    get
-  }
-}
-public protocol Face {
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCGImage(exportCroppedFace: Swift.Bool) -> CoreGraphics.CGImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCGImage(maxDimension: Swift.Int, exportCroppedFace: Swift.Bool) -> CoreGraphics.CGImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createImage(exportCroppedFace: Swift.Bool, encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createImage(maxDimension: Swift.Int, exportCroppedFace: Swift.Bool, encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-}
-final public class CaptureGroup {
-  final public let id: Swift.String
-  final public let captureAndFingerType: SlapshotCaptureSDK.CaptureAndFingerType
-  final public var fingertips: [SlapshotCaptureSDK.Fingertip]
-  final public var missingFingers: Swift.Set<SlapshotCaptureSDK.FingerType>
-  final public var captures: Swift.Set<SlapshotCaptureSDK.Capture>
-  final public var keyCaptureID: Swift.String?
-  final public var meta: Foundation.Data?
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var keyCapture: SlapshotCaptureSDK.Capture? {
-    get
-  }
-  #endif
-  final public var shouldBeAccepted: Swift.Bool {
-    get
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(id: Swift.String = UUID().uuidString, captureAndFingerType: SlapshotCaptureSDK.CaptureAndFingerType, captures: Swift.Set<SlapshotCaptureSDK.Capture> = .init(), keyCaptureID: Swift.String? = nil, fingertips: [SlapshotCaptureSDK.Fingertip] = [], missingFingers: Swift.Set<SlapshotCaptureSDK.FingerType> = [], meta: Foundation.Data? = nil)
-  #endif
-  @objc deinit
-}
-extension UIKit.UIImage {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func createImage(encodingType: SlapshotCaptureSDK.EncodingType, dpi: Swift.Int? = nil) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-}
-public enum UserMode {
-  case SelfCapture
-  case AdministeredCapture
-  public static func == (a: SlapshotCaptureSDK.UserMode, b: SlapshotCaptureSDK.UserMode) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-@_hasMissingDesignatedInitializers public class SlapshotSDK {
-  public static func getEngine() -> any SlapshotCaptureSDK.SlapshotCaptureEngine
-  @objc deinit
-}
-public protocol SingleFingerCaptureModality {
-  var fingerType: SlapshotCaptureSDK.FingerType { get }
-}
-@_Concurrency.MainActor @preconcurrency open class CustomHostingController<T> : SwiftUI.UIHostingController<T>, UIKit.UINavigationControllerDelegate, SlapshotCaptureSDK.WindowNavVCProtocol where T : SwiftUICore.View {
-  @_Concurrency.MainActor @preconcurrency public var viewDidAppearCallback: (() -> Swift.Void)?
-  @_Concurrency.MainActor @preconcurrency public var viewDidDisappearCallback: (() -> Swift.Void)?
-  @_Concurrency.MainActor @preconcurrency public var viewDidLayoutSubviewsCallback: (() -> Swift.Void)?
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewWillAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewDidAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewWillDisappear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewDidDisappear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewDidLayoutSubviews()
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc public func navigationController(_ navigationController: UIKit.UINavigationController, animationControllerFor operation: UIKit.UINavigationController.Operation, from fromVC: UIKit.UIViewController, to toVC: UIKit.UIViewController) -> (any UIKit.UIViewControllerAnimatedTransitioning)?
-  #endif
-  @_Concurrency.MainActor @preconcurrency override public init(rootView: T)
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency override public init?(coder aDecoder: Foundation.NSCoder, rootView: T)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
-  #endif
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class CustomViewController : UIKit.UIViewController {
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidDisappear(_ animated: Swift.Bool)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLayoutSubviews()
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
-  @objc deinit
-}
-extension SlapshotCaptureSDK.CustomViewController : UIKit.UINavigationControllerDelegate {
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc dynamic public func navigationController(_ navigationController: UIKit.UINavigationController, animationControllerFor operation: UIKit.UINavigationController.Operation, from fromVC: UIKit.UIViewController, to toVC: UIKit.UIViewController) -> (any UIKit.UIViewControllerAnimatedTransitioning)?
-  #endif
-}
-@objc @_inheritsConvenienceInitializers open class FaceDetectorPluginBase : ObjectiveC.NSObject {
-  @objc override required dynamic public init()
-  @objc deinit
-}
-@_hasMissingDesignatedInitializers final public class SlapshotSettings : Combine.ObservableObject {
-  public static let shared: SlapshotCaptureSDK.SlapshotSettings
-  final public var isCalibrated: Swift.Bool {
-    get
-  }
-  final public var shouldShowCaptureAdministeredSlapOnboarding: Swift.Bool {
-    get
-    set
-  }
-  final public var shouldShowCaptureAdministeredThumbsOnboarding: Swift.Bool {
-    get
-    set
-  }
-  final public var shouldShowCaptureSelfOnboarding: Swift.Bool {
-    get
-    set
-  }
-  final public var callback: ((_ callbackType: SlapshotCaptureSDK.CallbackType) -> Swift.Void)?
-  @Combine.Published @_projectedValueProperty($windowSize) final public var windowSize: CoreFoundation.CGSize {
-    get
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    set
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    _modify
-  }
-  final public var $windowSize: Combine.Published<CoreFoundation.CGSize>.Publisher {
-    get
-    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
-    set
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  @Combine.Published @_projectedValueProperty($lastPendingViewTransitionSize) final public var lastPendingViewTransitionSize: CoreFoundation.CGSize? {
-    get
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    set
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    _modify
-  }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var $lastPendingViewTransitionSize: Combine.Published<CoreFoundation.CGSize?>.Publisher {
-    get
-    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
-    set
-  }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  @Combine.Published @_projectedValueProperty($orientation) final public var orientation: UIKit.UIInterfaceOrientation? {
-    get
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    set
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    _modify
-  }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var $orientation: Combine.Published<UIKit.UIInterfaceOrientation?>.Publisher {
-    get
-    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
-    set
-  }
-  #endif
-  @Combine.Published @_projectedValueProperty($latestLandscapeOrientation) final public var latestLandscapeOrientation: UIKit.UIInterfaceOrientation {
-    get
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    set
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    _modify
-  }
-  final public var $latestLandscapeOrientation: Combine.Published<UIKit.UIInterfaceOrientation>.Publisher {
-    get
-    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
-    set
-  }
-  final public var isDevModeEnabled: Swift.Bool
-  final public var isTesting: Swift.Bool {
-    get
-    set
-  }
-  final public var shouldEnableAdditionalDebugInfo: Swift.Bool
-  final public var shouldDeleteDebugInfoAfterEveryAppStart: Swift.Bool
-  final public var maxDebugInfoSizeInBytes: Swift.UInt64?
-  final public func prepare()
-  final public func resetDirectionPrompts()
-  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
-  @objc deinit
-}
-@_hasMissingDesignatedInitializers final public class DatabaseHelper {
-  public static let shared: SlapshotCaptureSDK.DatabaseHelper
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var url: Foundation.URL? {
-    get
-  }
-  #endif
-  @objc deinit
-}
-@_hasMissingDesignatedInitializers public class DatabaseTable<T> : Swift.Equatable {
-  public func delete()
-  public static func == (lhs: SlapshotCaptureSDK.DatabaseTable<T>, rhs: SlapshotCaptureSDK.DatabaseTable<T>) -> Swift.Bool
-  @objc deinit
-}
 public protocol CaptureIdentity {
   var id: Swift.String { get }
   var capturedModalities: [any SlapshotCaptureSDK.CapturedModality] { get }
 }
-public struct CaptureAndFingerType : Swift.Hashable, Swift.Equatable {
-  public let captureType: SlapshotCaptureSDK.CaptureType
-  public let fingerType: SlapshotCaptureSDK.FingerType?
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(captureType: SlapshotCaptureSDK.CaptureType, fingerType: SlapshotCaptureSDK.FingerType? = nil)
-  #endif
-  public static func == (a: SlapshotCaptureSDK.CaptureAndFingerType, b: SlapshotCaptureSDK.CaptureAndFingerType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
+public protocol CaptureRequest : AnyObject {
+  var id: Swift.String { get }
+  var captureRequestType: SlapshotCaptureSDK.CaptureRequestType { get }
+  var reviewCapture: Swift.Bool { get }
+  var showCaptureImageInReview: Swift.Bool { get }
+  var singleFingerCaptureExplicitType: SlapshotCaptureSDK.FingerType { get }
+  var missingFingerMapping: [SlapshotCaptureSDK.FingerType : SlapshotCaptureSDK.FpCondition] { get }
+  var allowUserToChangeTorchSetting: Swift.Bool { get }
+  var defaultTorchSetting: SlapshotCaptureSDK.TorchSetting { get }
+  var showNativeCapturePpiInReview: Swift.Bool { get }
+  var allowUncalibratedCapture: Swift.Bool { get }
+}
+extension SlapshotCaptureSDK.CaptureRequest {
+  public var allowUncalibratedCapture: Swift.Bool {
     get
   }
 }
-public enum FingertipQualityLevel : Swift.Int {
-  case worst
-  case poor
-  case medium
-  case good
-  case best
-  case unknown
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
+public protocol CaptureRequestBuilder {
+  func build() -> any SlapshotCaptureSDK.CaptureRequest
+  func setCaptureRequestType(captureRequestType: SlapshotCaptureSDK.CaptureRequestType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setReviewCapture(_ reviewCapture: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setShowCaptureImageInReview(_ showCaptureImageInReview: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setSingleFingerCaptureExplicitType(_ singleFingerCaptureExplicitType: SlapshotCaptureSDK.FingerType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setMissingFingerMapping(_ missingFingerMapping: [SlapshotCaptureSDK.FingerType : SlapshotCaptureSDK.FpCondition]) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setAllowUserToChangeToTorchSetting(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setDefaultTorchSetting(_ defaultTorchSetting: SlapshotCaptureSDK.TorchSetting) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setShowNativeCapturePpiInReview(_ show: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func setAllowUncalibratedCapture(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
 }
-@_hasMissingDesignatedInitializers public class PalmCaptureMeta : Swift.Codable {
-  public var version: Swift.Int {
-    get
-  }
-  public var regionOfInterest: SlapshotCaptureSDK.RegionOfInterest {
-    get
-  }
-  public var palmType: SlapshotCaptureSDK.FingerType
-  public func clearROI()
-  @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+extension SlapshotCaptureSDK.CaptureRequestBuilder {
+  public func setAllowUncalibratedCapture(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
 }
-public protocol DigitalLiftCaptureRequest {
-  #if compiler(>=5.3) && $NonescapableTypes
-  var explicitLiftType: SlapshotCaptureSDK.LiftType? { get }
-  #endif
-  var allowExplicitLiftTypeToBeChangedInReview: Swift.Bool { get }
+public protocol CaptureRequestSequence {
+  var captureRequests: [any SlapshotCaptureSDK.CaptureRequest] { get }
+  var userMode: SlapshotCaptureSDK.UserMode { get }
+  var existingCaptureIdentity: (any SlapshotCaptureSDK.CaptureIdentity)? { get }
 }
-@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class IdentitiesTable : SlapshotCaptureSDK.DatabaseTable<SlapshotCaptureSDK.Identity> {
-  public static let shared: SlapshotCaptureSDK.IdentitiesTable
-  final public var enrollmentsCount: Swift.Int {
-    get
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func object(id: Swift.String, shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> SlapshotCaptureSDK.Identity?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func object(remoteID: Swift.String, shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> SlapshotCaptureSDK.Identity?
-  #endif
-  final public func objects(ids: [Swift.String], shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> [SlapshotCaptureSDK.Identity]
-  final public func objects(shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> [SlapshotCaptureSDK.Identity]
-  final public func objects(shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, matchQueryStates: [SlapshotCaptureSDK.IdentityState], enrollmentStates: [SlapshotCaptureSDK.IdentityState], sortBy: SlapshotCaptureSDK.IdentitySortByValue, isDescending: Swift.Bool, shouldCheckListAppearance: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> [SlapshotCaptureSDK.Identity]
-  final public func insert(_ object: SlapshotCaptureSDK.Identity, shouldInsertCaptureGroups: Swift.Bool = true)
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public func updateRemoteID(id: Swift.String, remoteID: Swift.String, nistSubmissionID: Swift.Int? = nil)
-  #endif
-  final public func updateMatchedIdentities(id: Swift.String, matchedIdentities: [SlapshotCaptureSDK.Identity])
-  final public func updateIdentityState(id: Swift.String, state: SlapshotCaptureSDK.IdentityState)
-  final public func delete(id: Swift.String)
-  final public func delete(ids: [Swift.String])
-  final public func deleteAll(shouldDeleteMatchQueries: Swift.Bool = true, shouldDeleteEnrollments: Swift.Bool = true)
-  final public func setAllPendingOrUploadingToFailed()
-  @objc deinit
-}
-final public class Identity : Swift.Hashable {
-  final public let id: Swift.String
-  final public var remoteID: Swift.String?
-  final public var nistSubmissionID: Swift.Int?
-  final public var firstName: Swift.String?
-  final public var lastName: Swift.String?
-  final public var middleName: Swift.String?
-  final public var sex: SlapshotCaptureSDK.IdentitySex?
-  final public var eyeColor: SlapshotCaptureSDK.IdentityEyeColor?
-  final public var height: Swift.String?
-  final public var address: Swift.String?
-  final public var dateOfBirth: Foundation.Date?
-  final public var notes: Swift.String?
-  final public var captureGroups: [SlapshotCaptureSDK.CaptureAndFingerType : SlapshotCaptureSDK.CaptureGroup]
-  final public var isMatchQuery: Swift.Bool
-  final public var identityState: SlapshotCaptureSDK.IdentityState
-  final public var image: UIKit.UIImage?
-  final public let date: Foundation.Date
-  final public var matchedIdentities: [SlapshotCaptureSDK.Identity]?
-  final public var shouldAppearInList: Swift.Bool
-  final public var isEmpty: Swift.Bool {
-    get
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(id: Swift.String = UUID().uuidString, remoteID: Swift.String? = nil, firstName: Swift.String? = nil, lastName: Swift.String? = nil, middleName: Swift.String? = nil, sex: SlapshotCaptureSDK.IdentitySex? = nil, eyeColor: SlapshotCaptureSDK.IdentityEyeColor? = nil, height: Swift.String? = nil, address: Swift.String? = nil, dateOfBirth: Foundation.Date? = nil, notes: Swift.String? = nil, isMatchQuery: Swift.Bool, shouldAppearInList: Swift.Bool = true, identityState: SlapshotCaptureSDK.IdentityState = .saved, image: UIKit.UIImage? = nil, date: Foundation.Date = Date(), matchedIdentities: [SlapshotCaptureSDK.Identity]? = nil)
-  #endif
-  final public var copy: SlapshotCaptureSDK.Identity {
-    get
-  }
-  public static func == (lhs: SlapshotCaptureSDK.Identity, rhs: SlapshotCaptureSDK.Identity) -> Swift.Bool
-  final public func hash(into hasher: inout Swift.Hasher)
-  @objc deinit
-  final public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum FPCondition : Swift.String, Swift.CaseIterable {
-  case normal
-  case missing
-  case cannotImage
-  public var text: Swift.String {
-    get
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias AllCases = [SlapshotCaptureSDK.FPCondition]
-  public typealias RawValue = Swift.String
-  nonisolated public static var allCases: [SlapshotCaptureSDK.FPCondition] {
-    get
-  }
-  public var rawValue: Swift.String {
-    get
-  }
+public protocol CaptureRequestSequenceBuilder {
+  func build() -> any SlapshotCaptureSDK.CaptureRequestSequence
+  func addCaptureRequest(captureRequest: any SlapshotCaptureSDK.CaptureRequest) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+  func setUserMode(userMode: SlapshotCaptureSDK.UserMode) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+  func setExistingCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
 }
 public enum CaptureRequestType {
   case leftSlap
@@ -611,6 +277,436 @@ public enum CaptureRequestType {
     get
   }
 }
+public protocol CaptureStatusCallback {
+  func onSuccess(captureIdentity: SlapshotCaptureSDK.Identity)
+  func onCalibrationSuccess()
+  func onError(captureIdentity: SlapshotCaptureSDK.Identity, error: SlapshotCaptureSDK.CaptureError, errorDetails: Swift.String)
+}
+public class DeviceInfo {
+  final public let manufacturer: Swift.String
+  final public let model: Swift.String
+  public init(manufacturer: Swift.String, model: Swift.String)
+  @objc deinit
+}
+public protocol DigitalLift {
+  var dpi: Swift.Int { get }
+  var meta: any SlapshotCaptureSDK.DigitalLiftBiometricMetadata { get }
+  func createRawImage() -> (any SlapshotCaptureSDK.RawImage)?
+  func createRawImage(destinationDpi: Swift.Int?) -> (any SlapshotCaptureSDK.RawImage)?
+  func createCGImage() -> CoreGraphics.CGImage?
+  func createCGImage(destinationDpi: Swift.Int?) -> CoreGraphics.CGImage?
+  func createImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+  func createImage(encodingType: SlapshotCaptureSDK.EncodingType, destinationDpi: Swift.Int?) -> (any SlapshotCaptureSDK.EncodedImage)?
+  func createSrcImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+}
+public protocol DigitalLiftBiometricMetadata {
+  var liftType: SlapshotCaptureSDK.LiftType { get }
+}
+public protocol DigitalLiftCaptureRequest {
+  var explicitLiftType: SlapshotCaptureSDK.LiftType? { get }
+  var allowExplicitLiftTypeToBeChangedInReview: Swift.Bool { get }
+}
+public protocol DigitalLiftCaptureRequestBuilder : SlapshotCaptureSDK.CaptureRequestBuilder {
+  func setExplicitLiftType(liftType: SlapshotCaptureSDK.LiftType) -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
+  func setAllowExplicitLiftTypeToBeChangedInReview(allow: Swift.Bool) -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
+}
+public protocol EncodedImage {
+  var width: Swift.Int { get }
+  var height: Swift.Int { get }
+  var data: Foundation.Data? { get }
+  var encodingType: SlapshotCaptureSDK.EncodingType { get }
+}
+public enum EncodingType {
+  case raw
+  case png
+  case wsq
+  case jpg
+  public static func == (a: SlapshotCaptureSDK.EncodingType, b: SlapshotCaptureSDK.EncodingType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol ExportCaptureRequest {
+  var captureIdentity: any SlapshotCaptureSDK.CaptureIdentity { get }
+  var scaleTo500Dpi: Swift.Bool { get }
+  var includeSlaps: Swift.Bool { get }
+  var constrainSlapDimensionsTo1600x1500: Swift.Bool { get }
+  var progressCallback: ((_ progressPercent: Swift.Int) -> Swift.Void)? { get }
+}
+public protocol ExportCaptureRequestBuilder {
+  func build() -> any SlapshotCaptureSDK.ExportCaptureRequest
+  func setScaleTo500Dpi(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+  func setIncludeSlaps(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+  func setConstrainSlapDimensionsTo1600x1500(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+  func setProgressCallback(_ value: @escaping (_ progress: Swift.Int) -> Swift.Void) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+}
+public protocol Face {
+  func createCGImage(exportCroppedFace: Swift.Bool) -> CoreGraphics.CGImage?
+  func createCGImage(maxDimension: Swift.Int, exportCroppedFace: Swift.Bool) -> CoreGraphics.CGImage?
+  func createImage(exportCroppedFace: Swift.Bool, encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+  func createImage(maxDimension: Swift.Int, exportCroppedFace: Swift.Bool, encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+}
+public protocol FaceCaptureRequest : SlapshotCaptureSDK.CaptureRequest {
+  var isLandscape: Swift.Bool { get }
+}
+public protocol FaceCaptureRequestBuilder : SlapshotCaptureSDK.CaptureRequestBuilder {
+  func setIsLandscape(_ value: Swift.Bool) -> any SlapshotCaptureSDK.FaceCaptureRequestBuilder
+}
+public protocol Fingerprint {
+  var fingerType: SlapshotCaptureSDK.FingerType { get }
+  var dpi: Swift.Int { get }
+  var qualityScore: (any SlapshotCaptureSDK.FpQualityScore)? { get }
+  var containedFingerLocations: [any SlapshotCaptureSDK.FingerprintLocation] { get }
+  var meta: any SlapshotCaptureSDK.BiometricMetadata { get }
+  var condition: SlapshotCaptureSDK.FpCondition { get }
+  func createRawImage() -> (any SlapshotCaptureSDK.RawImage)?
+  func createCGImage() -> CoreGraphics.CGImage?
+  func createImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+}
+public protocol FingerprintLocation {
+  var fingerType: SlapshotCaptureSDK.FingerType { get }
+  var l: Swift.Int { get }
+  var r: Swift.Int { get }
+  var t: Swift.Int { get }
+  var b: Swift.Int { get }
+  var w: Swift.Int { get }
+  var h: Swift.Int { get }
+  var qualityScore: (any SlapshotCaptureSDK.FpQualityScore)? { get }
+}
+public enum FpCondition : Swift.Int {
+  case normal
+  case missing
+  case cannotImage
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+extension SlapshotCaptureSDK.FpCondition {
+  public func isNormal() -> Swift.Bool
+}
+public protocol FpQualityScore {
+  var type: Swift.String { get }
+  var quality: Swift.Int { get }
+  var scoreMin: Swift.Int { get }
+  var scoreMax: Swift.Int { get }
+  var isHigherScoreBetter: Swift.Bool { get }
+}
+public enum FpQualityScorerType : Swift.Int {
+  case nfiq
+  case contactless
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum LiftType : Swift.Codable {
+  case lift
+  case gelLift
+  case undeveloped
+  public static func == (a: SlapshotCaptureSDK.LiftType, b: SlapshotCaptureSDK.LiftType) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol Palm {
+  var dpi: Swift.Int { get }
+  var meta: any SlapshotCaptureSDK.PalmBiometricMetadata { get }
+  func createRawImage() -> (any SlapshotCaptureSDK.RawImage)?
+  func createCGImage() -> CoreGraphics.CGImage?
+  func createImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+  func createAfisImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+  func createSrcImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
+}
+public protocol PalmBiometricMetadata {
+  var palmType: SlapshotCaptureSDK.FingerType { get }
+}
+public enum QualityLevel : Swift.Int {
+  case worst
+  case poor
+  case medium
+  case good
+  case best
+  case unknown
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public protocol RawImage : SlapshotCaptureSDK.EncodedImage {
+}
+public protocol ReviewRequest {
+  var identityId: Swift.String { get }
+  var capturedModalityId: Swift.String { get }
+  var isMutable: Swift.Bool { get }
+  var showImagesInReview: Swift.Bool { get }
+}
+public protocol ReviewRequestBuilder {
+  func setIsMutable(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ReviewRequestBuilder
+  func setShowImagesInReview(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ReviewRequestBuilder
+  func build() -> any SlapshotCaptureSDK.ReviewRequest
+}
+public protocol SingleFingerCaptureModality {
+  var fingerType: SlapshotCaptureSDK.FingerType { get }
+}
+public protocol SlapshotCaptureEngine : AnyObject {
+  func installLicense(license: Foundation.Data) throws
+  func activateLicenseKey(licenseKey: Swift.String) throws
+  func createOfflineLicenseRequest(licenseKey: Swift.String) throws -> Swift.String
+  @available(*, deprecated, message: "Not used by LicenseSpring licensing. Use activateLicenseKey(licenseKey:) or installLicense(license:).")
+  func setLicenseEntitlement(entitlementId: Swift.String) throws
+  var isLicensed: Swift.Bool { get }
+  @available(*, deprecated, message: "Not used by LicenseSpring licensing. Use createOfflineLicenseRequest(licenseKey:) for offline activation.")
+  var licensingHardwareId: Swift.String { get }
+  func configure(config: any SlapshotCaptureSDK.CaptureEngineConfig)
+  func initialize() throws
+  func createNewCaptureEngineConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
+  func createNewCaptureEngineFaceConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
+  func createNewCaptureRequestBuilder() -> any SlapshotCaptureSDK.CaptureRequestBuilder
+  func createNewFaceCaptureRequestBuilder() -> any SlapshotCaptureSDK.FaceCaptureRequestBuilder
+  func createNewDigitalLiftCaptureRequestBuilder() -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
+  func createNewCaptureRequestSequenceBuilder() -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+  func createNewReviewRequestBuilder(identityId: Swift.String, capturedModalityId: Swift.String) -> any SlapshotCaptureSDK.ReviewRequestBuilder
+  func createNewExportCaptureRequestBuilder(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+  func exportCaptureIdentity(exportCaptureRequest: any SlapshotCaptureSDK.ExportCaptureRequest, cancelToken: SlapshotCaptureSDK.CancelToken) throws -> any SlapshotCaptureSDK.BiometricPayload
+  var isCalibrated: Swift.Bool { get }
+  func resetCalibration() throws
+  func exportCalibration()
+  func addModelBasedCalibration(calibrationBytes: [Swift.UInt8]) throws -> Swift.Bool
+  func addModelBasedCalibration(calibrationBytes: [Swift.UInt8], matchingFunction: ((_ deviceInfo: SlapshotCaptureSDK.DeviceInfo) -> Swift.Bool)?) throws -> Swift.Bool
+  func resetDirectionPrompts() throws
+  func close()
+  var version: Swift.String { get }
+  func getAllCaptureIdentities() throws -> [any SlapshotCaptureSDK.CaptureIdentity]
+  func getCaptureIdentity(id: Swift.String) throws -> any SlapshotCaptureSDK.CaptureIdentity
+  func deleteCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) throws
+  func deleteAllCaptureIdentities() throws
+  func runCalibration(onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  func runCalibration(tryModelBasedCalibration: Swift.Bool, onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  func runCalibrationValidation(numberOfValidationCaptures: Swift.Int, onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  func runCaptureSequence(captureRequestSequence: any SlapshotCaptureSDK.CaptureRequestSequence, onSuccess: @escaping (_ identity: any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+  func runReviewCapturedModality(reviewRequest: any SlapshotCaptureSDK.ReviewRequest, onSuccess: @escaping (_ identity: any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
+}
+public enum SlapshotCaptureError : Swift.Error {
+  case none
+  case error(message: Swift.String)
+  case licensingNoActivationsAvailable
+  case licensingNoNetwork
+  case licenseExpired
+  case licenseRevoked
+  case invalidLicenseKey
+  case identityDoesntExist
+  case capturedModalityDoesntExist
+  case cancelled
+}
+public enum TorchSetting : Swift.Int {
+  case captureDefault
+  case on
+  case off
+  case auto
+  case remember
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum UserMode {
+  case SelfCapture
+  case AdministeredCapture
+  public static func == (a: SlapshotCaptureSDK.UserMode, b: SlapshotCaptureSDK.UserMode) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class _SlapshotSDK {
+  public static func getEngine() -> any SlapshotCaptureSDK._SlapshotCaptureEngine
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SlapshotSDK {
+  public static func getEngine() -> any SlapshotCaptureSDK.SlapshotCaptureEngine
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class OrientationHelper {
+  @objc deinit
+}
+@_Concurrency.MainActor @preconcurrency open class CustomHostingController<T> : SwiftUI.UIHostingController<T>, UIKit.UINavigationControllerDelegate, SlapshotCaptureSDK.WindowNavVCProtocol where T : SwiftUICore.View {
+  @_Concurrency.MainActor @preconcurrency public var viewDidAppearCallback: (() -> Swift.Void)?
+  @_Concurrency.MainActor @preconcurrency public var viewDidDisappearCallback: (() -> Swift.Void)?
+  @_Concurrency.MainActor @preconcurrency public var viewDidLayoutSubviewsCallback: (() -> Swift.Void)?
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewWillAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewDidAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewWillDisappear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewDidDisappear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func viewDidLayoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc public func navigationController(_ navigationController: UIKit.UINavigationController, animationControllerFor operation: UIKit.UINavigationController.Operation, from fromVC: UIKit.UIViewController, to toVC: UIKit.UIViewController) -> (any UIKit.UIViewControllerAnimatedTransitioning)?
+  @_Concurrency.MainActor @preconcurrency override public init(rootView: T)
+  @_Concurrency.MainActor @preconcurrency override public init?(coder aDecoder: Foundation.NSCoder, rootView: T)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency open class CustomViewController : UIKit.UIViewController {
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLoad()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewWillDisappear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidDisappear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic open func viewDidLayoutSubviews()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+extension SlapshotCaptureSDK.CustomViewController : UIKit.UINavigationControllerDelegate {
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public func navigationController(_ navigationController: UIKit.UINavigationController, animationControllerFor operation: UIKit.UINavigationController.Operation, from fromVC: UIKit.UIViewController, to toVC: UIKit.UIViewController) -> (any UIKit.UIViewControllerAnimatedTransitioning)?
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class WindowNavController : UIKit.UINavigationController {
+  @_Concurrency.MainActor @preconcurrency @objc override final public var shouldAutorotate: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency @objc override final public var prefersStatusBarHidden: Swift.Bool {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency final public var orientation: SlapshotCaptureSDK.WindowOrientation
+  @_Concurrency.MainActor @preconcurrency @objc override final public var supportedInterfaceOrientations: UIKit.UIInterfaceOrientationMask {
+    @objc get
+  }
+  @_Concurrency.MainActor @preconcurrency final public var window: SlapshotCaptureSDK.VariableMakeKeyWindow?
+  @_Concurrency.MainActor @preconcurrency @objc override final public func viewDidAppear(_ animated: Swift.Bool)
+  @objc deinit
+}
+public enum CalibrationError {
+  case errorCalibrationInaccurate(inaccuracyInPpi: Swift.Int)
+  case errorCoinNotDetected
+  case notEnoughData
+  case invalidInputData
+  case doesNotMeetMinimumMaxDpiRequirement
+  case noValidPointsFound
+  case calibratedZoneTooSmall
+  case targetLargerThanFrame
+  case unknownError
+}
+public enum CameraError : Swift.Error {
+  case permissionsError
+  case noSuitableCamera
+  public static func == (a: SlapshotCaptureSDK.CameraError, b: SlapshotCaptureSDK.CameraError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class DatabaseHelper {
+  public static let shared: SlapshotCaptureSDK.DatabaseHelper
+  final public var url: Foundation.URL? {
+    get
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class DatabaseTable<T> : Swift.Equatable {
+  public func delete()
+  public static func == (lhs: SlapshotCaptureSDK.DatabaseTable<T>, rhs: SlapshotCaptureSDK.DatabaseTable<T>) -> Swift.Bool
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class IdentitiesTable : SlapshotCaptureSDK.DatabaseTable<SlapshotCaptureSDK.Identity> {
+  public static let shared: SlapshotCaptureSDK.IdentitiesTable
+  final public var enrollmentsCount: Swift.Int {
+    get
+  }
+  final public func object(id: Swift.String, shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> SlapshotCaptureSDK.Identity?
+  final public func object(remoteID: Swift.String, shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> SlapshotCaptureSDK.Identity?
+  final public func objects(ids: [Swift.String], shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> [SlapshotCaptureSDK.Identity]
+  final public func objects(shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> [SlapshotCaptureSDK.Identity]
+  final public func objects(shouldLoadCaptureGroups: Swift.Bool = false, shouldLoadMatchedIdentities: Swift.Bool = false, shouldLoadMatchedIdentityImages: Swift.Bool = false, shouldLoadIdentityImage: Swift.Bool = false, matchQueryStates: [SlapshotCaptureSDK.IdentityState], enrollmentStates: [SlapshotCaptureSDK.IdentityState], sortBy: SlapshotCaptureSDK.IdentitySortByValue, isDescending: Swift.Bool, shouldCheckListAppearance: Swift.Bool = false, shouldLoadCaptures: Swift.Bool = true) -> [SlapshotCaptureSDK.Identity]
+  final public func insert(_ object: SlapshotCaptureSDK.Identity, shouldInsertCaptureGroups: Swift.Bool = true)
+  final public func updateRemoteID(id: Swift.String, remoteID: Swift.String, nistSubmissionID: Swift.Int? = nil)
+  final public func updateMatchedIdentities(id: Swift.String, matchedIdentities: [SlapshotCaptureSDK.Identity])
+  final public func updateIdentityState(id: Swift.String, state: SlapshotCaptureSDK.IdentityState)
+  final public func delete(id: Swift.String)
+  final public func delete(ids: [Swift.String])
+  final public func deleteAll(shouldDeleteMatchQueries: Swift.Bool = true, shouldDeleteEnrollments: Swift.Bool = true)
+  final public func setAllPendingOrUploadingToFailed()
+  @objc deinit
+}
+extension CoreMedia.CMSampleBuffer {
+  public var image: UIKit.UIImage? {
+    get
+  }
+}
+extension SwiftUICore.View {
+  @inlinable @_Concurrency.MainActor @preconcurrency internal func reverseMask<Mask>(alignment: SwiftUICore.Alignment = .center, @SwiftUICore.ViewBuilder _ mask: () -> Mask) -> some SwiftUICore.View where Mask : SwiftUICore.View {
+        self.mask(
+            ZStack {
+                Rectangle()
+
+                mask()
+                    .blendMode(.destinationOut)
+            }
+        )
+    }
+  
+}
+extension UIKit.UIImage {
+  public func rotated(radians: Swift.Float) -> UIKit.UIImage?
+}
+extension ImageIO.CGImagePropertyOrientation {
+  public init(_ uiOrientation: UIKit.UIImage.Orientation)
+}
+extension UIKit.UIImage.Orientation {
+  public init(_ cgOrientation: UIKit.UIImage.Orientation)
+}
+extension SlapshotCaptureSDK.WindowNavHelper {
+  public func showSlapshot(identity: SlapshotCaptureSDK.Identity, activityType: SlapshotCaptureSDK.ActivityType, settings: [SlapshotCaptureSDK.SlapshotSetting], isAnimated: Swift.Bool, existingCaptureGroup: SlapshotCaptureSDK.CaptureGroup? = nil, suppressDirections: Swift.Bool = false)
+}
+public protocol WindowNavSwiftUIViewProtocol : SwiftUICore.View {
+  var hostingVC: SwiftUI.UIHostingController<Self>? { get set }
+}
+extension SlapshotCaptureSDK.WindowNavSwiftUIViewProtocol {
+  public var size: CoreFoundation.CGSize {
+    get
+  }
+  public var safeAreaInsets: UIKit.UIEdgeInsets {
+    get
+  }
+}
+public protocol WindowNavVCProtocol : UIKit.UIViewController, UIKit.UINavigationControllerDelegate {
+  var viewDidAppearCallback: (() -> Swift.Void)? { get set }
+  var viewDidDisappearCallback: (() -> Swift.Void)? { get set }
+  var viewDidLayoutSubviewsCallback: (() -> Swift.Void)? { get set }
+  func willAppear()
+  func didAppear()
+  func willDisappear()
+  func didDisappear()
+  func didLayoutSubviews()
+}
+extension SlapshotCaptureSDK.WindowNavVCProtocol {
+  public var size: CoreFoundation.CGSize {
+    get
+  }
+  public var safeInsets: UIKit.UIEdgeInsets {
+    get
+  }
+  public func willAppear()
+  public func didAppear()
+  public func willDisappear()
+  public func didDisappear()
+  public func didLayoutSubviews()
+}
+public class CancelToken {
+  public var isCancelled: Swift.Bool {
+    get
+  }
+  public init(isCancelledFunc: @escaping () -> Swift.Bool)
+  public init()
+  public func cancel()
+  @objc deinit
+}
 @objc @_Concurrency.MainActor @preconcurrency final public class SlideVCTransition : ObjectiveC.NSObject, UIKit.UIViewControllerAnimatedTransitioning {
   public enum SlideDirection {
     case left
@@ -624,10 +720,76 @@ public enum CaptureRequestType {
     }
   }
   @_Concurrency.MainActor @preconcurrency public init(direction: SlapshotCaptureSDK.SlideVCTransition.SlideDirection, shouldShow: Swift.Bool)
-  #if compiler(>=5.3) && $NonescapableTypes
   @_Concurrency.MainActor @preconcurrency @objc final public func transitionDuration(using transitionContext: (any UIKit.UIViewControllerContextTransitioning)?) -> Foundation.TimeInterval
-  #endif
   @_Concurrency.MainActor @preconcurrency @objc final public func animateTransition(using transitionContext: any UIKit.UIViewControllerContextTransitioning)
+  @objc deinit
+}
+public enum ActivityType {
+  case calibration
+  case capture(captureType: SlapshotCaptureSDK.CaptureType, fingerType: SlapshotCaptureSDK.FingerType?, isAdministered: Swift.Bool)
+}
+@_hasMissingDesignatedInitializers final public class CalibrationHelper : Combine.ObservableObject {
+  public static let shared: SlapshotCaptureSDK.CalibrationHelper
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
+public enum CallbackType {
+  case calibrationCompleted
+  case captureCompleted(identity: SlapshotCaptureSDK.Identity?, captureGroup: SlapshotCaptureSDK.CaptureGroup)
+  case calibrationCancelled
+  case cancelledCapture
+  case rejectedCaptureReview
+  case calibrationError(errorType: SlapshotCaptureSDK.CalibrationError)
+  case existingCaptureDeleted(identity: SlapshotCaptureSDK.Identity)
+  case existingCaptureDismissed
+  case orientationChanged(orientation: UIKit.UIInterfaceOrientationMask)
+  case cameraError(cameraError: SlapshotCaptureSDK.CameraError)
+}
+final public class Capture : Swift.Hashable {
+  final public let id: Swift.String
+  final public let settingsId: Swift.String?
+  final public let lensPosition: Swift.Float?
+  final public let dpi: Swift.Int?
+  final public var image: UIKit.UIImage?
+  final public var grayscaleImage: UIKit.UIImage? {
+    get
+    set
+  }
+  final public var bgRemovedImage: UIKit.UIImage?
+  final public var date: Foundation.Date?
+  public init(id: Swift.String = UUID().uuidString, settingsId: Swift.String? = nil, lensPosition: Swift.Float? = nil, dpi: Swift.Int? = nil, image: UIKit.UIImage? = nil, date: Foundation.Date? = Date())
+  public static func == (lhs: SlapshotCaptureSDK.Capture, rhs: SlapshotCaptureSDK.Capture) -> Swift.Bool
+  final public func hash(into hasher: inout Swift.Hasher)
+  @objc deinit
+  final public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct CaptureAndFingerType : Swift.Hashable, Swift.Equatable {
+  public let captureType: SlapshotCaptureSDK.CaptureType
+  public let fingerType: SlapshotCaptureSDK.FingerType?
+  public init(captureType: SlapshotCaptureSDK.CaptureType, fingerType: SlapshotCaptureSDK.FingerType? = nil)
+  public static func == (a: SlapshotCaptureSDK.CaptureAndFingerType, b: SlapshotCaptureSDK.CaptureAndFingerType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+final public class CaptureGroup {
+  final public let id: Swift.String
+  final public let captureAndFingerType: SlapshotCaptureSDK.CaptureAndFingerType
+  final public var fingertips: [SlapshotCaptureSDK.Fingertip]
+  final public var missingFingers: Swift.Set<SlapshotCaptureSDK.FingerType>
+  final public var captures: Swift.Set<SlapshotCaptureSDK.Capture>
+  final public var keyCaptureID: Swift.String?
+  final public var meta: Foundation.Data?
+  final public var keyCapture: SlapshotCaptureSDK.Capture? {
+    get
+  }
+  final public var shouldBeAccepted: Swift.Bool {
+    get
+  }
+  public init(id: Swift.String = UUID().uuidString, captureAndFingerType: SlapshotCaptureSDK.CaptureAndFingerType, captures: Swift.Set<SlapshotCaptureSDK.Capture> = .init(), keyCaptureID: Swift.String? = nil, fingertips: [SlapshotCaptureSDK.Fingertip] = [], missingFingers: Swift.Set<SlapshotCaptureSDK.FingerType> = [], meta: Foundation.Data? = nil)
   @objc deinit
 }
 @_hasMissingDesignatedInitializers final public class CaptureHelper : Combine.ObservableObject {
@@ -635,98 +797,150 @@ public enum CaptureRequestType {
   public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
   @objc deinit
 }
-@_hasMissingDesignatedInitializers public class OrientationHelper {
+@objc public enum CaptureType : Swift.Int, Swift.Codable, Swift.CaseIterable {
+  case face = 4
+  case singleFinger = 20
+  case slapLeft = 0
+  case slapRight = 1
+  case thumbs = 2
+  case digitalLift = 8
+  case palm = 16
+  public var fingerCount: Swift.Int? {
+    get
+  }
+  public var id: Swift.String? {
+    get
+  }
+  public func getTitle(fingerType: SlapshotCaptureSDK.FingerType?) -> Swift.String?
+  public init?(rawValue: Swift.Int)
+  public typealias AllCases = [SlapshotCaptureSDK.CaptureType]
+  public typealias RawValue = Swift.Int
+  nonisolated public static var allCases: [SlapshotCaptureSDK.CaptureType] {
+    get
+  }
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class DebugHelper {
+  public static let shared: SlapshotCaptureSDK.DebugHelper
+  final public var releaseAndBuildVersionString: Swift.String {
+    get
+  }
+  final public var versionString: Swift.String {
+    get
+  }
   @objc deinit
 }
-public protocol BiometricMetadata {
-  #if compiler(>=5.3) && $NonescapableTypes
-  var notes: Swift.String? { get }
-  #endif
-}
-@_hasMissingDesignatedInitializers public class _SlapshotSDK {
-  public static func getEngine() -> any SlapshotCaptureSDK._SlapshotCaptureEngine
+postfix operator °
+@objc public class DetectedCircle : ObjectiveC.NSObject {
+  final public let x: Swift.Int, y: Swift.Int, r: Swift.Int
+  final public let isValid: Swift.Bool
+  @objc public init(x: Swift.Int, y: Swift.Int, r: Swift.Int, isValid: Swift.Bool = true)
+  public func getDPI(coinDiameterInMm: Swift.Float) -> Swift.Double
+  public func doesMatch(_ circle: SlapshotCaptureSDK.DetectedCircle) -> Swift.Bool
   @objc deinit
 }
-public protocol CaptureEngineFaceConfig {
-  var autoCaptureFaceAfterValidation: Swift.Bool { get }
-  var minFaceWidthInPixels: Swift.Int { get }
-  var minFaceWidthToMinorImageAxisRatio: Swift.Double { get }
-  var maxFaceWidthInPixels: Swift.Int { get }
-  var maxFaceWidthToMinorImageAxisRatio: Swift.Double { get }
-  var requiredMillisecondsOfValidFacesBeforeCapture: Swift.Int { get }
-  var faceExportPaddingFactor: Swift.Double { get }
-  var faceExportHeightToWidthFactor: Swift.Double { get }
-  var showDebugFaceCaptureOverlays: Swift.Bool { get }
+@_hasMissingDesignatedInitializers public class DigitalLiftCaptureMeta : Swift.Codable {
+  public var version: Swift.Int {
+    get
+  }
+  public var regionOfInterest: SlapshotCaptureSDK.RegionOfInterest {
+    get
+  }
+  public var liftType: SlapshotCaptureSDK.LiftType
+  public var latentMeta: SlapshotCaptureSDK.LatentMeta {
+    get
+  }
+  public var isLiftTypeTonallyInverted: Swift.Bool {
+    get
+  }
+  public var isLiftTypeMirroredForComparisonToLiftSpace: Swift.Bool {
+    get
+  }
+  public func clearROI()
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
 }
-extension SlapshotCaptureSDK.WindowNavHelper {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func showSlapshot(identity: SlapshotCaptureSDK.Identity, activityType: SlapshotCaptureSDK.ActivityType, settings: [SlapshotCaptureSDK.SlapshotSetting], isAnimated: Swift.Bool, existingCaptureGroup: SlapshotCaptureSDK.CaptureGroup? = nil, suppressDirections: Swift.Bool = false)
-  #endif
+@_hasMissingDesignatedInitializers public class DigitalLiftSettings {
+  @objc deinit
+}
+@objc public class ExtractWaveletRidgeDetailResponse : ObjectiveC.NSObject {
+  public var destImage: UIKit.UIImage
+  final public let qualityMapImage: UIKit.UIImage
+  final public let ridgeImageWidthPrediction: UIKit.UIImage
+  final public let adjustedDpi: Swift.Int
+  @objc public init(destImage: UIKit.UIImage, qualityMapImage: UIKit.UIImage, ridgeImageWithPrediction: UIKit.UIImage)
+  @objc public init(destImage: UIKit.UIImage, qualityMapImage: UIKit.UIImage, ridgeImageWithPrediction: UIKit.UIImage, adjustedDpi: Swift.Int)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class FileHelper {
+  public static let shared: SlapshotCaptureSDK.FileHelper
+  final public var debugInfoDirectory: Foundation.URL? {
+    get
+  }
+  final public func getIdentityDirectory(identityID: Swift.String) -> Foundation.URL?
+  final public func getCaptureGroupDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
+  final public func getCapturesDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
+  final public func getFingertipImagesDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
+  final public func getFingertipRidgeDetailImagesDirectory(identityID: Swift.String, captureGroupID: Swift.String) -> Foundation.URL?
+  @objc deinit
+}
+@objc final public class Fingertip : ObjectiveC.NSObject {
+  final public let id: Swift.String
+  final public var captureID: Swift.String?
+  final public var fingerType: SlapshotCaptureSDK.FingerType
+  final public var frame: CoreFoundation.CGRect
+  final public var focusFrame: CoreFoundation.CGRect {
+    get
+  }
+  final public let isValid: Swift.Bool
+  final public var fingersSpread: Swift.Bool?
+  final public var condition: SlapshotCaptureSDK.FPCondition?
+  final public var noteText: Swift.String?
+  final public var qualityScore: (any SlapshotCaptureSDK.FingerprintQualityScore)?
+  final public var image: UIKit.UIImage?
+  final public var ridgeDetailImage: UIKit.UIImage?
+  final public var dpi: Swift.Int
+  final public var evalState: SlapshotCaptureSDK.FingertipEvalState {
+    get
+  }
+  final public var qualityLevel: SlapshotCaptureSDK.FingertipQualityLevel? {
+    get
+  }
+  final public var text: Swift.String {
+    get
+  }
+  @objc public init(fingerType: SlapshotCaptureSDK.FingerType, frame: CoreFoundation.CGRect, isValid: Swift.Bool, fingersSpread: Swift.Bool = false, ridgeDetailImage: UIKit.UIImage? = nil, dpi: Swift.Float)
+  public init(id: Swift.String, captureID: Swift.String?, fingerType: SlapshotCaptureSDK.FingerType, frame: CoreFoundation.CGRect, isValid: Swift.Bool, condition: SlapshotCaptureSDK.FPCondition?, noteText: Swift.String?, qualityScore: (any SlapshotCaptureSDK.FingerprintQualityScore)?, image: UIKit.UIImage? = nil, ridgeDetailImage: UIKit.UIImage? = nil, dpi: Swift.Int)
+  final public var copy: SlapshotCaptureSDK.Fingertip {
+    get
+  }
+  @objc deinit
 }
 public enum FingertipEvalState : Swift.Int {
   case pending
   case fail
   case pass
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
 }
-public enum SlapshotSetting {
-  case fastCalibrationMode(enabled: Swift.Bool)
-  case defaultFlashMode(flashMode: AVFoundation.AVCaptureDevice.FlashMode)
-  case fpQualityScorerType(fpQualityScorerType: SlapshotCaptureSDK.FingerprintQualityScorerType)
-  case fpQualityPluginClass(pluginClass: any SlapshotCaptureSDK.FingerprintQualityScorer)
-  case inclusiveFingerprintQualityThreshold(threshold: Swift.Int)
-  case isReadOnly(isEnabled: Swift.Bool)
-  case numberOfRetriesForSlapCapture(retries: Swift.Int)
-  case numberOfValidFingersRequiredToAccept2Slap(numberOfFps: Swift.Int)
-  case numberOfValidFingersRequiredToAccept4Slap(numberOfFps: Swift.Int)
-  case shouldAllowFingerPositionAndSizeEditing(isEnabled: Swift.Bool)
-  case shouldAlwaysShowOnboarding(isEnabled: Swift.Bool)
-  case shouldEnforceFingerSpreadingForSlapCapture(isEnabled: Swift.Bool)
-  case shouldEnforceFingerValidationOnReview(isEnabled: Swift.Bool)
-  case shouldShowFingersSpreadForSlapCapture(isEnabled: Swift.Bool)
-  case shouldShowFingertipDebugFrames(isEnabled: Swift.Bool)
-  case shouldShowFrameworkVersion(isEnabled: Swift.Bool)
-  case shouldSkipReviewCapture(isEnabled: Swift.Bool)
-  case allowCaptureSlapViaTap(isEnabled: Swift.Bool)
-  case allowSetMissingFingersDuringCapture(isEnabled: Swift.Bool)
-  case showFpQualityNames(isEnabled: Swift.Bool)
-  case useQualityLevelColors(isEnabled: Swift.Bool)
-  case fpInclusiveQualityMapForScoreType(maps: [Swift.String : [Swift.Int : SlapshotCaptureSDK.FingertipQualityLevel]])
-  case showNativeCapturePpiInReview(isEnabled: Swift.Bool)
-  case digitalLiftSettings(settings: SlapshotCaptureSDK.DigitalLiftSettings)
-}
-public enum FaceDetectionError : Swift.Error {
-  case none
-  case error(message: Swift.String)
-  case faceNotSupported
-}
-extension SlapshotCaptureSDK.FaceDetectionError {
-  public func faceNotSupported() -> Swift.Bool
-}
-
-public enum QualityLevel : Swift.Int {
+public enum FingertipQualityLevel : Swift.Int {
   case worst
   case poor
   case medium
   case good
   case best
   case unknown
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
-}
-public protocol PalmBiometricMetadata {
-  var palmType: SlapshotCaptureSDK.FingerType { get }
 }
 @objc public enum FingerType : Swift.Int, Swift.Codable {
   case unknown = 0
@@ -749,16 +963,12 @@ public protocol PalmBiometricMetadata {
   case rightWritersPalm = 22
   case leftFullPalm = 23
   case leftWritersPalm = 24
-  #if compiler(>=5.3) && $NonescapableTypes
   public var shortText: Swift.String? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public var longID: Swift.String? {
     get
   }
-  #endif
   public var isThumb: Swift.Bool {
     get
   }
@@ -787,149 +997,94 @@ public protocol PalmBiometricMetadata {
     get
   }
   public init(captureType: SlapshotCaptureSDK.CaptureType, index: Swift.Int)
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
   }
 }
-public class SlapshotCaptureEngineImpl : SlapshotCaptureSDK.SlapshotCaptureEngine, SlapshotCaptureSDK._SlapshotCaptureEngine {
-  public var version: Swift.String
-  public var isLicensed: Swift.Bool
-  public var licensingHardwareId: Swift.String
-  public var isCalibrated: Swift.Bool {
+public enum FPCondition : Swift.String, Swift.CaseIterable {
+  case normal
+  case missing
+  case cannotImage
+  public var text: Swift.String {
     get
   }
-  public init()
-  public func initialize() throws
-  public func installLicense(license: Foundation.Data) throws
-  public func setLicenseEntitlement(entitlementId: Swift.String) throws
-  public func configure(config: any SlapshotCaptureSDK.CaptureEngineConfig)
-  public func runCalibration(onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  public func runCalibration(tryModelBasedCalibration: Swift.Bool, onSuccess: @escaping () -> Swift.Void, onError: @escaping (SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  public func runCalibrationValidation(numberOfValidationCaptures: Swift.Int, onSuccess: @escaping () -> Swift.Void, onError: @escaping (SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  public func runCaptureSequence(captureRequestSequence: any SlapshotCaptureSDK.CaptureRequestSequence, onSuccess: @escaping (_ identity: any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  public func runReviewCapturedModality(reviewRequest: any SlapshotCaptureSDK.ReviewRequest, onSuccess: @escaping (any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  public func exportCaptureIdentity(exportCaptureRequest: any SlapshotCaptureSDK.ExportCaptureRequest, cancelToken: SlapshotCaptureSDK.CancelToken) throws -> any SlapshotCaptureSDK.BiometricPayload
-  public func createNewCaptureEngineConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  public func createNewCaptureEngineFaceConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  public func createNewExportCaptureRequestBuilder(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
-  public func createNewCaptureRequestSequenceBuilder() -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  public func createNewCaptureRequestBuilder() -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func createNewFaceCaptureRequestBuilder() -> any SlapshotCaptureSDK.FaceCaptureRequestBuilder
-  public func createNewDigitalLiftCaptureRequestBuilder() -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
-  public func createNewReviewRequestBuilder(identityId: Swift.String, capturedModalityId: Swift.String) -> any SlapshotCaptureSDK.ReviewRequestBuilder
-  public func exportCalibration()
-  public func resetCalibration() throws
-  public func addModelBasedCalibration(calibrationBytes: [Swift.UInt8]) throws -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func addModelBasedCalibration(calibrationBytes: [Swift.UInt8], matchingFunction: ((SlapshotCaptureSDK.DeviceInfo) -> Swift.Bool)?) throws -> Swift.Bool
-  #endif
-  public func getCaptureIdentity(id: Swift.String) throws -> any SlapshotCaptureSDK.CaptureIdentity
-  public func getAllCaptureIdentities() throws -> [any SlapshotCaptureSDK.CaptureIdentity]
-  public func deleteCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) throws
-  public func deleteAllCaptureIdentities() throws
-  public func resetDirectionPrompts() throws
-  public func close()
-  public func createCaptureIdentity(id: Swift.String, captureModalities: [any SlapshotCaptureSDK.CapturedModality]) -> any SlapshotCaptureSDK.CaptureIdentity
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func createCapturedModality(id: Swift.String, captureRequestType: SlapshotCaptureSDK.CaptureRequestType, fingerType: SlapshotCaptureSDK.FingerType?) -> any SlapshotCaptureSDK.CapturedModality
-  #endif
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [SlapshotCaptureSDK.FPCondition]
+  public typealias RawValue = Swift.String
+  nonisolated public static var allCases: [SlapshotCaptureSDK.FPCondition] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+final public class Identity : Swift.Hashable {
+  final public let id: Swift.String
+  final public var remoteID: Swift.String?
+  final public var nistSubmissionID: Swift.Int?
+  final public var firstName: Swift.String?
+  final public var lastName: Swift.String?
+  final public var middleName: Swift.String?
+  final public var sex: SlapshotCaptureSDK.IdentitySex?
+  final public var eyeColor: SlapshotCaptureSDK.IdentityEyeColor?
+  final public var height: Swift.String?
+  final public var address: Swift.String?
+  final public var dateOfBirth: Foundation.Date?
+  final public var notes: Swift.String?
+  final public var captureGroups: [SlapshotCaptureSDK.CaptureAndFingerType : SlapshotCaptureSDK.CaptureGroup]
+  final public var isMatchQuery: Swift.Bool
+  final public var identityState: SlapshotCaptureSDK.IdentityState
+  final public var image: UIKit.UIImage?
+  final public let date: Foundation.Date
+  final public var matchedIdentities: [SlapshotCaptureSDK.Identity]?
+  final public var shouldAppearInList: Swift.Bool
+  final public var isEmpty: Swift.Bool {
+    get
+  }
+  public init(id: Swift.String = UUID().uuidString, remoteID: Swift.String? = nil, firstName: Swift.String? = nil, lastName: Swift.String? = nil, middleName: Swift.String? = nil, sex: SlapshotCaptureSDK.IdentitySex? = nil, eyeColor: SlapshotCaptureSDK.IdentityEyeColor? = nil, height: Swift.String? = nil, address: Swift.String? = nil, dateOfBirth: Foundation.Date? = nil, notes: Swift.String? = nil, isMatchQuery: Swift.Bool, shouldAppearInList: Swift.Bool = true, identityState: SlapshotCaptureSDK.IdentityState = .saved, image: UIKit.UIImage? = nil, date: Foundation.Date = Date(), matchedIdentities: [SlapshotCaptureSDK.Identity]? = nil)
+  final public var copy: SlapshotCaptureSDK.Identity {
+    get
+  }
+  public static func == (lhs: SlapshotCaptureSDK.Identity, rhs: SlapshotCaptureSDK.Identity) -> Swift.Bool
+  final public func hash(into hasher: inout Swift.Hasher)
   @objc deinit
-}
-public protocol ReviewRequestBuilder {
-  func setIsMutable(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ReviewRequestBuilder
-  func setShowImagesInReview(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ReviewRequestBuilder
-  func build() -> any SlapshotCaptureSDK.ReviewRequest
-}
-public protocol DigitalLift {
-  var dpi: Swift.Int { get }
-  var meta: any SlapshotCaptureSDK.DigitalLiftBiometricMetadata { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createRawImage() -> (any SlapshotCaptureSDK.RawImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createRawImage(destinationDpi: Swift.Int?) -> (any SlapshotCaptureSDK.RawImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCGImage() -> CoreGraphics.CGImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCGImage(destinationDpi: Swift.Int?) -> CoreGraphics.CGImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createImage(encodingType: SlapshotCaptureSDK.EncodingType, destinationDpi: Swift.Int?) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createSrcImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-}
-public protocol CaptureRequestSequence {
-  var captureRequests: [any SlapshotCaptureSDK.CaptureRequest] { get }
-  var userMode: SlapshotCaptureSDK.UserMode { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  var existingCaptureIdentity: (any SlapshotCaptureSDK.CaptureIdentity)? { get }
-  #endif
-}
-public protocol FaceCaptureRequest : SlapshotCaptureSDK.CaptureRequest {
-  var isLandscape: Swift.Bool { get }
-}
-@_hasMissingDesignatedInitializers public class WindowNavHelper {
-  public static let shared: SlapshotCaptureSDK.WindowNavHelper
-  public var navcs: [SlapshotCaptureSDK.WindowNavController] {
-    get
-    set
-  }
-  weak public var topNavc: SlapshotCaptureSDK.WindowNavController?
-  public var navStack: [SlapshotCaptureSDK.WindowNavStackElement]
-  public var orientation: SlapshotCaptureSDK.WindowOrientation {
+  final public var hashValue: Swift.Int {
     get
   }
-  public var areWindowsLoading: Swift.Bool {
+}
+public enum IdentityEyeColor : Swift.String {
+  case blue, brown, black, green
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
     get
   }
-  public func createNavcs(windowScene: UIKit.UIWindowScene)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func push(elements: [SlapshotCaptureSDK.WindowNavStackElement], shouldRotate: Swift.Bool = true, isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func push(element: SlapshotCaptureSDK.WindowNavStackElement, shouldRotate: Swift.Bool = true, isAnimated: Swift.Bool, isLastPush: Swift.Bool = true, callback: (() -> Swift.Void)? = nil)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func pop(isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func popAll(isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func pop(to element: SlapshotCaptureSDK.WindowNavStackElement, isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
-  #endif
-  public func getSize(for vc: UIKit.UIViewController) -> CoreFoundation.CGSize
-  public func getSafeAreaInsets(for vc: UIKit.UIViewController) -> UIKit.UIEdgeInsets
-  public func removeAllWindows()
-  @objc deinit
 }
-public protocol ExportCaptureRequestBuilder {
-  func build() -> any SlapshotCaptureSDK.ExportCaptureRequest
-  func setScaleTo500Dpi(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
-  func setIncludeSlaps(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
-  func setConstrainSlapDimensionsTo1600x1500(_ value: Swift.Bool) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
-  func setProgressCallback(_ value: @escaping (_ progress: Swift.Int) -> Swift.Void) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
+public enum IdentitySex : Swift.String {
+  case male, female, unknown
+  public static let abbreviationsToCases: [SlapshotCaptureSDK.IdentitySex : Swift.String]
+  public var abbreviation: Swift.String {
+    get
+  }
+  public var text: Swift.String {
+    get
+  }
+  public init(abbreviation: Swift.String)
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
 }
-public protocol CaptureStatusCallback {
-  func onSuccess(captureIdentity: SlapshotCaptureSDK.Identity)
-  func onCalibrationSuccess()
-  func onError(captureIdentity: SlapshotCaptureSDK.Identity, error: SlapshotCaptureSDK.CaptureError, errorDetails: Swift.String)
-}
-@_hasMissingDesignatedInitializers final public class CalibrationHelper : Combine.ObservableObject {
-  public static let shared: SlapshotCaptureSDK.CalibrationHelper
-  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
-  @objc deinit
+public enum IdentitySortByValue {
+  case date, name, identityState
+  public static func == (a: SlapshotCaptureSDK.IdentitySortByValue, b: SlapshotCaptureSDK.IdentitySortByValue) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
 }
 public enum IdentityState : Swift.String {
   case saved
@@ -946,147 +1101,241 @@ public enum IdentityState : Swift.String {
   public static var enrollmentStates: [SlapshotCaptureSDK.IdentityState] {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
 }
-public protocol FingerprintLocation {
-  var fingerType: SlapshotCaptureSDK.FingerType { get }
-  var l: Swift.Int { get }
-  var r: Swift.Int { get }
-  var t: Swift.Int { get }
-  var b: Swift.Int { get }
-  var w: Swift.Int { get }
-  var h: Swift.Int { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  var qualityScore: (any SlapshotCaptureSDK.FpQualityScore)? { get }
-  #endif
+@_hasMissingDesignatedInitializers public class LatentMeta : Swift.Codable {
+  public var notes: Swift.String
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+@_hasMissingDesignatedInitializers public class PalmCaptureMeta : Swift.Codable {
+  public var version: Swift.Int {
+    get
+  }
+  public var regionOfInterest: SlapshotCaptureSDK.RegionOfInterest {
+    get
+  }
+  public var palmType: SlapshotCaptureSDK.FingerType
+  public func clearROI()
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+public class RegionOfInterest : Swift.Codable {
+  public init()
+  public init(copy: SlapshotCaptureSDK.RegionOfInterest)
+  public var captureType: SlapshotCaptureSDK.CaptureType
+  public var strokeCircles: [[SlapshotCaptureSDK.RegionOfInterest.Circle]]
+  public var numberOfStrokes: Swift.Int {
+    get
+  }
+  public var isStrokeStarted: Swift.Bool {
+    get
+  }
+  public func addRegion(x: Swift.Double, y: Swift.Double, r: Swift.Double)
+  public func finishRegion()
+  public func removeLastStroke()
+  public func clear()
+  public struct Circle : Swift.Codable {
+    public var x: Swift.Double
+    public var y: Swift.Double
+    public var r: Swift.Double
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+public enum SlapshotSetting {
+  case fastCalibrationMode(enabled: Swift.Bool)
+  case defaultFlashMode(flashMode: AVFoundation.AVCaptureDevice.FlashMode)
+  case fpQualityScorerType(fpQualityScorerType: SlapshotCaptureSDK.FingerprintQualityScorerType)
+  case fpQualityPluginClass(pluginClass: any SlapshotCaptureSDK.FingerprintQualityScorer)
+  case inclusiveFingerprintQualityThreshold(threshold: Swift.Int)
+  case isReadOnly(isEnabled: Swift.Bool)
+  case numberOfRetriesForSlapCapture(retries: Swift.Int)
+  case numberOfValidFingersRequiredToAccept2Slap(numberOfFps: Swift.Int)
+  case numberOfValidFingersRequiredToAccept4Slap(numberOfFps: Swift.Int)
+  case shouldAllowFingerPositionAndSizeEditing(isEnabled: Swift.Bool)
+  case shouldAlwaysShowOnboarding(isEnabled: Swift.Bool)
+  case shouldEnforceFingerSpreadingForSlapCapture(isEnabled: Swift.Bool)
+  case shouldEnforceFingerValidationOnReview(isEnabled: Swift.Bool)
+  case shouldShowFingersSpreadForSlapCapture(isEnabled: Swift.Bool)
+  case shouldShowFingertipDebugFrames(isEnabled: Swift.Bool)
+  case shouldShowFrameworkVersion(isEnabled: Swift.Bool)
+  case shouldSkipReviewCapture(isEnabled: Swift.Bool)
+  case allowCaptureSlapViaTap(isEnabled: Swift.Bool)
+  case allowSetMissingFingersDuringCapture(isEnabled: Swift.Bool)
+  case showFpQualityNames(isEnabled: Swift.Bool)
+  case useQualityLevelColors(isEnabled: Swift.Bool)
+  case fpInclusiveQualityMapForScoreType(maps: [Swift.String : [Swift.Int : SlapshotCaptureSDK.FingertipQualityLevel]])
+  case showNativeCapturePpiInReview(isEnabled: Swift.Bool)
+  case allowUncalibratedCapture(isEnabled: Swift.Bool)
+  case digitalLiftSettings(settings: SlapshotCaptureSDK.DigitalLiftSettings)
+  case supportEmailAddress(address: Swift.String)
+  case enableExperimentalBuild(isEnabled: Swift.Bool)
+  case enableLegacyBuild(isEnabled: Swift.Bool)
+  case walkCalibrationStepsFarToNear(isEnabled: Swift.Bool)
+}
+@_hasMissingDesignatedInitializers final public class SlapshotSettings : Combine.ObservableObject {
+  public static let shared: SlapshotCaptureSDK.SlapshotSettings
+  final public var isCalibrated: Swift.Bool {
+    get
+  }
+  final public var shouldShowCaptureAdministeredSlapOnboarding: Swift.Bool {
+    get
+    set
+  }
+  final public var shouldShowCaptureAdministeredThumbsOnboarding: Swift.Bool {
+    get
+    set
+  }
+  final public var shouldShowCaptureSelfOnboarding: Swift.Bool {
+    get
+    set
+  }
+  final public var callback: ((_ callbackType: SlapshotCaptureSDK.CallbackType) -> Swift.Void)?
+  @Combine.Published<CoreFoundation.CGSize> @_projectedValueProperty($windowSize) final public var windowSize: CoreFoundation.CGSize {
+    get
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    set
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    _modify
+  }
+  final public var $windowSize: Combine.Published<CoreFoundation.CGSize>.Publisher {
+    get
+    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
+    set
+  }
+  @Combine.Published<CoreFoundation.CGSize?> @_projectedValueProperty($lastPendingViewTransitionSize) final public var lastPendingViewTransitionSize: CoreFoundation.CGSize? {
+    get
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    set
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    _modify
+  }
+  final public var $lastPendingViewTransitionSize: Combine.Published<CoreFoundation.CGSize?>.Publisher {
+    get
+    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
+    set
+  }
+  @Combine.Published<UIKit.UIInterfaceOrientation?> @_projectedValueProperty($orientation) final public var orientation: UIKit.UIInterfaceOrientation? {
+    get
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    set
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    _modify
+  }
+  final public var $orientation: Combine.Published<UIKit.UIInterfaceOrientation?>.Publisher {
+    get
+    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
+    set
+  }
+  @Combine.Published<UIKit.UIInterfaceOrientation> @_projectedValueProperty($latestLandscapeOrientation) final public var latestLandscapeOrientation: UIKit.UIInterfaceOrientation {
+    get
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    set
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+    _modify
+  }
+  final public var $latestLandscapeOrientation: Combine.Published<UIKit.UIInterfaceOrientation>.Publisher {
+    get
+    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
+    set
+  }
+  final public var isDevModeEnabled: Swift.Bool
+  final public var isTesting: Swift.Bool {
+    get
+    set
+  }
+  final public var shouldEnableAdditionalDebugInfo: Swift.Bool
+  final public var shouldDeleteDebugInfoAfterEveryAppStart: Swift.Bool
+  final public var maxDebugInfoSizeInBytes: Swift.UInt64?
+  final public func prepare()
+  final public func resetDirectionPrompts()
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class WindowNavHelper {
+  public static let shared: SlapshotCaptureSDK.WindowNavHelper
+  public var navcs: [SlapshotCaptureSDK.WindowNavController] {
+    get
+    set
+  }
+  weak public var topNavc: SlapshotCaptureSDK.WindowNavController?
+  public var navStack: [SlapshotCaptureSDK.WindowNavStackElement]
+  public var orientation: SlapshotCaptureSDK.WindowOrientation {
+    get
+  }
+  public var areWindowsLoading: Swift.Bool {
+    get
+  }
+  public func createNavcs(windowScene: UIKit.UIWindowScene)
+  public func push(elements: [SlapshotCaptureSDK.WindowNavStackElement], shouldRotate: Swift.Bool = true, isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
+  public func push(element: SlapshotCaptureSDK.WindowNavStackElement, shouldRotate: Swift.Bool = true, isAnimated: Swift.Bool, isLastPush: Swift.Bool = true, callback: (() -> Swift.Void)? = nil)
+  public func pop(isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
+  public func popAll(isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
+  public func pop(to element: SlapshotCaptureSDK.WindowNavStackElement, isAnimated: Swift.Bool, callback: (() -> Swift.Void)? = nil)
+  public func getSize(for vc: UIKit.UIViewController) -> CoreFoundation.CGSize
+  public func getSafeAreaInsets(for vc: UIKit.UIViewController) -> UIKit.UIEdgeInsets
+  public func removeAllWindows()
+  @objc deinit
+}
+public struct WindowNavStackElement : Swift.Equatable {
+  public let windowOrientation: SlapshotCaptureSDK.WindowOrientation
+  public var vc: UIKit.UIViewController?
+  public init(windowOrientation: SlapshotCaptureSDK.WindowOrientation, vc: UIKit.UIViewController?)
+  public static func == (a: SlapshotCaptureSDK.WindowNavStackElement, b: SlapshotCaptureSDK.WindowNavStackElement) -> Swift.Bool
+}
+public enum WindowOrientation {
+  case allOrientations
+  case portrait
+  case landscape
+  public var interfaceOrientation: UIKit.UIInterfaceOrientation? {
+    get
+  }
+  public var interfaceOrientationMask: UIKit.UIInterfaceOrientationMask {
+    get
+  }
+  public static func == (a: SlapshotCaptureSDK.WindowOrientation, b: SlapshotCaptureSDK.WindowOrientation) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public class Bounds {
+  final public let left: Swift.Double
+  final public let top: Swift.Double
+  final public let right: Swift.Double
+  final public let bottom: Swift.Double
+  public var midX: Swift.Double {
+    get
+  }
+  public var midY: Swift.Double {
+    get
+  }
+  public var width: Swift.Double {
+    get
+  }
+  public var height: Swift.Double {
+    get
+  }
+  public var isEmpty: Swift.Bool {
+    get
+  }
+  public init(left: Swift.Double, top: Swift.Double, right: Swift.Double, bottom: Swift.Double)
+  public static func empty() -> SlapshotCaptureSDK.Bounds
+  @objc deinit
 }
 @_hasMissingDesignatedInitializers public class CaptureContext {
   public var cameraPosition: AVFoundation.AVCaptureDevice.Position
   @objc deinit
-}
-public protocol CaptureEngineConfigBuilder {
-  func build() -> any SlapshotCaptureSDK.CaptureEngineConfig
-  func setMode(_ captureEngineMode: SlapshotCaptureSDK.CaptureEngineMode) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setNumberOfRetriesForSlapCapture(_ retries: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setInclusiveFingerprintQualityThreshold(_ threshold: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setNumberOfValidFingersRequiredToAccept4Slap(_ numberOfFps: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setNumberOfValidFingersRequiredToAccept2Slap(_ numberOfFps: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  #if compiler(>=5.3) && $NonescapableTypes
-  func setFpQualityPluginClass(_ pluginClass: (any SlapshotCaptureSDK.FingerprintQualityScorer.Type)?) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  #endif
-  func setFpQualityScorerType(_ fpQualityScorerType: SlapshotCaptureSDK.FpQualityScorerType) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setShowFpQualityNames(_ show: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setUseQualityLevelColors(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setFpInclusiveQualityMapForScoreTypes(_ value: [Swift.String : [Swift.Int : SlapshotCaptureSDK.QualityLevel]]) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setEnforceFingerSpreadingForSlapCapture(_ enforce: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setShowFingersSpreadForSlapCapture(_ showSpread: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setEnforceFingerValidationOnReview(_ enforce: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setAllowFingerPositionAndSizeEditing(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setAllowCapturInitByTap(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setFaceConfig(_ config: any SlapshotCaptureSDK.CaptureEngineFaceConfig) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setUseModelBasedCalibrationByDefault(_ use: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setValidationCapturesForModelBasedCalibration(_ numberOfValidationCaptures: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func setAllowSetMissingFingersDuringCapture(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-}
-public protocol Palm {
-  var dpi: Swift.Int { get }
-  var meta: any SlapshotCaptureSDK.PalmBiometricMetadata { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createRawImage() -> (any SlapshotCaptureSDK.RawImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCGImage() -> CoreGraphics.CGImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createAfisImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createSrcImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
-}
-public protocol CaptureEngineFaceConfigBuilder {
-  func build() -> any SlapshotCaptureSDK.CaptureEngineFaceConfig
-  func setAutoCaptureFaceAfterValidation(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setMinFaceWidthInPixels(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setMinFaceWidthToMinorImageAxisRatio(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setMaxFaceWithInPixels(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setMaxFaceWidthToMinorImageAxisRatio(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setRequiredMillisecondsOfValidFacesBeforeCapture(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setFaceExportPaddingFactor(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setFaceExportHeightToWidthFactor(_ value: Swift.Double) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func setShowDebugFaceCaptureOverlays(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-}
-extension UIKit.UIColor {
-  #if compiler(>=5.3) && $NonescapableTypes
-  convenience public init?(hex: Swift.String)
-  #endif
-}
-public protocol WindowNavVCProtocol : UIKit.UIViewController, UIKit.UINavigationControllerDelegate {
-  #if compiler(>=5.3) && $NonescapableTypes
-  var viewDidAppearCallback: (() -> Swift.Void)? { get set }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  var viewDidDisappearCallback: (() -> Swift.Void)? { get set }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  var viewDidLayoutSubviewsCallback: (() -> Swift.Void)? { get set }
-  #endif
-  func willAppear()
-  func didAppear()
-  func willDisappear()
-  func didDisappear()
-  func didLayoutSubviews()
-}
-extension SlapshotCaptureSDK.WindowNavVCProtocol {
-  public var size: CoreFoundation.CGSize {
-    get
-  }
-  public var safeInsets: UIKit.UIEdgeInsets {
-    get
-  }
-  public func willAppear()
-  public func didAppear()
-  public func willDisappear()
-  public func didDisappear()
-  public func didLayoutSubviews()
-}
-@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency public class VariableMakeKeyWindow : UIKit.UIWindow {
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func makeKey()
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func hitTest(_ point: CoreFoundation.CGPoint, with event: UIKit.UIEvent?) -> UIKit.UIView?
-  #endif
-  @available(iOS 13.0, *)
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(windowScene: UIKit.UIWindowScene)
-  @available(iOS, introduced: 2.0, deprecated: 26.0, message: "Use init(windowScene:) instead.")
-  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
-  #if compiler(>=5.3) && $NonescapableTypes
-  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
-  #endif
-  @objc deinit
-}
-public enum FpCondition : Swift.Int {
-  case normal
-  case missing
-  case cannotImage
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
-}
-extension SlapshotCaptureSDK.FpCondition {
-  public func isNormal() -> Swift.Bool
 }
 public protocol DetectedFace {
   var faceBounds: SlapshotCaptureSDK.Bounds { get }
@@ -1095,8 +1344,34 @@ public protocol DetectedFace {
   var error: SlapshotCaptureSDK.FaceDetectionError { get }
   func copy(faceBounds: SlapshotCaptureSDK.Bounds, imgBounds: SlapshotCaptureSDK.Bounds) -> any SlapshotCaptureSDK.DetectedFace
 }
-public protocol DigitalLiftBiometricMetadata {
-  var liftType: SlapshotCaptureSDK.LiftType { get }
+public enum FaceDetectionError : Swift.Error {
+  case none
+  case error(message: Swift.String)
+  case faceNotSupported
+}
+extension SlapshotCaptureSDK.FaceDetectionError {
+  public func faceNotSupported() -> Swift.Bool
+}
+public protocol FingerprintQualityScore : Swift.Decodable, Swift.Encodable {
+  var type: SlapshotCaptureSDK.FingerprintQualityScoreType { get }
+  var minScore: Swift.Int { get }
+  var maxScore: Swift.Int { get }
+  var higherScoreIsBetter: Swift.Bool { get }
+  var score: Swift.Int { get }
+  func isGoodQuality(qualityThreshold: Swift.Int) -> Swift.Bool
+}
+public enum FingerprintQualityScorerType {
+  case nfiq
+  case contactless
+  public static func == (a: SlapshotCaptureSDK.FingerprintQualityScorerType, b: SlapshotCaptureSDK.FingerprintQualityScorerType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FingerprintQualityScoreType : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
 }
 @objc public class QualityMapScore : ObjectiveC.NSObject {
   public var score: Swift.Int
@@ -1110,176 +1385,12 @@ public protocol DigitalLiftBiometricMetadata {
   @objc public init(score: Swift.Int, dpi: Swift.Int, roiL: Swift.Int, roiT: Swift.Int, roiR: Swift.Int, roiB: Swift.Int)
   @objc deinit
 }
-public class CancelToken {
-  public var isCancelled: Swift.Bool {
-    get
-  }
-  public init(isCancelledFunc: @escaping () -> Swift.Bool)
-  public init()
-  public func cancel()
+@_hasMissingDesignatedInitializers public class RidgeExtractionOutput {
   @objc deinit
 }
-public enum IdentitySortByValue {
-  case date, name, identityState
-  public static func == (a: SlapshotCaptureSDK.IdentitySortByValue, b: SlapshotCaptureSDK.IdentitySortByValue) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-postfix operator °
-public enum IdentityEyeColor : Swift.String {
-  case blue, brown, black, green
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public protocol ExportCaptureRequest {
-  var captureIdentity: any SlapshotCaptureSDK.CaptureIdentity { get }
-  var scaleTo500Dpi: Swift.Bool { get }
-  var includeSlaps: Swift.Bool { get }
-  var constrainSlapDimensionsTo1600x1500: Swift.Bool { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  var progressCallback: ((_ progressPercent: Swift.Int) -> Swift.Void)? { get }
-  #endif
-}
-public enum CallbackType {
-  case calibrationCompleted
-  case captureCompleted(identity: SlapshotCaptureSDK.Identity?, captureGroup: SlapshotCaptureSDK.CaptureGroup)
-  case calibrationCancelled
-  case cancelledCapture
-  case rejectedCaptureReview
-  case calibrationError(errorType: SlapshotCaptureSDK.CalibrationError)
-  case existingCaptureDeleted(identity: SlapshotCaptureSDK.Identity)
-  case existingCaptureDismissed
-  case orientationChanged(orientation: UIKit.UIInterfaceOrientationMask)
-  case cameraError(cameraError: SlapshotCaptureSDK.CameraError)
-}
-public protocol FingerprintQualityScore : Swift.Decodable, Swift.Encodable {
-  var type: SlapshotCaptureSDK.FingerprintQualityScoreType { get }
-  var minScore: Swift.Int { get }
-  var maxScore: Swift.Int { get }
-  var higherScoreIsBetter: Swift.Bool { get }
-  var score: Swift.Int { get }
-  func isGoodQuality(qualityThreshold: Swift.Int) -> Swift.Bool
-}
-public protocol FaceDetector {
-  var canDetectFace: Swift.Bool { get }
-  func configure(fast: Swift.Bool)
-  func detectFace(sampleBuffer: CoreMedia.CMSampleBuffer, captureContext: SlapshotCaptureSDK.CaptureContext) -> any SlapshotCaptureSDK.DetectedFace
-  func detectFace(image: UIKit.UIImage) -> any SlapshotCaptureSDK.DetectedFace
-}
-public protocol SlapshotCaptureEngine : AnyObject {
-  func installLicense(license: Foundation.Data) throws
-  func setLicenseEntitlement(entitlementId: Swift.String) throws
-  var isLicensed: Swift.Bool { get }
-  var licensingHardwareId: Swift.String { get }
-  func configure(config: any SlapshotCaptureSDK.CaptureEngineConfig)
-  func initialize() throws
-  func createNewCaptureEngineConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineConfigBuilder
-  func createNewCaptureEngineFaceConfigBuilder() -> any SlapshotCaptureSDK.CaptureEngineFaceConfigBuilder
-  func createNewCaptureRequestBuilder() -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func createNewFaceCaptureRequestBuilder() -> any SlapshotCaptureSDK.FaceCaptureRequestBuilder
-  func createNewDigitalLiftCaptureRequestBuilder() -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
-  func createNewCaptureRequestSequenceBuilder() -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  func createNewReviewRequestBuilder(identityId: Swift.String, capturedModalityId: Swift.String) -> any SlapshotCaptureSDK.ReviewRequestBuilder
-  func createNewExportCaptureRequestBuilder(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.ExportCaptureRequestBuilder
-  func exportCaptureIdentity(exportCaptureRequest: any SlapshotCaptureSDK.ExportCaptureRequest, cancelToken: SlapshotCaptureSDK.CancelToken) throws -> any SlapshotCaptureSDK.BiometricPayload
-  var isCalibrated: Swift.Bool { get }
-  func resetCalibration() throws
-  func exportCalibration()
-  func addModelBasedCalibration(calibrationBytes: [Swift.UInt8]) throws -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
-  func addModelBasedCalibration(calibrationBytes: [Swift.UInt8], matchingFunction: ((_ deviceInfo: SlapshotCaptureSDK.DeviceInfo) -> Swift.Bool)?) throws -> Swift.Bool
-  #endif
-  func resetDirectionPrompts() throws
-  func close()
-  var version: Swift.String { get }
-  func getAllCaptureIdentities() throws -> [any SlapshotCaptureSDK.CaptureIdentity]
-  func getCaptureIdentity(id: Swift.String) throws -> any SlapshotCaptureSDK.CaptureIdentity
-  func deleteCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) throws
-  func deleteAllCaptureIdentities() throws
-  func runCalibration(onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  func runCalibration(tryModelBasedCalibration: Swift.Bool, onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  func runCalibrationValidation(numberOfValidationCaptures: Swift.Int, onSuccess: @escaping () -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  func runCaptureSequence(captureRequestSequence: any SlapshotCaptureSDK.CaptureRequestSequence, onSuccess: @escaping (_ identity: any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-  func runReviewCapturedModality(reviewRequest: any SlapshotCaptureSDK.ReviewRequest, onSuccess: @escaping (_ identity: any SlapshotCaptureSDK.CaptureIdentity) -> Swift.Void, onError: @escaping (_ error: SlapshotCaptureSDK.SlapshotCaptureError) -> Swift.Void) throws
-}
-public protocol FpQualityScore {
-  var type: Swift.String { get }
-  var quality: Swift.Int { get }
-  var scoreMin: Swift.Int { get }
-  var scoreMax: Swift.Int { get }
-  var isHigherScoreBetter: Swift.Bool { get }
-}
-@_hasMissingDesignatedInitializers public class DigitalLiftSettings {
+@_hasMissingDesignatedInitializers public class IOHelper {
+  public static func resourceToUInt8Array(resourceName: Swift.String, extensionName: Swift.String) -> [Swift.UInt8]?
   @objc deinit
-}
-public protocol FingerprintQualityScorer : AnyObject {
-  init()
-  var scoreType: SlapshotCaptureSDK.FingerprintQualityScoreType { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  func getQualityScore(ridgeExtractionOutput: SlapshotCaptureSDK.RidgeExtractionOutput, dpi: Swift.Int, isCancelled: (() -> Swift.Bool)?) -> any SlapshotCaptureSDK.FingerprintQualityScore
-  #endif
-  func getWorstScore() -> any SlapshotCaptureSDK.FingerprintQualityScore
-}
-extension CoreMedia.CMSampleBuffer {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public var image: UIKit.UIImage? {
-    get
-  }
-  #endif
-}
-extension SwiftUICore.View {
-  @inlinable @_Concurrency.MainActor @preconcurrency internal func reverseMask<Mask>(alignment: SwiftUICore.Alignment = .center, @SwiftUICore.ViewBuilder _ mask: () -> Mask) -> some SwiftUICore.View where Mask : SwiftUICore.View {
-        self.mask(
-            ZStack {
-                Rectangle()
-
-                mask()
-                    .blendMode(.destinationOut)
-            }
-        )
-    }
-  
-}
-public protocol FaceCaptureRequestBuilder : SlapshotCaptureSDK.CaptureRequestBuilder {
-  func setIsLandscape(_ value: Swift.Bool) -> any SlapshotCaptureSDK.FaceCaptureRequestBuilder
-}
-public protocol RawImage : SlapshotCaptureSDK.EncodedImage {
-}
-final public class Capture : Swift.Hashable {
-  final public let id: Swift.String
-  final public let settingsId: Swift.String?
-  final public let lensPosition: Swift.Float?
-  final public let dpi: Swift.Int?
-  final public var image: UIKit.UIImage?
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var grayscaleImage: UIKit.UIImage? {
-    get
-    set
-  }
-  #endif
-  final public var bgRemovedImage: UIKit.UIImage?
-  final public var date: Foundation.Date?
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(id: Swift.String = UUID().uuidString, settingsId: Swift.String? = nil, lensPosition: Swift.Float? = nil, dpi: Swift.Int? = nil, image: UIKit.UIImage? = nil, date: Foundation.Date? = Date())
-  #endif
-  public static func == (lhs: SlapshotCaptureSDK.Capture, rhs: SlapshotCaptureSDK.Capture) -> Swift.Bool
-  final public func hash(into hasher: inout Swift.Hasher)
-  @objc deinit
-  final public var hashValue: Swift.Int {
-    get
-  }
-}
-public protocol CalibrationRequest : SlapshotCaptureSDK.CaptureRequest {
-  var useModelCalibration: Swift.Bool { get }
-  var isValidation: Swift.Bool { get }
-  var numberOfValidationSteps: Swift.Int { get }
 }
 @_hasMissingDesignatedInitializers public class DetectedFaceImpl : SlapshotCaptureSDK.DetectedFace {
   public var faceBounds: SlapshotCaptureSDK.Bounds
@@ -1293,375 +1404,105 @@ public protocol CalibrationRequest : SlapshotCaptureSDK.CaptureRequest {
   public static func NoFaceDetected() -> any SlapshotCaptureSDK.DetectedFace
   @objc deinit
 }
-public protocol Fingerprint {
-  var fingerType: SlapshotCaptureSDK.FingerType { get }
-  var dpi: Swift.Int { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  var qualityScore: (any SlapshotCaptureSDK.FpQualityScore)? { get }
-  #endif
-  var containedFingerLocations: [any SlapshotCaptureSDK.FingerprintLocation] { get }
-  var meta: any SlapshotCaptureSDK.BiometricMetadata { get }
-  var condition: SlapshotCaptureSDK.FpCondition { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createRawImage() -> (any SlapshotCaptureSDK.RawImage)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCGImage() -> CoreGraphics.CGImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createImage(encodingType: SlapshotCaptureSDK.EncodingType) -> (any SlapshotCaptureSDK.EncodedImage)?
-  #endif
+@objc @_inheritsConvenienceInitializers open class FaceDetectorPluginBase : ObjectiveC.NSObject {
+  @objc override required dynamic public init()
+  @objc deinit
 }
-public protocol CaptureEngineConfig {
-  var captureEngineMode: SlapshotCaptureSDK.CaptureEngineMode { get }
-  var numberOfRetriesForSlapCapture: Swift.Int { get }
-  var inclusiveFingerprintQualityThreshold: Swift.Int { get }
-  var numberOfValidFingersRequiredToAccept4Slap: Swift.Int { get }
-  var numberOfValidFingersRequiredToAccept2Slap: Swift.Int { get }
-  #if compiler(>=5.3) && $NonescapableTypes
-  var fpQualityPluginClass: (any SlapshotCaptureSDK.FingerprintQualityScorer.Type)? { get }
-  #endif
-  var fpQualityScorerType: SlapshotCaptureSDK.FpQualityScorerType { get }
-  var showFpQualityNames: Swift.Bool { get }
-  var useQualityLevelColors: Swift.Bool { get }
-  var fpInclusiveQualityMapForScoreTypes: [Swift.String : [Swift.Int : SlapshotCaptureSDK.QualityLevel]] { get }
-  var enforceFingerSpreadingForSlapCapture: Swift.Bool { get }
-  var showFingerSpread: Swift.Bool { get }
-  var enforceFingerValidationOnReview: Swift.Bool { get }
-  var allowFingerPositionSizeAndEditing: Swift.Bool { get }
-  var allowCaptureInitByTap: Swift.Bool { get }
-  var useModelBasedCalibrationByDefault: Swift.Bool { get }
-  var validationCapturesForModelBasedCalibration: Swift.Int { get }
-  var faceConfig: any SlapshotCaptureSDK.CaptureEngineFaceConfig { get }
-  var allowSetMissingFingersDuringCapture: Swift.Bool { get }
+public protocol FaceDetector {
+  var canDetectFace: Swift.Bool { get }
+  func configure(fast: Swift.Bool)
+  func detectFace(sampleBuffer: CoreMedia.CMSampleBuffer, captureContext: SlapshotCaptureSDK.CaptureContext) -> any SlapshotCaptureSDK.DetectedFace
+  func detectFace(image: UIKit.UIImage) -> any SlapshotCaptureSDK.DetectedFace
 }
-public enum LiftType : Swift.Codable {
-  case lift
-  case gelLift
-  case undeveloped
-  public static func == (a: SlapshotCaptureSDK.LiftType, b: SlapshotCaptureSDK.LiftType) -> Swift.Bool
-  public func encode(to encoder: any Swift.Encoder) throws
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-  public init(from decoder: any Swift.Decoder) throws
+public protocol FingerprintQualityScorer : AnyObject {
+  init()
+  var scoreType: SlapshotCaptureSDK.FingerprintQualityScoreType { get }
+  func getQualityScore(ridgeExtractionOutput: SlapshotCaptureSDK.RidgeExtractionOutput, dpi: Swift.Int, isCancelled: (() -> Swift.Bool)?) -> any SlapshotCaptureSDK.FingerprintQualityScore
+  func getWorstScore() -> any SlapshotCaptureSDK.FingerprintQualityScore
 }
-public protocol _SlapshotCaptureEngine {
-  func createCaptureIdentity(id: Swift.String, captureModalities: [any SlapshotCaptureSDK.CapturedModality]) -> any SlapshotCaptureSDK.CaptureIdentity
-  #if compiler(>=5.3) && $NonescapableTypes
-  func createCapturedModality(id: Swift.String, captureRequestType: SlapshotCaptureSDK.CaptureRequestType, fingerType: SlapshotCaptureSDK.FingerType?) -> any SlapshotCaptureSDK.CapturedModality
-  #endif
-}
-
-public protocol CalibrationRequestBuilder : SlapshotCaptureSDK.CaptureRequestBuilder {
-  func setUseModelCalibration(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setIsValidation(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setNumberOfValidationSlaps(_ value: Swift.Int) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-}
-@_hasMissingDesignatedInitializers final public class DebugHelper {
-  public static let shared: SlapshotCaptureSDK.DebugHelper
-  final public var releaseAndBuildVersionString: Swift.String {
-    get
-  }
-  final public var versionString: Swift.String {
-    get
-  }
+@_hasMissingDesignatedInitializers public class AlertHelper {
+  public static func showAlert(alertTitle: Swift.String, message: Swift.String)
   @objc deinit
 }
 
-@_hasMissingDesignatedInitializers public class RidgeExtractionOutput {
-  @objc deinit
-}
-public protocol DigitalLiftCaptureRequestBuilder : SlapshotCaptureSDK.CaptureRequestBuilder {
-  func setExplicitLiftType(liftType: SlapshotCaptureSDK.LiftType) -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
-  func setAllowExplicitLiftTypeToBeChangedInReview(allow: Swift.Bool) -> any SlapshotCaptureSDK.DigitalLiftCaptureRequestBuilder
-}
-@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class WindowNavController : UIKit.UINavigationController {
-  @_Concurrency.MainActor @preconcurrency @objc override final public var shouldAutorotate: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency @objc override final public var prefersStatusBarHidden: Swift.Bool {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency final public var orientation: SlapshotCaptureSDK.WindowOrientation
-  @_Concurrency.MainActor @preconcurrency @objc override final public var supportedInterfaceOrientations: UIKit.UIInterfaceOrientationMask {
-    @objc get
-  }
-  @_Concurrency.MainActor @preconcurrency final public var window: SlapshotCaptureSDK.VariableMakeKeyWindow?
-  @_Concurrency.MainActor @preconcurrency @objc override final public func viewDidAppear(_ animated: Swift.Bool)
-  @objc deinit
-}
-@objc final public class Fingertip : ObjectiveC.NSObject {
-  final public let id: Swift.String
-  final public var captureID: Swift.String?
-  final public var fingerType: SlapshotCaptureSDK.FingerType
-  final public var frame: CoreFoundation.CGRect
-  final public var focusFrame: CoreFoundation.CGRect {
-    get
-  }
-  final public let isValid: Swift.Bool
-  final public var fingersSpread: Swift.Bool?
-  final public var condition: SlapshotCaptureSDK.FPCondition?
-  final public var noteText: Swift.String?
-  final public var qualityScore: (any SlapshotCaptureSDK.FingerprintQualityScore)?
-  final public var image: UIKit.UIImage?
-  final public var ridgeDetailImage: UIKit.UIImage?
-  final public var dpi: Swift.Int
-  final public var evalState: SlapshotCaptureSDK.FingertipEvalState {
-    get
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  final public var qualityLevel: SlapshotCaptureSDK.FingertipQualityLevel? {
-    get
-  }
-  #endif
-  final public var text: Swift.String {
-    get
-  }
-  #if compiler(>=5.3) && $NonescapableTypes
-  @objc public init(fingerType: SlapshotCaptureSDK.FingerType, frame: CoreFoundation.CGRect, isValid: Swift.Bool, fingersSpread: Swift.Bool = false, ridgeDetailImage: UIKit.UIImage? = nil, dpi: Swift.Float)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init(id: Swift.String, captureID: Swift.String?, fingerType: SlapshotCaptureSDK.FingerType, frame: CoreFoundation.CGRect, isValid: Swift.Bool, condition: SlapshotCaptureSDK.FPCondition?, noteText: Swift.String?, qualityScore: (any SlapshotCaptureSDK.FingerprintQualityScore)?, image: UIKit.UIImage? = nil, ridgeDetailImage: UIKit.UIImage? = nil, dpi: Swift.Int)
-  #endif
-  final public var copy: SlapshotCaptureSDK.Fingertip {
-    get
-  }
-  @objc deinit
+
+
+
+
+
+extension UIKit.UIColor {
+  convenience public init?(hex: Swift.String)
 }
 
-@_hasMissingDesignatedInitializers public class IOHelper {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public static func resourceToUInt8Array(resourceName: Swift.String, extensionName: Swift.String) -> [Swift.UInt8]?
-  #endif
-  @objc deinit
-}
-public protocol BiometricPayload {
-  var captureIdentity: any SlapshotCaptureSDK.CaptureIdentity { get }
-  var fingerprints: [any SlapshotCaptureSDK.Fingerprint] { get }
-  var faces: [any SlapshotCaptureSDK.Face] { get }
-  var digitalLifts: [any SlapshotCaptureSDK.DigitalLift] { get }
-  var palms: [any SlapshotCaptureSDK.Palm] { get }
-}
-public protocol CaptureRequestBuilder {
-  func build() -> any SlapshotCaptureSDK.CaptureRequest
-  func setCaptureRequestType(captureRequestType: SlapshotCaptureSDK.CaptureRequestType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setReviewCapture(_ reviewCapture: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setShowCaptureImageInReview(_ showCaptureImageInReview: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setSingleFingerCaptureExplicitType(_ singleFingerCaptureExplicitType: SlapshotCaptureSDK.FingerType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setMissingFingerMapping(_ missingFingerMapping: [SlapshotCaptureSDK.FingerType : SlapshotCaptureSDK.FpCondition]) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setAllowUserToChangeToTorchSetting(_ allow: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setDefaultTorchSetting(_ defaultTorchSetting: SlapshotCaptureSDK.TorchSetting) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  func setShowNativeCapturePpiInReview(_ show: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-}
-public protocol CaptureRequest : AnyObject {
-  var id: Swift.String { get }
-  var captureRequestType: SlapshotCaptureSDK.CaptureRequestType { get }
-  var reviewCapture: Swift.Bool { get }
-  var showCaptureImageInReview: Swift.Bool { get }
-  var singleFingerCaptureExplicitType: SlapshotCaptureSDK.FingerType { get }
-  var missingFingerMapping: [SlapshotCaptureSDK.FingerType : SlapshotCaptureSDK.FpCondition] { get }
-  var allowUserToChangeTorchSetting: Swift.Bool { get }
-  var defaultTorchSetting: SlapshotCaptureSDK.TorchSetting { get }
-  var showNativeCapturePpiInReview: Swift.Bool { get }
-}
-public class CaptureRequestBuilderImpl : SlapshotCaptureSDK.CaptureRequestBuilder {
-  public init()
-  public func build() -> any SlapshotCaptureSDK.CaptureRequest
-  public func setCaptureRequestType(captureRequestType: SlapshotCaptureSDK.CaptureRequestType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setReviewCapture(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setShowCaptureImageInReview(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setSingleFingerCaptureExplicitType(_ value: SlapshotCaptureSDK.FingerType) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setMissingFingerMapping(_ value: [SlapshotCaptureSDK.FingerType : SlapshotCaptureSDK.FpCondition]) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setAllowUserToChangeToTorchSetting(_ value: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setDefaultTorchSetting(_ value: SlapshotCaptureSDK.TorchSetting) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  public func setShowNativeCapturePpiInReview(_ show: Swift.Bool) -> any SlapshotCaptureSDK.CaptureRequestBuilder
-  @objc deinit
-}
-public protocol CapturedModality {
-  var id: Swift.String { get }
-  var captureRequestType: SlapshotCaptureSDK.CaptureRequestType { get }
-}
-@_hasMissingDesignatedInitializers public class LatentMeta : Swift.Codable {
-  public var notes: Swift.String
-  @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
-}
-public protocol ReviewRequest {
-  var identityId: Swift.String { get }
-  var capturedModalityId: Swift.String { get }
-  var isMutable: Swift.Bool { get }
-  var showImagesInReview: Swift.Bool { get }
-}
-@objc public enum CaptureType : Swift.Int, Swift.Codable {
-  case face = 4
-  case singleFinger = 20
-  case slapLeft = 0
-  case slapRight = 1
-  case thumbs = 2
-  case digitalLift = 8
-  case palm = 16
-  #if compiler(>=5.3) && $NonescapableTypes
-  public var fingerCount: Swift.Int? {
-    get
-  }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public var id: Swift.String? {
-    get
-  }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func getTitle(fingerType: SlapshotCaptureSDK.FingerType?) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
-}
-public class CaptureRequestSequenceBuilderImpl : SlapshotCaptureSDK.CaptureRequestSequenceBuilder {
-  public init()
-  public func build() -> any SlapshotCaptureSDK.CaptureRequestSequence
-  public func addCaptureRequest(captureRequest: any SlapshotCaptureSDK.CaptureRequest) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  public func setUserMode(userMode: SlapshotCaptureSDK.UserMode) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  public func setExistingCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  @objc deinit
-}
-@objc public class ExtractWaveletRidgeDetailResponse : ObjectiveC.NSObject {
-  public var destImage: UIKit.UIImage
-  final public let qualityMapImage: UIKit.UIImage
-  final public let ridgeImageWidthPrediction: UIKit.UIImage
-  @objc public init(destImage: UIKit.UIImage, qualityMapImage: UIKit.UIImage, ridgeImageWithPrediction: UIKit.UIImage)
-  @objc deinit
-}
-public enum CameraError {
-  case permissionsError
-  public static func == (a: SlapshotCaptureSDK.CameraError, b: SlapshotCaptureSDK.CameraError) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum TorchSetting : Swift.Int {
-  case captureDefault
-  case on
-  case off
-  case auto
-  case remember
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
-}
-@_hasMissingDesignatedInitializers public class DigitalLiftCaptureMeta : Swift.Codable {
-  public var version: Swift.Int {
-    get
-  }
-  public var regionOfInterest: SlapshotCaptureSDK.RegionOfInterest {
-    get
-  }
-  public var liftType: SlapshotCaptureSDK.LiftType
-  public var latentMeta: SlapshotCaptureSDK.LatentMeta {
-    get
-  }
-  public var isLiftTypeTonallyInverted: Swift.Bool {
-    get
-  }
-  public var isLiftTypeMirroredForComparisonToLiftSpace: Swift.Bool {
-    get
-  }
-  public func clearROI()
-  @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
-}
-public struct FingerprintQualityScoreType : Swift.Codable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
-}
-public enum EncodingType {
-  case raw
-  case png
-  case wsq
-  case jpg
-  public static func == (a: SlapshotCaptureSDK.EncodingType, b: SlapshotCaptureSDK.EncodingType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
 
-public protocol CaptureRequestSequenceBuilder {
-  func build() -> any SlapshotCaptureSDK.CaptureRequestSequence
-  func addCaptureRequest(captureRequest: any SlapshotCaptureSDK.CaptureRequest) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  func setUserMode(userMode: SlapshotCaptureSDK.UserMode) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
-  func setExistingCaptureIdentity(captureIdentity: any SlapshotCaptureSDK.CaptureIdentity) -> any SlapshotCaptureSDK.CaptureRequestSequenceBuilder
+
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency public class VariableMakeKeyWindow : UIKit.UIWindow {
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func makeKey()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func hitTest(_ point: CoreFoundation.CGPoint, with event: UIKit.UIEvent?) -> UIKit.UIView?
+  @available(iOS 13.0, *)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(windowScene: UIKit.UIWindowScene)
+  @available(iOS, introduced: 2.0, deprecated: 26.0, message: "Use init(windowScene:) instead.")
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
 }
-extension SlapshotCaptureSDK.CaptureError : Swift.Equatable {}
-extension SlapshotCaptureSDK.CaptureError : Swift.Hashable {}
-extension SlapshotCaptureSDK.WindowOrientation : Swift.Equatable {}
-extension SlapshotCaptureSDK.WindowOrientation : Swift.Hashable {}
-extension SlapshotCaptureSDK.IdentitySex : Swift.Equatable {}
-extension SlapshotCaptureSDK.IdentitySex : Swift.Hashable {}
-extension SlapshotCaptureSDK.IdentitySex : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.FingerprintQualityScorerType : Swift.Equatable {}
-extension SlapshotCaptureSDK.FingerprintQualityScorerType : Swift.Hashable {}
-extension SlapshotCaptureSDK.FpQualityScorerType : Swift.Equatable {}
-extension SlapshotCaptureSDK.FpQualityScorerType : Swift.Hashable {}
-extension SlapshotCaptureSDK.FpQualityScorerType : Swift.RawRepresentable {}
 extension SlapshotCaptureSDK.CaptureEngineMode : Swift.Equatable {}
 extension SlapshotCaptureSDK.CaptureEngineMode : Swift.Hashable {}
 extension SlapshotCaptureSDK.CaptureEngineMode : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.UserMode : Swift.Equatable {}
-extension SlapshotCaptureSDK.UserMode : Swift.Hashable {}
-extension SlapshotCaptureSDK.FingertipQualityLevel : Swift.Equatable {}
-extension SlapshotCaptureSDK.FingertipQualityLevel : Swift.Hashable {}
-extension SlapshotCaptureSDK.FingertipQualityLevel : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.FPCondition : Swift.Equatable {}
-extension SlapshotCaptureSDK.FPCondition : Swift.Hashable {}
-extension SlapshotCaptureSDK.FPCondition : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.CaptureError : Swift.Equatable {}
+extension SlapshotCaptureSDK.CaptureError : Swift.Hashable {}
 extension SlapshotCaptureSDK.CaptureRequestType : Swift.Equatable {}
 extension SlapshotCaptureSDK.CaptureRequestType : Swift.Hashable {}
-extension SlapshotCaptureSDK.SlideVCTransition : Swift.Sendable {}
-extension SlapshotCaptureSDK.SlideVCTransition.SlideDirection : Swift.Equatable {}
-extension SlapshotCaptureSDK.SlideVCTransition.SlideDirection : Swift.Hashable {}
-extension SlapshotCaptureSDK.FingertipEvalState : Swift.Equatable {}
-extension SlapshotCaptureSDK.FingertipEvalState : Swift.Hashable {}
-extension SlapshotCaptureSDK.FingertipEvalState : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.QualityLevel : Swift.Equatable {}
-extension SlapshotCaptureSDK.QualityLevel : Swift.Hashable {}
-extension SlapshotCaptureSDK.QualityLevel : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.FingerType : Swift.Equatable {}
-extension SlapshotCaptureSDK.FingerType : Swift.Hashable {}
-extension SlapshotCaptureSDK.FingerType : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.IdentityState : Swift.Equatable {}
-extension SlapshotCaptureSDK.IdentityState : Swift.Hashable {}
-extension SlapshotCaptureSDK.IdentityState : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.EncodingType : Swift.Equatable {}
+extension SlapshotCaptureSDK.EncodingType : Swift.Hashable {}
 extension SlapshotCaptureSDK.FpCondition : Swift.Equatable {}
 extension SlapshotCaptureSDK.FpCondition : Swift.Hashable {}
 extension SlapshotCaptureSDK.FpCondition : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.IdentitySortByValue : Swift.Equatable {}
-extension SlapshotCaptureSDK.IdentitySortByValue : Swift.Hashable {}
-extension SlapshotCaptureSDK.IdentityEyeColor : Swift.Equatable {}
-extension SlapshotCaptureSDK.IdentityEyeColor : Swift.Hashable {}
-extension SlapshotCaptureSDK.IdentityEyeColor : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.FpQualityScorerType : Swift.Equatable {}
+extension SlapshotCaptureSDK.FpQualityScorerType : Swift.Hashable {}
+extension SlapshotCaptureSDK.FpQualityScorerType : Swift.RawRepresentable {}
 extension SlapshotCaptureSDK.LiftType : Swift.Equatable {}
 extension SlapshotCaptureSDK.LiftType : Swift.Hashable {}
-extension SlapshotCaptureSDK.CaptureType : Swift.Equatable {}
-extension SlapshotCaptureSDK.CaptureType : Swift.Hashable {}
-extension SlapshotCaptureSDK.CaptureType : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.CameraError : Swift.Equatable {}
-extension SlapshotCaptureSDK.CameraError : Swift.Hashable {}
+extension SlapshotCaptureSDK.QualityLevel : Swift.Equatable {}
+extension SlapshotCaptureSDK.QualityLevel : Swift.Hashable {}
+extension SlapshotCaptureSDK.QualityLevel : Swift.RawRepresentable {}
 extension SlapshotCaptureSDK.TorchSetting : Swift.Equatable {}
 extension SlapshotCaptureSDK.TorchSetting : Swift.Hashable {}
 extension SlapshotCaptureSDK.TorchSetting : Swift.RawRepresentable {}
-extension SlapshotCaptureSDK.EncodingType : Swift.Equatable {}
-extension SlapshotCaptureSDK.EncodingType : Swift.Hashable {}
+extension SlapshotCaptureSDK.UserMode : Swift.Equatable {}
+extension SlapshotCaptureSDK.UserMode : Swift.Hashable {}
+extension SlapshotCaptureSDK.CameraError : Swift.Equatable {}
+extension SlapshotCaptureSDK.CameraError : Swift.Hashable {}
+extension SlapshotCaptureSDK.SlideVCTransition : Swift.Sendable {}
+extension SlapshotCaptureSDK.SlideVCTransition.SlideDirection : Swift.Equatable {}
+extension SlapshotCaptureSDK.SlideVCTransition.SlideDirection : Swift.Hashable {}
+extension SlapshotCaptureSDK.CaptureType : Swift.Equatable {}
+extension SlapshotCaptureSDK.CaptureType : Swift.Hashable {}
+extension SlapshotCaptureSDK.CaptureType : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.FingertipEvalState : Swift.Equatable {}
+extension SlapshotCaptureSDK.FingertipEvalState : Swift.Hashable {}
+extension SlapshotCaptureSDK.FingertipEvalState : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.FingertipQualityLevel : Swift.Equatable {}
+extension SlapshotCaptureSDK.FingertipQualityLevel : Swift.Hashable {}
+extension SlapshotCaptureSDK.FingertipQualityLevel : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.FingerType : Swift.Equatable {}
+extension SlapshotCaptureSDK.FingerType : Swift.Hashable {}
+extension SlapshotCaptureSDK.FingerType : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.FPCondition : Swift.Equatable {}
+extension SlapshotCaptureSDK.FPCondition : Swift.Hashable {}
+extension SlapshotCaptureSDK.FPCondition : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.IdentityEyeColor : Swift.Equatable {}
+extension SlapshotCaptureSDK.IdentityEyeColor : Swift.Hashable {}
+extension SlapshotCaptureSDK.IdentityEyeColor : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.IdentitySex : Swift.Equatable {}
+extension SlapshotCaptureSDK.IdentitySex : Swift.Hashable {}
+extension SlapshotCaptureSDK.IdentitySex : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.IdentitySortByValue : Swift.Equatable {}
+extension SlapshotCaptureSDK.IdentitySortByValue : Swift.Hashable {}
+extension SlapshotCaptureSDK.IdentityState : Swift.Equatable {}
+extension SlapshotCaptureSDK.IdentityState : Swift.Hashable {}
+extension SlapshotCaptureSDK.IdentityState : Swift.RawRepresentable {}
+extension SlapshotCaptureSDK.WindowOrientation : Swift.Equatable {}
+extension SlapshotCaptureSDK.WindowOrientation : Swift.Hashable {}
+extension SlapshotCaptureSDK.FingerprintQualityScorerType : Swift.Equatable {}
+extension SlapshotCaptureSDK.FingerprintQualityScorerType : Swift.Hashable {}

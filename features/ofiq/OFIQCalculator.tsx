@@ -115,8 +115,13 @@ function performCalculations(face: Face, image: ImageDetails): OFIQResults {
 
 function calculateInterEyeDistance(face: Face, results: OFIQResults) {
   if (face.landmarks) {
-    var ied =
-      face.landmarks.rightEye.position.x - face.landmarks.leftEye.position.x;
+    // The straight-line distance between the eye centers. (It used to be
+    // right x minus left x, which goes negative when the detector reports the
+    // eyes the other way round, and that failed every image.)
+    var ied = Math.hypot(
+      face.landmarks.rightEye.position.x - face.landmarks.leftEye.position.x,
+      face.landmarks.rightEye.position.y - face.landmarks.leftEye.position.y,
+    );
     var meetsReq: boolean = false;
     var meetsBest: boolean = false;
     if (ied > 90) {
@@ -172,8 +177,10 @@ function calculateHeadSize(
       results.score = results.score + 1;
     }
 
-    var headWidth =
-      face.landmarks.rightEar.position.x - face.landmarks.leftEar.position.x;
+    // Ear to ear, whichever order the detector reports the ears in.
+    var headWidth = Math.abs(
+      face.landmarks.rightEar.position.x - face.landmarks.leftEar.position.x,
+    );
     var headWidthRatio = headWidth / image.width;
     var meetsHeadWidthRatioRequirement: boolean = false;
     if (headWidthRatio >= 0.5 && headWidthRatio <= 0.75) {

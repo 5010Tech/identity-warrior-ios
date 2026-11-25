@@ -46,7 +46,11 @@ export const OmitFingerDialog = ({
     toggle();
   };
 
-  const primary = useThemeColor({}, "primary");
+  // 5010 red when on: the theme's primary is near-white in dark mode, which
+  // would hide the white switch knob.
+  const primary = useThemeColor({}, "accent");
+  // The dialog follows the app's light / dark setting, so its labels must too.
+  const labelColor = useThemeColor({}, "textStrong");
   return (
     <Dialog.Container verticalButtons visible={visible}>
       <Dialog.Title>{tHelper("omitFinger")}</Dialog.Title>
@@ -58,7 +62,7 @@ export const OmitFingerDialog = ({
           </Dialog.Description>
           <View style={styles.switchesContainer}>
             <View style={styles.switchContainer}>
-              <Text style={styles.switchLabel}>{tHelper("amputated")}</Text>
+              <Text style={[styles.switchLabel, { color: labelColor }]}>{tHelper("amputated")}</Text>
               <Switch
                 value={omissions[i]?.reason === "XX"}
                 onChange={handleOmission(
@@ -69,7 +73,7 @@ export const OmitFingerDialog = ({
               />
             </View>
             <View style={styles.switchContainer}>
-              <Text style={styles.switchLabel}>{tHelper("bandaged")}</Text>
+              <Text style={[styles.switchLabel, { color: labelColor }]}>{tHelper("bandaged")}</Text>
               <Switch
                 value={omissions[i]?.reason === "UP"}
                 onChange={handleOmission(

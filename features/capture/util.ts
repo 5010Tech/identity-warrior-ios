@@ -100,11 +100,20 @@ export const runBTCapture = async (
   fgp?: FGP,
   fingerIndex?: number,
   fingerprintCaptureSequence?: fingerprintCaptureSequence,
+  /** DoD capture steps; captured in this order and merged into existingFingers. */
+  steps?: FGP[],
+  existingFingers: Finger[] = [],
+  /** Starting Hand = Left (App Settings). */
+  leftFirst = false,
 ) => {
   setLoadingMessage("Setting up fingerprint capture...");
   try {
     await ExpoNeoScanModule.setCaptureSequence(
-      fgp ? [fgp] : arrayFromSequence(fingerprintCaptureSequence || "tenFlat"),
+      fgp
+        ? [fgp]
+        : steps
+          ? steps.flatMap((step) => fgpFromMultiple[step])
+          : arrayFromSequence(fingerprintCaptureSequence || "tenFlat", leftFirst),
       fingerprintCaptureSequence === "tenRolled"
         ? IMP.LIVE_SCAN_ROLLED
         : IMP.LIVE_SCAN_PLAIN,
@@ -239,6 +248,19 @@ export const runBTCapture = async (
                 `pngFingers.${mapToFingerType(fgp)}`,
                 images[0].previewBase64,
               );
+            } else if (steps) {
+              const positions = new Set(
+                fingers.map((f) => Number(f.fingerPosition)),
+              );
+              setValue("transaction.fingers", [
+                ...existingFingers.filter(
+                  (f) => !positions.has(Number(f.fingerPosition)),
+                ),
+                ...fingers,
+              ]);
+              images.forEach(({ previewBase64, fgp }) =>
+                setValue(`pngFingers.${mapToFingerType(fgp)}`, previewBase64),
+              );
             } else {
               const pngFingers = images.reduce(
                 (acc, { previewBase64, fgp }) => ({
@@ -273,8 +295,34 @@ export const runBTCapture = async (
   );
 };
 
+const MIRROR_PAIRS: [CaptureSequence, CaptureSequence][] = [
+  [FGP.RIGHT_THUMB, FGP.LEFT_THUMB],
+  [FGP.RIGHT_INDEX, FGP.LEFT_INDEX],
+  [FGP.RIGHT_MIDDLE, FGP.LEFT_MIDDLE],
+  [FGP.RIGHT_RING, FGP.LEFT_RING],
+  [FGP.RIGHT_LITTLE, FGP.LEFT_LITTLE],
+  [FGP.PLAIN_RIGHT_THUMB, FGP.PLAIN_LEFT_THUMB],
+  [FGP.PLAIN_RIGHT_FOUR_FINGERS, FGP.PLAIN_LEFT_FOUR_FINGERS],
+  [AdditionalFGP.RIGHT_INDEX_AND_MIDDLE, AdditionalFGP.LEFT_INDEX_AND_MIDDLE],
+  [AdditionalFGP.RIGHT_RING_AND_LITTLE, AdditionalFGP.LEFT_RING_AND_LITTLE],
+];
+const MIRROR = new Map<CaptureSequence, CaptureSequence>(
+  MIRROR_PAIRS.flatMap(([r, l]) => [
+    [r, l],
+    [l, r],
+  ]),
+);
+
+/**
+ * Swaps left and right in a capture order, turning the standard right-first
+ * order into a left-first one (Starting Hand = Left).
+ */
+export const leftHandFirst = <T extends CaptureSequence>(sequence: T[]): T[] =>
+  sequence.map((position) => (MIRROR.get(position) ?? position) as T);
+
 export const arrayFromSequence = (
   fingerprintCaptureSequenceSetting: fingerprintCaptureSequence,
+  leftFirst = false,
 ) => {
   const values: Record<fingerprintCaptureSequence, FGP[]> = {
     tenFlat: [
@@ -303,7 +351,8 @@ export const arrayFromSequence = (
       FGP.LEFT_THUMB,
     ],
   };
-  return values[fingerprintCaptureSequenceSetting];
+  const order = values[fingerprintCaptureSequenceSetting];
+  return leftFirst ? leftHandFirst(order) : order;
 };
 
 export const requiredEyes: IrisEyePosition[] = ["left", "right"];

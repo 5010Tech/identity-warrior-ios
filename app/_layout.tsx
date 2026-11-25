@@ -2,15 +2,19 @@ import { AutofillProvider } from "@/components/autofill/context/AutofillContext"
 import DeviceProvider from "@/components/device/DeviceProvider";
 import { SlapshotGlobalHost } from "@/components/Slapshot/SlapshotGlobalHost";
 import { SlapshotContextProvider } from "@/components/Slapshot/SlapshotContext";
+import { SelfieModeSync } from "@/components/Slapshot/SelfieModeSync";
+import { RetentionSync } from "@/features/ebts/RetentionSync";
 import { useColorScheme } from "@/components/useColorScheme";
 import { UserProvider } from "@/components/user";
 import { APIClient } from "@/util/server/APIClient";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider } from "@react-navigation/native";
+import { IWDarkTheme, IWLightTheme } from "@/components/theme/navigationTheme";
+import { EulaGate } from "@/components/eula/EulaGate";
+import { LicenseGate } from "@/features/license/LicenseGate";
+import { PasscodeGate } from "@/components/passcode/PasscodeViews";
+import { HeaderBackButton } from "@/components/navigation";
+import { ThemeModeSync } from "@/components/theme/ThemeModeSync";
 import { Camera } from "expo-camera";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -63,7 +67,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     Camera.requestCameraPermissionsAsync();
-    WifiManager.getCurrentWifiSSID();
+    // Asks for the permission early; no network name yet is not an error.
+    WifiManager.getCurrentWifiSSID().catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -90,12 +95,22 @@ function RootLayoutNav() {
       <SlapshotContextProvider>
         <UserProvider>
           <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            value={colorScheme === "dark" ? IWDarkTheme : IWLightTheme}
           >
             <AutofillProvider>
+              <ThemeModeSync />
+              {/* Nothing of the app is there until a valid license is in. */}
+              <LicenseGate>
+              <SelfieModeSync />
+              <RetentionSync />
+              <EulaGate />
+              <PasscodeGate />
               <SubmissionProvider>
                 <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-                <Stack>
+                {/* The app's own screens are portrait only. The contactless capture
+                    runs in its own window and may turn landscape; when it closes,
+                    the app comes back upright. */}
+                <Stack screenOptions={{ orientation: "portrait" }}>
                   <Stack.Screen
                     name="(tabs)"
                     options={{
@@ -116,11 +131,34 @@ function RootLayoutNav() {
                     options={{
                       headerBackTitle: tHelper("back"),
                       headerTitle: tHelper("devices"),
+                      // The system back button was not responding on this
+                      // screen, so it uses the app's own.
+                      headerBackVisible: false,
+                      headerLeft: () => <HeaderBackButton />,
                     }}
                   />
                   <Stack.Screen
                     name="submissions"
                     options={{ headerShown: false, presentation: "modal" }}
+                  />
+                  <Stack.Screen
+                    name="latent"
+                    options={{
+                      headerTitle: tHelper("latentFpCapture"),
+                      // The system back button does not respond here either
+                      // (as on Devices), so this uses the app's own.
+                      headerBackVisible: false,
+                      headerLeft: () => <HeaderBackButton />,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="latentTransaction"
+                    options={{
+                      headerTitle: tHelper("latentTransTitle"),
+                      // One Back only: the one beside Submit Transaction.
+                      headerBackVisible: false,
+                      headerLeft: () => null,
+                    }}
                   />
                   <Stack.Screen name="+not-found" />
                   <Stack.Screen
@@ -144,6 +182,7 @@ function RootLayoutNav() {
                 </Stack>
                 <SlapshotGlobalHost />
               </SubmissionProvider>
+              </LicenseGate>
             </AutofillProvider>
           </ThemeProvider>
         </UserProvider>

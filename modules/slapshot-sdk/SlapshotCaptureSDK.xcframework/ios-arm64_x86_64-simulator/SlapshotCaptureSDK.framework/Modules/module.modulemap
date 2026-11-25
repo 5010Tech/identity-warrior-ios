@@ -7,5 +7,4 @@ framework module SlapshotCaptureSDK {
 
 module SlapshotCaptureSDK.Swift {
   header "SlapshotCaptureSDK-Swift.h"
-  requires objc
 }

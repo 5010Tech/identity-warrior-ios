@@ -1,6 +1,10 @@
 import { FormButtons, IdentifyingNumberForm } from "@/components/form";
 import { BiographicsForm } from "@/components/form/BiographicsForm";
 import { DNAForm } from "@/components/form/DnaForm";
+import { DodBiographicsForm } from "@/components/form/DodBiographicsForm";
+import { useAutofillSelector } from "@/components/autofill/context/useAutofillSelector";
+import { useCaptureValue } from "@/features/capture/context/hooks";
+import { tHelper } from "@/translations/translationHelper";
 import { DocumentsForm } from "@/components/form/DocumentsForm";
 import { FormContainer } from "@/components/Structure";
 import { SafeAreaView, View } from "@/components/themed";
@@ -20,6 +24,10 @@ export default function BiographicsScreen() {
   } = useFormContext<BiographicData>();
 
   const router = useRouter();
+  const isDod = useAutofillSelector(
+    (s) => s.appSettings?.collectionMode !== "DHS",
+  );
+  const dodTot = useCaptureValue<string | undefined>("dodTot");
 
   const onSubmit = (data: any) => {
     setValue("transaction.biographicData", data);
@@ -34,6 +42,23 @@ export default function BiographicsScreen() {
     );
     return () => sub.remove();
   }, [getValue, setFormValue]);
+
+  if (isDod) {
+    // DoD: the Android app's Type-2 screen (cards, Back / Save).
+    return (
+      <SafeAreaView edges={["bottom"]} style={StyleSheet.absoluteFill}>
+        <FormContainer style={styles.dodContainer}>
+          <DodBiographicsForm control={control} dodTot={dodTot} />
+        </FormContainer>
+        <FormButtons
+          onCancel={router.back}
+          onSubmit={handleSubmit(onSubmit)}
+          cancelText={tHelper("back")}
+          submitText={tHelper("save")}
+        />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView edges={["bottom"]} style={StyleSheet.absoluteFill}>
@@ -52,6 +77,9 @@ export default function BiographicsScreen() {
 const styles = StyleSheet.create({
   header: {
     alignItems: "flex-end",
+  },
+  dodContainer: {
+    paddingTop: 8,
   },
   autofill: {
     fontSize: 20,

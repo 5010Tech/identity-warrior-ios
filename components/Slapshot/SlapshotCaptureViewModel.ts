@@ -32,6 +32,8 @@ import {
 import { UserInterface, useCreateUserInterface } from "./UserInterface";
 import licenseJson from "./assets/license.json";
 import { fingerprintCaptureSequence } from "@/types";
+import { FGP } from "@/types/BiometricData";
+import { mapToFingerType } from "@/types/util";
 
 type SlapshotCalibrationResult = SlapshotCaptureError | boolean;
 type SlapshotCaptureResult = SlapshotCaptureIdentity | SlapshotCaptureError;
@@ -43,6 +45,8 @@ export type SlapshotCaptureViewModel = {
   calibrate: () => Promise<SlapshotCalibrationResult>;
   validateCalibration: () => Promise<SlapshotCalibrationResult>;
   completeCalibration: () => void;
+  /** Selfie Mode from App Settings: self capture instead of administered. */
+  setSelfieMode: (on: boolean) => void;
   captureBiometricsSelf: (
     faceCapture?: boolean,
   ) => Promise<SlapshotCaptureResult>;
@@ -53,6 +57,12 @@ export type SlapshotCaptureViewModel = {
   captureSingleFinger: (
     fingerType: FingerType,
   ) => Promise<SlapshotCaptureResult>;
+  /** Captures the given slap/thumb steps, in order (DoD 4-4-2 / 4-1-4-1). */
+  captureFingerSteps: (steps: FGP[]) => Promise<SlapshotCaptureResult>;
+  /** Captures one latent print (the SDK's Digital Lift). */
+  captureLatent: () => Promise<SlapshotCaptureResult>;
+  /** Captures one contactless palm (FingerType.LFP, LWP, RFP or RWP). */
+  capturePalm: (palmType: FingerType) => Promise<SlapshotCaptureResult>;
   failCaptureBiometrics: () => void;
   exportIdentity: (
     slapshotCaptureIdentity: SlapshotCaptureIdentity,
@@ -372,6 +382,15 @@ export function useCreateSlapshotViewModel(options: SlapshotCaptureOptions) {
     } else log.info(`not sending status ${currentState}`);
   };
 
+  // Selfie Mode (App Settings): the operator is collecting their own prints,
+  // so the SDK presents the capture for self use instead of administered.
+  const selfieMode = useRef(false);
+  const setSelfieMode = (on: boolean) => {
+    selfieMode.current = on;
+  };
+  const userModeNow = () =>
+    selfieMode.current ? UserMode.SelfCapture : UserMode.AdministeredCapture;
+
   const captureBiometricsSelf = (
     faceCapture?: boolean,
   ): Promise<SlapshotCaptureResult> => {
@@ -383,7 +402,7 @@ export function useCreateSlapshotViewModel(options: SlapshotCaptureOptions) {
     captureSequence?: fingerprintCaptureSequence,
   ): Promise<SlapshotCaptureResult> => {
     return captureBiometrics(
-      UserMode.AdministeredCapture,
+      userModeNow(),
       faceCapture,
       undefined,
       captureSequence,
@@ -393,13 +412,44 @@ export function useCreateSlapshotViewModel(options: SlapshotCaptureOptions) {
   const captureSingleFinger = (
     fingerType: FingerType,
   ): Promise<SlapshotCaptureResult> => {
-    return captureBiometrics(UserMode.AdministeredCapture, false, fingerType);
+    return captureBiometrics(userModeNow(), false, fingerType);
+  };
+  const captureFingerSteps = (steps: FGP[]): Promise<SlapshotCaptureResult> => {
+    return captureBiometrics(
+      userModeNow(),
+      false,
+      undefined,
+      undefined,
+      steps,
+    );
+  };
+  const captureLatent = (): Promise<SlapshotCaptureResult> => {
+    return captureBiometrics(
+      userModeNow(),
+      false,
+      undefined,
+      undefined,
+      undefined,
+      CaptureRequestType.DigitalLift,
+    );
+  };
+  const capturePalm = (palmType: FingerType): Promise<SlapshotCaptureResult> => {
+    return captureBiometrics(
+      userModeNow(),
+      false,
+      palmType,
+      undefined,
+      undefined,
+      CaptureRequestType.PalmCapture,
+    );
   };
   const captureBiometrics = (
     userMode: UserMode,
     faceCapture?: boolean,
     fingerType?: FingerType,
     fingerprintCaptureSequence?: fingerprintCaptureSequence,
+    steps?: FGP[],
+    singleRequestType?: CaptureRequestType,
   ): Promise<SlapshotCaptureResult> => {
     ui.update(0, "Processing biometric capture");
 
@@ -437,6 +487,8 @@ export function useCreateSlapshotViewModel(options: SlapshotCaptureOptions) {
         faceCapture,
         fingerType,
         fingerprintCaptureSequence,
+        steps,
+        singleRequestType,
       );
 
       SlapshotCaptureEngine.captureBiometrics(
@@ -528,9 +580,47 @@ export function useCreateSlapshotViewModel(options: SlapshotCaptureOptions) {
     faceCapture?: boolean,
     fingerType?: FingerType,
     fingerprintCaptureSequence?: fingerprintCaptureSequence,
+    steps?: FGP[],
+    singleRequestType?: CaptureRequestType,
   ): Promise<CaptureRequestSequence> => {
     let captureRequestSequenceBuilder;
-    if (faceCapture) {
+    if (singleRequestType) {
+      captureRequestSequenceBuilder = CaptureRequestSequenceBuilder.create(
+        userMode,
+      ).addCaptureRequest(
+        // A palm request names which palm through the explicit finger type,
+        // the same way the Android app builds it.
+        (fingerType
+          ? CaptureRequestBuilder.create(singleRequestType)
+              .setReviewCapture(true)
+              .setSingleFingerCaptureExplicitType(fingerType)
+          : CaptureRequestBuilder.create(singleRequestType).setReviewCapture(
+              true,
+            )
+        ).build(),
+      );
+    } else if (steps?.length) {
+      const slapTypes: Partial<Record<FGP, CaptureRequestType>> = {
+        [FGP.PLAIN_LEFT_FOUR_FINGERS]: CaptureRequestType.LeftSlap,
+        [FGP.PLAIN_RIGHT_FOUR_FINGERS]: CaptureRequestType.RightSlap,
+        [FGP.PLAIN_LEFT_AND_RIGHT_THUMBS]: CaptureRequestType.ThumbsSlap,
+      };
+      let builder = CaptureRequestSequenceBuilder.create(userMode);
+      for (const step of steps) {
+        const slapType = slapTypes[step];
+        const request = slapType
+          ? CaptureRequestBuilder.create(slapType)
+              .setReviewCapture(true)
+              .setMissingFingerMapping(new Map<FingerType, FpCondition>())
+              .build()
+          : CaptureRequestBuilder.create(CaptureRequestType.SingleFingerCapture)
+              .setReviewCapture(true)
+              .setSingleFingerCaptureExplicitType(mapToFingerType(step))
+              .build();
+        builder = builder.addCaptureRequest(request);
+      }
+      captureRequestSequenceBuilder = builder;
+    } else if (faceCapture) {
       if (livePersistedState.current === SlapshotCaptureStates.NotCalibrated) {
         await calibrate();
       }
@@ -658,9 +748,13 @@ export function useCreateSlapshotViewModel(options: SlapshotCaptureOptions) {
     calibrate,
     validateCalibration,
     completeCalibration,
+    setSelfieMode,
     captureBiometricsSelf,
     captureBiometricsAdministered,
     captureSingleFinger,
+    captureFingerSteps,
+    captureLatent,
+    capturePalm,
     failCaptureBiometrics,
     exportIdentity,
     completeExportIdentity,

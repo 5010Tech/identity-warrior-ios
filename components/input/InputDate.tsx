@@ -1,16 +1,11 @@
-import Colors from "@/constants/style/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { useMemo, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  TouchableOpacity
-} from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { Text, useThemeColor, View } from "../themed";
+import { Text, useThemeColor } from "../themed";
 import { InputParent } from "./InputParent";
-import { inputStyles } from "./styles";
+import { inputStyles, useInputColors } from "./styles";
 
 interface InputDateProps {
   onChange: (...e: any[]) => void;
@@ -22,6 +17,8 @@ interface InputDateProps {
   max?: Date;
   type?: "datetime" | "date" | "time";
   displayFormat?: string;
+  /** Shown, muted, while no date is set. */
+  placeholder?: string;
 }
 
 export const InputDate = ({
@@ -34,7 +31,9 @@ export const InputDate = ({
   value,
   type = "date",
   displayFormat,
+  placeholder,
 }: InputDateProps) => {
+  const placeholderColor = useThemeColor({}, "textSecondary");
   const [focused, setFocused] = useState(false);
 
   const toggleModal = () => {
@@ -42,6 +41,7 @@ export const InputDate = ({
   };
 
   const buttonColor = useThemeColor({}, "primary");
+  const colors = useInputColors();
 
   const renderValue = useMemo(() => {
     if (!value) return "";
@@ -76,13 +76,28 @@ export const InputDate = ({
       required={required}
       onPress={toggleModal}
     >
-      <View style={styles.display}>
+      <View
+        style={[
+          styles.display,
+          {
+            borderColor: colors.borderColor,
+            backgroundColor: colors.backgroundColor,
+          },
+        ]}
+      >
         <Pressable style={styles.valuePressable} onPress={toggleModal}>
-          <Text style={styles.value}>{renderValue}</Text>
+          <Text
+            style={[
+              styles.value,
+              { color: renderValue ? colors.color : placeholderColor },
+            ]}
+          >
+            {renderValue || placeholder}
+          </Text>
         </Pressable>
         {value && (
           <TouchableOpacity onPress={handleClear} style={styles.clear}>
-            <FontAwesome size={14} color={Colors.light.text} name="times" />
+            <FontAwesome size={18} color={colors.color} name="times" />
           </TouchableOpacity>
         )}
       </View>
@@ -101,8 +116,9 @@ export const InputDate = ({
 
 const styles = StyleSheet.create({
   display: {
-    flexDirection: "row",
     ...inputStyles.input,
+    flexDirection: "row",
+    alignItems: "center",
   },
   valuePressable: {
     flex: 1,
@@ -112,6 +128,6 @@ const styles = StyleSheet.create({
   },
   clear: {
     flexShrink: 1,
-    marginRight: -15,
+    padding: 6,
   },
 });

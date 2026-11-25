@@ -7,6 +7,9 @@ import { ExpoIdentifi } from "@/modules/expo-identifi";
 import openSettings from "@/util/openNetworkSettings";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
+import { Button } from "@/components/Button";
+import { useRouter } from "expo-router";
+import { View } from "react-native";
 import { Alert, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import WifiManager from "react-native-wifi-reborn";
@@ -17,6 +20,7 @@ import { AddDeviceDialog } from "@/features/devices/AddDeviceDialog";
 
 export default function DevicesScreen() {
   const { devices, setActiveDevice, deleteDevice, addDevice } = useDevices();
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const { connecting, disconnectFromDevice } = useActiveDevice();
@@ -178,6 +182,15 @@ export default function DevicesScreen() {
             <FontAwesome name="plus" size={24} /> {tHelper("addDevice")}
           </H2>
         </TouchableOpacity>
+        <View style={styles.back}>
+          <Button
+            text={tHelper("back")}
+            variant="secondary"
+            onPress={() =>
+              router.canGoBack() ? router.back() : router.replace("/")
+            }
+          />
+        </View>
         <AddDeviceDialog
           toggle={() => setDialogOpen(false)}
           addDevice={addWiFiDevice}
@@ -192,6 +205,11 @@ export default function DevicesScreen() {
 const styles = StyleSheet.create({
   container: {
     height: "100%",
+  },
+  back: {
+    marginTop: "auto",
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
   newButton: {
     width: "100%",

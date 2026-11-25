@@ -1,6 +1,7 @@
 import { useAutofill } from "@/components/autofill/context/AutofillContext";
 import { FormButtons } from "@/components/form";
 import { ControlledInput, InputSelect, InputText } from "@/components/input";
+import { Section } from "@/components/Section";
 import { FormContainer } from "@/components/Structure";
 import { SafeAreaView } from "@/components/themed";
 import { activityCategories } from "@/constants/SelectOptions";
@@ -52,81 +53,94 @@ export default function SubmissionSettingsScreen() {
   return (
     <SafeAreaView edges={["bottom"]} style={StyleSheet.absoluteFill}>
       <FormContainer style={styles.container}>
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"ori"}
-          label={tHelper("ori")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"oan"}
-          label={tHelper("oan")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"dai"}
-          label={tHelper("dai")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"dan"}
-          label={tHelper("dan")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"cai"}
-          label={tHelper("cai")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"on"}
-          label={tHelper("on")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"ou"}
-          label={tHelper("ou")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"osu"}
-          label={tHelper("osu")}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"activitySiteId"}
-          label={tHelper("acitveSiteID")}
-        />
-        <ControlledInput
-          component={InputSelect}
-          control={control}
-          name={"activityCategory"}
-          label={tHelper("activeCat")}
-          items={activityCategories}
-        />
-        <ControlledInput
-          component={InputText}
-          control={control}
-          name={"activityTerminal"}
-          label={tHelper("activityTerminal")}
-        />
+        <Section title={tHelper("sectionOriginatingAgency")}>
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"ori"}
+            label={tHelper("ori")}
+          />
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"oan"}
+            label={tHelper("oan")}
+          />
+        </Section>
+        <Section title={tHelper("sectionDestinationAgency")}>
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"dai"}
+            label={tHelper("dai")}
+          />
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"dan"}
+            label={tHelper("dan")}
+          />
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"cai"}
+            label={tHelper("cai")}
+          />
+        </Section>
+        <Section title={tHelper("sectionOrganization")}>
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"on"}
+            label={tHelper("on")}
+          />
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"ou"}
+            label={tHelper("ou")}
+          />
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"osu"}
+            label={tHelper("osu")}
+          />
+        </Section>
+        <Section title={tHelper("sectionActivity")}>
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"activitySiteId"}
+            label={tHelper("acitveSiteID")}
+          />
+          <ControlledInput
+            component={InputSelect}
+            control={control}
+            name={"activityCategory"}
+            label={tHelper("activeCat")}
+            items={activityCategories}
+          />
+          <ControlledInput
+            component={InputText}
+            control={control}
+            name={"activityTerminal"}
+            label={tHelper("activityTerminal")}
+          />
+        </Section>
       </FormContainer>
-      <FormButtons onCancel={router.back} onSubmit={handleSubmit(onSubmit)} />
+      <FormButtons
+        onCancel={router.back}
+        onSubmit={handleSubmit(onSubmit)}
+        cancelText={tHelper("back")}
+        submitText={tHelper("saveSettings")}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 20,
+    paddingTop: 8,
   },
 });

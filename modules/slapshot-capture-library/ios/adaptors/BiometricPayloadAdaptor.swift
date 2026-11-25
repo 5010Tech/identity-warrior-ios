@@ -101,10 +101,46 @@ extension BiometricPayload {
             faces.append(face)
         }
         
+        // Latent prints (DigitalLift capture requests)
+        let liftOptions = exportRequest.digitalLiftExportOptions ?? DigitalLiftExportOptions()
+        let sdkLiftEncodingType = try liftOptions.encodingType.mapToSdk()
+        let sdkLiftSourceEncodingType = try liftOptions.sourceEncodingType.mapToSdk()
+        var digitalLifts: [DigitalLiftDto] = []
+        sdkBiometricPayload.digitalLifts.forEach { (sdkLift) in
+            var image: EncodedImage? = nil
+            if let sdkImage = sdkLift.createImage(encodingType: sdkLiftEncodingType), sdkImage.data != nil {
+                image = EncodedImage.mapFromSdk(sdkEncodedImage: sdkImage)
+            }
+            var srcImage: EncodedImage? = nil
+            if liftOptions.exportSource,
+               let sdkSrcImage = sdkLift.createSrcImage(encodingType: sdkLiftSourceEncodingType),
+               sdkSrcImage.data != nil {
+                srcImage = EncodedImage.mapFromSdk(sdkEncodedImage: sdkSrcImage)
+            }
+            digitalLifts.append(DigitalLiftDto(dpi: sdkLift.dpi, image: image, srcImage: srcImage))
+        }
+
+        // Contactless palms (PalmCapture capture requests)
+        var palms: [PalmDto] = []
+        sdkBiometricPayload.palms.forEach { (sdkPalm) in
+            var image: EncodedImage? = nil
+            // The processed print (the SDK's AFIS image), as fingerprints are
+            // exported, not the photograph of the palm. Falls back to the
+            // plain image if the SDK has no processed one.
+            if let sdkImage = sdkPalm.createAfisImage(encodingType: sdkFingerEncodingType), sdkImage.data != nil {
+                image = EncodedImage.mapFromSdk(sdkEncodedImage: sdkImage)
+            } else if let sdkImage = sdkPalm.createImage(encodingType: sdkFingerEncodingType), sdkImage.data != nil {
+                image = EncodedImage.mapFromSdk(sdkEncodedImage: sdkImage)
+            }
+            palms.append(PalmDto(dpi: sdkPalm.dpi, palmType: sdkPalm.meta.palmType.rawValue, image: image))
+        }
+
         let biometricPayload = BiometricPayload(
             captureIdentity: captureIdentity,
             fingerprints: fingerprints,
-            faces: faces)
+            faces: faces,
+            digitalLifts: digitalLifts,
+            palms: palms)
         
         return biometricPayload
     }

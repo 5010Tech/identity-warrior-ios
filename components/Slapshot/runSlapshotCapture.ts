@@ -19,8 +19,14 @@ export const runSlapshotCapture = async (
   fingerPosition?: FGP,
   fingerIndex?: number,
   fingerprintCaptureSequence?: fingerprintCaptureSequence,
+  /**
+   * DoD capture steps (see getDodFingerPlan). When given, only these are
+   * captured and the result is merged into the fingers already collected.
+   */
+  steps?: FGP[],
+  existingFingers: Finger[] = [],
 ) => {
-  if (fingerprintCaptureSequence === "tenRolled") {
+  if (!steps && fingerprintCaptureSequence === "tenRolled") {
     Alert.alert(
       "Not Supported",
       "Identity Warrior does not support contactless rolled capture. Please connect a device, or update app settings to use a different capture sequence.",
@@ -30,7 +36,9 @@ export const runSlapshotCapture = async (
   const log = logger.createLogger();
   const capturedResult = await (fingerPosition
     ? viewModel.captureSingleFinger(mapToFingerType(fingerPosition))
-    : viewModel.captureBiometricsAdministered(
+    : steps
+      ? viewModel.captureFingerSteps(steps)
+      : viewModel.captureBiometricsAdministered(
         false,
         fingerprintCaptureSequence,
       ));
@@ -90,6 +98,33 @@ export const runSlapshotCapture = async (
           `pngFingers.${mapToFingerType(fingerPosition)}`,
           pngFingerBase64.image?.imageBytesBase64,
         );
+    } else if (steps) {
+      const captured = imageData.fingerprints.map<Finger>(
+        ({ image, fingerType, qualityScore, condition }, i) =>
+          mapFinger({
+            image: image?.imageBytesBase64,
+            imageHeight: image?.height,
+            imageWidth: image?.width,
+            i,
+            nfiq: qualityScore?.quality as NFIQScore,
+            fgp: mapToFGP(fingerType),
+            modelNumber: "",
+            serialNumber: "",
+            make: "Slapshot",
+            missingFingerprintsReason:
+              condition === FpCondition.Normal ? undefined : "XX",
+          }),
+      );
+      const positions = new Set(captured.map((f) => Number(f.fingerPosition)));
+      setValue("transaction.fingers", [
+        ...existingFingers.filter(
+          (f) => !positions.has(Number(f.fingerPosition)),
+        ),
+        ...captured,
+      ]);
+      pngImageData.fingerprints.forEach(({ image, fingerType }) =>
+        setValue(`pngFingers.${fingerType}`, image?.imageBytesBase64),
+      );
     } else {
       imageData &&
         setValue(

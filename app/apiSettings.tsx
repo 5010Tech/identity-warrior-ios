@@ -77,7 +77,7 @@ export default function LoginPage() {
       >
         {fetching && <Spinner />}
         <View style={styles.container}>
-          <AppLogo200 style={styles.logo} />
+          <AppLogo200 style={styles.logo} resizeMode="contain" />
           <View style={styles.form}>
             <ControlledInput
               control={control}

@@ -43,6 +43,38 @@
                                                                 isMirrored:(bool)isMirrored
                                                                isCancelled:(bool (^)())isCancelled;
 
+/**
+ Extracts ridge detail from a single finger that has already been cropped and masked.
+
+ This is the per-finger counterpart to `extractWaveletRidgeDetailFromImage:…l:t:r:b:`. That
+ one takes the whole slap plus the fingertip's bounds and crops internally, which means the
+ mask it receives has to be slap-shaped — there is nowhere to put a per-finger mask. This one
+ takes the finger's own grayscale and the finger's own foreground mask, so a model that
+ segments one finger at a time has somewhere to send its output.
+
+ `srcW`/`srcH` describe the *original* image the finger was cropped from. They are not
+ geometry: nothing here maps back into slap space. They are used only to pick a stand-in dpi
+ when the capture is uncalibrated and no finger width is known.
+
+ Mirrors `extractWaveletRidgeDetailFromFtip` in the Android SDK's native-lib.cpp, which is
+ what `slapshot-native` builds and what Android's `WaveletRidgeExtractor` binds to.
+
+ @param fingerImage the finger's grayscale image, already cropped to the fingertip
+ @param foregroundMask the finger's foreground mask, the same size as `fingerImage`
+ @param knownFingerWidth the oriented box's minor axis, or 0 when unknown
+ @param knownFingerType the `FingerType` raw value, or 0 for unknown
+ */
+- (ExtractWaveletRidgeDetailResponse *) extractRidgeDetailFromFingerImage:(UIImage *)fingerImage
+                                                           foregroundMask:(UIImage *)foregroundMask
+                                                                      dpi:(float)dpi
+                                                         knownFingerWidth:(float)knownFingerWidth
+                                                          knownFingerType:(int)knownFingerType
+                                                               isInverted:(bool)isInverted
+                                                               isMirrored:(bool)isMirrored
+                                                                     srcW:(int)srcW
+                                                                     srcH:(int)srcH
+                                                              isCancelled:(bool (^)())isCancelled;
+
 - (UIImage *) generateDynamicFingerGuideFromImage:(UIImage *)image
                                   scaleDownFactor:(float)scaleDownFactor
                                               dpi:(float)dpi

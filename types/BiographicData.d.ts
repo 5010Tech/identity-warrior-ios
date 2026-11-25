@@ -366,4 +366,10 @@ export interface BiographicData {
   mnu?: string;
   dnaId?: string;
   dnaSystem?: string;
+  /** DoD Type-2 only. */
+  personnelType?: string;
+  /** DoD Type-2, Criminal Applicant only: internment serial number. */
+  internment?: string;
+  arrestDate?: Date | string | null;
+  arrestOffense?: string;
 }

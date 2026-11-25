@@ -62,16 +62,26 @@ export default function AutofillSettings() {
 
   return (
     <SafeAreaView edges={["bottom"]} style={StyleSheet.absoluteFill}>
-      <FormContainer>
-        <BiographicsForm control={control} />
-        <ControlledInput
-          label={tHelper("dnaSystem")}
-          control={control}
-          name="dnaSystem"
-          component={InputText}
-        />
+      <FormContainer style={styles.container}>
+        <BiographicsForm control={control} sectioned>
+          <ControlledInput
+            label={tHelper("dnaSystem")}
+            control={control}
+            name="dnaSystem"
+            component={InputText}
+          />
+        </BiographicsForm>
       </FormContainer>
-      <FormButtons onCancel={router.back} onSubmit={handleSubmit(onSubmit)} />
+      <FormButtons
+        onCancel={router.back}
+        onSubmit={handleSubmit(onSubmit)}
+        cancelText={tHelper("back")}
+        submitText={tHelper("saveSettings")}
+      />
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { paddingTop: 8 },
+});

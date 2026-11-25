@@ -14,6 +14,7 @@ import {
 } from "./userReducer";
 import { noOp } from "@/util/noOp";
 import { DispatchAction } from "@/types";
+import { getSavedCollectionMode } from "@/util/collectionMode";
 
 export const UserStateContext = createContext<UserState>(initialState);
 export const UserActionContext =
@@ -22,7 +23,11 @@ export const UserActionContext =
 export const UserProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
   useEffect(() => {
-    tokenRefresh(dispatch);
+    // The IXM sign-in only applies to DHS collections. In DoD mode the app
+    // doesn't contact the IXM server at start-up, so there is no sign-in error.
+    getSavedCollectionMode().then((mode) => {
+      if (mode === "DHS") tokenRefresh(dispatch);
+    });
   }, []);
 
   return (

@@ -1,6 +1,5 @@
 import { FC } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { View, ViewProps } from "./themed";
+import { ScrollView, StyleSheet, View, ViewProps } from "react-native";
 
 type RowProps = ViewProps & { gutter?: number };
 export const Row: FC<RowProps> = ({ style, gutter = 1, ...props }) => {
@@ -14,7 +13,17 @@ export const Col: FC<ColProps> = ({ style, size = 1, ...props }) => {
 };
 
 export const FormContainer = ({ style, ...rest }: ViewProps) => {
-  return <ScrollView contentContainerStyle={[styles.form, style]} {...rest} />;
+  return (
+    <ScrollView
+      contentContainerStyle={[styles.form, style]}
+      // Dragging the form closes the keyboard; taps on buttons still register.
+      keyboardDismissMode="on-drag"
+      // Make room for the keyboard and keep the field being typed in visible.
+      automaticallyAdjustKeyboardInsets
+      keyboardShouldPersistTaps="handled"
+      {...rest}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
@@ -24,8 +33,9 @@ const styles = StyleSheet.create({
   col: { flex: 1 },
   form: {
     flexGrow: 1,
-    paddingHorizontal: 15,
-    rowGap: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    rowGap: 12,
     minHeight: "100%",
   },
 });

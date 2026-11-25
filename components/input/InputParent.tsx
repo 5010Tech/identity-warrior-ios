@@ -1,7 +1,6 @@
 import { PropsWithChildren, useMemo } from "react";
-import { Pressable, StyleSheet, ViewStyle } from "react-native";
-import { Text, useThemeColor, View } from "../themed";
-import { themeColors } from "@/constants/style/Colors";
+import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
+import { Text, useThemeColor } from "../themed";
 
 interface InputParentProps {
   label?: string;
@@ -23,8 +22,8 @@ export const InputParent = ({
   disabled,
 }: PropsWithChildren<InputParentProps>) => {
   const errorColor = useThemeColor({}, "danger");
-  const labelColor = useThemeColor({}, "text");
-  const focusedColor = useThemeColor({}, "primary");
+  const labelColor = useThemeColor({}, "textMuted");
+  const focusedColor = useThemeColor({}, "textStrong");
 
   const color = useMemo(() => {
     if (focused) {
@@ -38,16 +37,19 @@ export const InputParent = ({
 
   const content = (
     <>
-      <Text
-        style={[
-          styles.label,
-          {
-            color,
-          },
-        ]}
-      >
-        {label}
-      </Text>
+      {/* No label, no blank line where it would have been. */}
+      {label ? (
+        <Text
+          style={[
+            styles.label,
+            {
+              color,
+            },
+          ]}
+        >
+          {label}
+        </Text>
+      ) : null}
       {children}
       {error && (
         <Text style={[styles.error, { color: errorColor }]}>{error}</Text>
@@ -76,15 +78,14 @@ export const InputParent = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    gap: 3,
+    gap: 5,
   },
   pressable: {
-    gap: 3,
+    gap: 5,
   },
   label: {
     fontWeight: "500",
-    fontSize: 16,
-    color: themeColors.darkGray,
+    fontSize: 15,
   },
   error: {},
 });

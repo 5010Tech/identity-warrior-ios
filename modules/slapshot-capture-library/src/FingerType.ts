@@ -15,6 +15,11 @@ enum FingerType {
     R4FS = "R4FS",
     L4FS = "L4FS",
     TS = "TS",
+    /** Palms (contactless palm capture). */
+    RFP = "RFP",
+    RWP = "RWP",
+    LFP = "LFP",
+    LWP = "LWP",
 }
 
 export default FingerType;

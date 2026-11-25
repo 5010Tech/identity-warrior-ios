@@ -11,6 +11,8 @@ import { useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button, StyleSheet, Text, View } from "react-native";
+import { Button as AppButton } from "@/components/Button";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tHelper } from "@/translations/translationHelper";
 
 export default function App() {
@@ -22,6 +24,7 @@ export default function App() {
   const isFocused = useIsFocused();
   const { setValue } = useFormContext<BiographicData>();
   const { getValue } = useAutofill();
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -37,9 +40,13 @@ export default function App() {
   const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     if (scanned.current) return; // ignore further scans
     scanned.current = true;
-    setValue("dnaId", data);
-    const autofillValues = getValue("biographics");
-    setValue("dnaSystem", autofillValues?.dnaSystem);
+    setValue("dnaId", data, { shouldDirty: true, shouldValidate: true });
+    // DNA System Name defaults from Settings: Type-2 in DoD mode, Autofill in DHS.
+    const isDod = getValue("appSettings")?.collectionMode !== "DHS";
+    const dnaSystem = isDod
+      ? getValue("type2Settings")?.dnaSystem
+      : getValue("biographics")?.dnaSystem;
+    setValue("dnaSystem", dnaSystem);
     router.back();
   };
 
@@ -67,9 +74,34 @@ export default function App() {
           ref={cameraRef}
           autofocus="on"
           videoQuality="2160p"
+          // Linear barcodes and 2D codes, QR included.
+          barcodeScannerSettings={{
+            barcodeTypes: [
+              "qr",
+              "datamatrix",
+              "pdf417",
+              "aztec",
+              "code128",
+              "code39",
+              "code93",
+              "codabar",
+              "itf14",
+              "ean13",
+              "ean8",
+              "upc_a",
+              "upc_e",
+            ],
+          }}
           onBarcodeScanned={handleBarCodeScanned}
         />
       )}
+      <View style={[styles.cancel, { bottom: insets.bottom + 16 }]}>
+        <AppButton
+          text={tHelper("cancel")}
+          variant="secondary"
+          onPress={router.back}
+        />
+      </View>
     </View>
   );
 }
@@ -85,6 +117,11 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  cancel: {
+    position: "absolute",
+    left: 16,
+    right: 16,
   },
   buttonContainer: {
     flex: 1,

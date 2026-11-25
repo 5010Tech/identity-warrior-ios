@@ -65,7 +65,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Identity Warrior requires access to your location while it is in use to provide location-based features.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
+	<string>Identity Warrior uses the microphone to record voice samples during a collection.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Identity Warrior needs access to your photos to upload images for face compare.</string>
 	<key>NSUserActivityTypes</key>
@@ -112,8 +112,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
+	<string>Automatic</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

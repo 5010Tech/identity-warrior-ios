@@ -1,5 +1,11 @@
 import { SubmissionItem } from "@/components/submissions/types";
-import { AppSettings, SubmissionSettings } from "@/types";
+import {
+  AbisSettings,
+  AppSettings,
+  SubmissionSettings,
+  Type1Settings,
+  Type2Settings,
+} from "@/types";
 import { BiographicData } from "@/types/BiographicData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format } from "date-fns";
@@ -17,6 +23,9 @@ export interface AutofillData {
   submissionSettings: SubmissionSettings;
   transactions: SubmissionItem[];
   appSettings: AppSettings;
+  abisSettings?: AbisSettings;
+  type1Settings?: Type1Settings;
+  type2Settings?: Type2Settings;
 }
 
 type Subscribe = (listener: () => void) => () => void;
@@ -83,7 +92,7 @@ export const AutofillProvider = ({ children }: PropsWithChildren) => {
     appSettings: {
       retainLogsDays: 100,
       retainSubmissionsDays: 100,
-      contactlessAdministered: true,
+      retainExportsDays: 2,
       fingerprintCaptureSequence: "tenFlat",
     },
   });

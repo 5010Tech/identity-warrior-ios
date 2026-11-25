@@ -21,11 +21,12 @@ export const FormButtons = ({
   cancelText = tHelper("cancel"),
 }: FormButtonProps) => {
   return (
-    <Row style={styles.buttonContainer}>
+    <Row style={styles.buttonContainer} gutter={2}>
       <Col>
         <Button
           onPress={onCancel}
           text={cancelText}
+          variant="secondary"
           disabled={cancelDisabled}
         />
       </Col>
@@ -42,6 +43,7 @@ export const FormButtons = ({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    margin: 10,
+    marginHorizontal: 16,
+    marginVertical: 10,
   },
 });

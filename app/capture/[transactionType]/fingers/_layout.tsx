@@ -1,61 +1,11 @@
-// app/finger-capture/_layout.tsx
-import React, { useState } from "react";
-import { Drawer } from "expo-router/drawer";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-  DrawerContentComponentProps,
-} from "@react-navigation/drawer";
-import { tHelper } from "@/translations/translationHelper";
-import { HeaderBackButton } from "@/components/navigation";
-import SetCaptureSequenceDialog from "@/features/capture/SetCaptureSequenceDialog";
+import React from "react";
+import { Stack } from "expo-router";
 
-function CustomDrawerContent(props: DrawerContentComponentProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
-      <DrawerItem
-        label={tHelper("setCaptureSequence")}
-        onPress={() => setIsDialogOpen(true)}
-      />
-      <SetCaptureSequenceDialog
-        isOpen={isDialogOpen}
-        setOpen={setIsDialogOpen}
-        onSequenceChange={() => props.navigation.goBack()}
-      />
-    </DrawerContentScrollView>
-  );
-}
-
+// No slide-out menu and no title bar: the scanner is picked on the Capture
+// screen, the capture sequence is set in App Settings, and the room goes to
+// the prints. Done at the bottom is the way out.
 export default function FingerCaptureLayout() {
   return (
-    <>
-      <Drawer
-        screenOptions={{ headerShown: false }}
-        drawerContent={(p) => <CustomDrawerContent {...p} />}
-      >
-        <Drawer.Screen
-          name="index"
-          options={{
-            drawerItemStyle: { display: "none" },
-          }}
-        />
-        <Drawer.Screen
-          name="device"
-          options={{ drawerItemStyle: { display: "none" } }}
-        />
-        <Drawer.Screen
-          name="devices-proxy"
-          options={{
-            headerShown: true,
-            title: tHelper("devices"),
-            headerLeft: () => <HeaderBackButton />,
-          }}
-        />
-      </Drawer>
-    </>
+    <Stack screenOptions={{ headerShown: false, orientation: "portrait" }} />
   );
 }
