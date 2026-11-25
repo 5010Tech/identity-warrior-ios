@@ -48,6 +48,17 @@ export interface DodBiographics {
   internment?: string;
   arrestDate?: Date | string | null;
   arrestOffense?: string;
+  /**
+   * Identity documents scanned on the biographics screen. The file carries
+   * the first as its collected identification (2.8019), as on Android.
+   */
+  documents?: {
+    identification?: string;
+    cid?: string;
+    country?: string;
+    issueDate?: Date | string | null;
+    expirationDate?: Date | string | null;
+  }[];
 }
 
 export interface EbtsInput {
@@ -183,6 +194,24 @@ const type2Record = (
   if (text(bio.birthCountry)) {
     setField(rec, 8033, ["", "", text(bio.birthCountry), "", ""]);
   }
+  // Collected identification, in the Android generator's order: number,
+  // kind (PASS, DLN), issuer, issued, expires, issuing office, comment.
+  const document = (bio.documents ?? []).find(
+    (doc) => text(doc.identification) && text(doc.cid),
+  );
+  if (document) {
+    setField(rec, 8019, [
+      [
+        text(document.identification),
+        text(document.cid),
+        text(document.country),
+        formDate(document.issueDate),
+        formDate(document.expirationDate),
+        "",
+        "",
+      ],
+    ]);
+  }
   if (text(bio.height)) {
     const inches = Number(bio.height);
     setField(rec, 8035, [[inches === 0 ? "000" : text(bio.height), "IN", "EST"]]);
@@ -284,12 +313,20 @@ const type14Record = (
     .filter((n) => n.nfiq != null)
     .map((n) => [String(Number(n.fingerPosition)), String(n.nfiq)]);
   setField(rec, 22, quality);
+  // Make, model and serial number: all three are mandatory once the field
+  // is there. The phone's camera gives none of its own, so its prints carry
+  // what the Android app writes for them (Sciometrics, Slapshot), and a
+  // device with no serial number says so, as on Android.
   const device = finger.captureDevice;
-  if (device?.make || device?.model || device?.serial) {
+  const make = text(device?.make);
+  const model = text(device?.model);
+  const serial = text(device?.serial);
+  if (make || model || serial) {
+    const camera = make === "Slapshot" && !model;
     setField(rec, 904, [
-      text(device.make),
-      text(device.model),
-      text(device.serial),
+      camera ? "Sciometrics" : make || model,
+      camera ? "Slapshot" : model || make,
+      serial || "No Serial",
     ]);
   }
   rec.data = fromBase64(finger.image ?? "");

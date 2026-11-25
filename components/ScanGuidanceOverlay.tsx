@@ -4,8 +4,18 @@ import {
   ExpoDocumentReaderScanGuidance,
   ExpoDocumentReaderScanMode,
 } from "@/modules/expo-document-reader";
+import BarcodeHighlight from "@/components/BarcodeHighlight";
 import React from "react";
-import { Image, LayoutChangeEvent, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  LayoutChangeEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type NormalizedRect = {
@@ -24,6 +34,13 @@ type Props = {
   debugCapture?: ExpoDocumentReaderDebugCapture | null;
   onDebugCapture?: () => void;
   onCancel?: () => void;
+  /** Draw a frame across the middle of the view for the zone to go in. */
+  zoneFrame?: boolean;
+  /**
+   * Barcode mode: where the camera sees a code, as fractions of the view
+   * from its top left corner. Outlined on screen, green once it is read.
+   */
+  codeBox?: NormalizedRect | null;
 };
 
 function guidanceLabel(
@@ -72,6 +89,8 @@ export default function ScanGuidanceOverlay({
   debugCapture,
   onDebugCapture,
   onCancel,
+  zoneFrame = false,
+  codeBox,
 }: Props) {
   const insets = useSafeAreaInsets();
   const isMrz = scanMode === "mrz";
@@ -98,10 +117,33 @@ export default function ScanGuidanceOverlay({
     return { left, top, width, height };
   }, [detectionBox, isMrz, overlaySize.height, overlaySize.width]);
 
-  return (
-    <View pointerEvents="box-none" onLayout={handleOverlayLayout} style={styles.overlay}>
+  const codeStyle = React.useMemo(() => {
+    if (isMrz || !codeBox || overlaySize.width <= 0 || overlaySize.height <= 0) {
+      return null;
+    }
+    return {
+      left: codeBox.x * overlaySize.width,
+      top: codeBox.y * overlaySize.height,
+      width: codeBox.width * overlaySize.width,
+      height: codeBox.height * overlaySize.height,
+    };
+  }, [codeBox, isMrz, overlaySize.height, overlaySize.width]);
+
+  // The interface turns with the phone on the scan screens. Sideways, the
+  // notch and home bar are at the sides (the insets say which) and there is
+  // little height, so things sit closer to the edges.
+  const window = useWindowDimensions();
+  const turned = window.width > window.height;
+  const edge = {
+    top: insets.top + (turned ? 12 : 10),
+    left: insets.left + 16,
+    right: insets.right + 16,
+  };
+
+  const controls = (
+    <>
       {onCancel ? (
-        <View style={[styles.topRightActions, { top: insets.top + 10 }]}>
+        <View style={[styles.topRightActions, { top: edge.top, right: edge.right }]}>
           {isMrz && onDebugCapture ? (
             <Pressable
               accessibilityRole="button"
@@ -131,34 +173,58 @@ export default function ScanGuidanceOverlay({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={isTipsCollapsed ? "Show scan tips" : "Hide scan tips"}
+        accessibilityLabel={tHelper(isTipsCollapsed ? "scanTipsShow" : "scanTipsHide")}
         onPress={() => setIsTipsCollapsed((current) => !current)}
         style={({ pressed }) => [
           styles.headerCard,
           isTipsCollapsed ? styles.headerCardCollapsed : undefined,
           pressed ? styles.headerCardPressed : undefined,
-          { top: insets.top + 10 },
+          { top: edge.top, left: edge.left, right: edge.right + 96 },
         ]}
       >
         <View style={styles.headerRow}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.headerToggle}>{isTipsCollapsed ? "Show tips" : "Hide tips"}</Text>
+          <Text style={styles.headerToggle}>{tHelper(isTipsCollapsed ? "scanTipsShow" : "scanTipsHide")}</Text>
         </View>
         {!isTipsCollapsed ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       </Pressable>
 
-      {isMrz && detectionStyle ? <View pointerEvents="none" style={[styles.detectedMrzBox, detectionStyle]} /> : null}
+      {/* Where the zone goes: about its own shape, across the middle. */}
+      {zoneFrame ? (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.zoneFrameArea,
+            { paddingLeft: edge.left - 4, paddingRight: edge.right - 4 },
+          ]}
+        >
+          <View style={styles.zoneFrame} />
+        </View>
+      ) : null}
 
       <View
         pointerEvents="none"
         style={[
           styles.feedbackPill,
+          turned
+            ? { bottom: 14, left: edge.left + 60, right: edge.right + 60 }
+            : null,
           showDetected ? styles.feedbackPillDetected : null,
           showReading ? styles.feedbackPillReading : null,
         ]}
       >
         <Text style={styles.feedbackText}>{guidanceLabel(guidance, scanMode)}</Text>
       </View>
+    </>
+  );
+
+  return (
+    <View pointerEvents="box-none" onLayout={handleOverlayLayout} style={styles.overlay}>
+      {controls}
+
+      {isMrz && detectionStyle ? <View pointerEvents="none" style={[styles.detectedMrzBox, detectionStyle]} /> : null}
+
+      {codeStyle ? <BarcodeHighlight box={codeStyle} read={showDetected} /> : null}
 
       {isMrz && debugCapture ? (
         <View style={styles.debugPanel}>
@@ -285,6 +351,21 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "rgba(68, 214, 182, 0.96)",
     backgroundColor: "rgba(68, 214, 182, 0.12)",
+  },
+  zoneFrameArea: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+  },
+  zoneFrame: {
+    // A passport's zone is a little over five times as wide as it is tall.
+    aspectRatio: 4.4,
+    maxHeight: "42%",
+    alignSelf: "center",
+    width: "100%",
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.85)",
+    backgroundColor: "rgba(255,255,255,0.06)",
   },
   feedbackPill: {
     position: "absolute",
