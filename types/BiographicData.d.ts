@@ -341,6 +341,12 @@ export interface DocumentDTO {
   issueDate: Date | string;
   type: DocumentType;
   identification: string;
+  /**
+   * DoD: the collected-identification code the EBTS file carries for this
+   * document, as the Android app sets it (PASS for anything read from a
+   * machine-readable zone or chip, DLN for a driver's licence).
+   */
+  cid?: "PASS" | "DLN";
 }
 
 type MNUType = "" | "EID" | "FIN";

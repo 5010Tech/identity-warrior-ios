@@ -1,5 +1,3 @@
-import { string } from "zod";
-
 export interface MRZData {
   type: string;
   documentType: string;

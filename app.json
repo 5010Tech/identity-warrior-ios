@@ -17,9 +17,18 @@
       "appleTeamId": "BL87FB4TZW",
       "buildNumber": "4",
       "entitlements": {
-        "com.apple.developer.networking.HotspotConfiguration": true
+        "com.apple.developer.networking.HotspotConfiguration": true,
+        "com.apple.developer.nfc.readersession.formats": [
+          "TAG"
+        ]
       },
       "infoPlist": {
+        "NFCReaderUsageDescription": "Identity Warrior uses NFC to read the chip in a passport or ID card",
+        "com.apple.developer.nfc.readersession.iso7816.select-identifiers": [
+          "A0000002471001",
+          "A0000002472001",
+          "00000000000000"
+        ],
         "UIFileSharingEnabled": true,
         "LSSupportsOpeningDocumentsInPlace": true,
         "UISupportedExternalAccessoryProtocols": [

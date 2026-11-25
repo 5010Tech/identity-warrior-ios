@@ -34,7 +34,21 @@ function mergeDocument(
   setValue: SetBiographicValue,
   getValues: GetBiographicValues,
   nextDocument: DocumentDTO,
+  /**
+   * DoD: the scanned document simply takes the place of whatever was there,
+   * as on Android. An EBTS file carries one collected identification, so
+   * there is nothing to ask about.
+   */
+  replace = false,
 ) {
+  if (replace) {
+    setValue("documents", [nextDocument], {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+    return;
+  }
   const docs = getValues("documents") || [];
   const existingIndex = docs.findIndex(
     (doc) => doc.identification === nextDocument.identification,
@@ -82,6 +96,8 @@ export function applyDLScanResult(
   parsed: DLData,
   setValue: SetBiographicValue,
   getValues: GetBiographicValues,
+  /** DoD: overwrite the document on file without asking (see mergeDocument). */
+  replaceDocument = false,
 ) {
   const mappedValues: Partial<BiographicData> = {
     firstName: parsed.firstName,
@@ -106,14 +122,20 @@ export function applyDLScanResult(
     .join(" ")
     .trim();
 
-  mergeDocument(setValue, getValues, {
-    country: (parsed.country || "") as CountryCode,
-    description,
-    expirationDate: parsed.expirationDate || "",
-    issueDate: parsed.issueDate || "",
-    type: "ID",
-    identification: parsed.licenseNumber || "",
-  });
+  mergeDocument(
+    setValue,
+    getValues,
+    {
+      country: (parsed.country || "") as CountryCode,
+      description,
+      expirationDate: parsed.expirationDate || "",
+      issueDate: parsed.issueDate || "",
+      type: "ID",
+      identification: parsed.licenseNumber || "",
+      cid: "DLN",
+    },
+    replaceDocument,
+  );
 }
 
 function normalizeMrzSex(sex: MRZData["sex"]): SexCode {
@@ -132,6 +154,10 @@ export function applyMRZScanResult(
   parsed: MRZData,
   setValue: SetBiographicValue,
   getValues: GetBiographicValues,
+  /** Where the data came from, kept with the document. */
+  source: "MRZ scan" | "NFC chip read" = "MRZ scan",
+  /** DoD: overwrite the document on file without asking (see mergeDocument). */
+  replaceDocument = false,
 ) {
   const mappedValues: Partial<BiographicData> = {
     lastName: parsed.lastName,
@@ -146,12 +172,18 @@ export function applyMRZScanResult(
     setIfPresent(setValue, key as keyof BiographicData, value);
   });
 
-  mergeDocument(setValue, getValues, {
-    country: parsed.issuingCountry as CountryCode,
-    description: "MRZ scan",
-    expirationDate: parsed.expirationDate || "",
-    issueDate: "",
-    type: documentTypeFromMrz(parsed.documentType),
-    identification: parsed.documentNumber,
-  });
+  mergeDocument(
+    setValue,
+    getValues,
+    {
+      country: parsed.issuingCountry as CountryCode,
+      description: source,
+      expirationDate: parsed.expirationDate || "",
+      issueDate: "",
+      type: documentTypeFromMrz(parsed.documentType),
+      identification: parsed.documentNumber,
+      cid: "PASS",
+    },
+    replaceDocument,
+  );
 }

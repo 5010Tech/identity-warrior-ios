@@ -56,6 +56,14 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NFCReaderUsageDescription</key>
+	<string>Identity Warrior uses NFC to read the chip in a passport or ID card</string>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>A0000002471001</string>
+		<string>A0000002472001</string>
+		<string>00000000000000</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Identity Warrior uses the camera to capture biometrics</string>
 	<key>NSFaceIDUsageDescription</key>

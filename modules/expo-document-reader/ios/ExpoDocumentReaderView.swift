@@ -44,11 +44,22 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
   private let ciContext = CIContext(options: nil)
   private var lastHandledDebugCaptureToken = 0
   private var pendingDebugCapture = false
+  /// How the phone is held, going by the interface: 0 upright, 1 on its side
+  /// with its top to the left, -1 on its side with its top to the right. The
+  /// camera frame is turned to match before the zone is read, so the text is
+  /// always the right way up for the recognizer.
+  private var readingTurn = 0
 
   let onBarcodeScanned = EventDispatcher()
   let onMrzScanned = EventDispatcher()
   let onScanFeedback = EventDispatcher()
   let onDebugCapture = EventDispatcher()
+  let onMrzCandidates = EventDispatcher()
+
+  /// Strict reading: every frame's text lines go to JavaScript, which
+  /// accepts a zone only when its check digits hold, and this view no
+  /// longer announces a zone on its own looser reading.
+  var strictMrz: Bool = false
 
   var debugCaptureToken: Int = 0 {
     didSet {
@@ -124,7 +135,51 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
   override func layoutSubviews() {
     super.layoutSubviews()
     previewLayer?.frame = bounds
+    updatePreviewRotation()
     updateRectOfInterest()
+  }
+
+  /// The interface turns with the phone on the scan screens, so the camera
+  /// picture has to turn with it or the scene shows on its side. Also notes
+  /// which way round a sideways phone is, for reading the zone (see
+  /// makePortraitImage).
+  private func updatePreviewRotation() {
+    let orientation = window?.windowScene?.interfaceOrientation ?? .portrait
+    let turn: Int
+    switch orientation {
+    case .landscapeRight:
+      turn = 1
+    case .landscapeLeft:
+      turn = -1
+    default:
+      turn = 0
+    }
+    if turn != readingTurn {
+      readingTurn = turn
+      // Where the zone was in the frame no longer holds once it has turned.
+      currentMrzCropRect = nil
+    }
+
+    let angle: CGFloat
+    switch orientation {
+    case .landscapeRight:
+      angle = 0
+    case .landscapeLeft:
+      angle = 180
+    case .portraitUpsideDown:
+      angle = 270
+    default:
+      angle = 90
+    }
+
+    guard let connection = previewLayer?.connection else {
+      return
+    }
+    if #available(iOS 17.0, *) {
+      if connection.isVideoRotationAngleSupported(angle) {
+        connection.videoRotationAngle = angle
+      }
+    }
   }
 
   private func installNotifications() {
@@ -216,7 +271,12 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
     didConfigureSession = true
 
     session.beginConfiguration()
-    if session.canSetSessionPreset(.hd1920x1080) {
+    // 4K where the camera has it: with the phone upright the zone runs
+    // across the short side of the frame, and at 1080p its characters are
+    // too small to read reliably (laser-engraved zones especially).
+    if session.canSetSessionPreset(.hd4K3840x2160) {
+      session.sessionPreset = .hd4K3840x2160
+    } else if session.canSetSessionPreset(.hd1920x1080) {
       session.sessionPreset = .hd1920x1080
     } else if session.canSetSessionPreset(.high) {
       session.sessionPreset = .high
@@ -404,6 +464,12 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
       return nil
     }
 
+    // Upright phone: the frame is already the right way up.
+    let turn = readingTurn
+    if turn == 0 {
+      return cgImage
+    }
+
     let sourceWidth = cgImage.width
     let sourceHeight = cgImage.height
     guard let colorSpace = cgImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB),
@@ -420,8 +486,14 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
     }
 
     context.interpolationQuality = .high
-    context.translateBy(x: CGFloat(sourceHeight), y: 0)
-    context.rotate(by: .pi / 2)
+    if turn < 0 {
+      // A quarter turn the other way, for a phone held the other way round.
+      context.translateBy(x: 0, y: CGFloat(sourceWidth))
+      context.rotate(by: -.pi / 2)
+    } else {
+      context.translateBy(x: CGFloat(sourceHeight), y: 0)
+      context.rotate(by: .pi / 2)
+    }
     context.draw(cgImage, in: CGRect(x: 0, y: 0, width: sourceWidth, height: sourceHeight))
 
     return context.makeImage()
@@ -669,7 +741,9 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
     lastSignalTime = CACurrentMediaTime()
     let guidance = feedbackForBarcode(bounds: transformedObject.bounds)
     log("barcode candidate type=\(object.type.rawValue) bounds=\(transformedObject.bounds) guidance=\(guidance) valueLength=\(object.stringValue?.count ?? 0)")
-    emitGuidance(guidance, candidateBox: nil)
+    // Where the code is in the view, sent with every sighting so the screen
+    // can outline it while it is being lined up and read.
+    emitGuidance(guidance, candidateBox: transformedObject.bounds.normalized(in: self.bounds))
 
     guard let value = object.stringValue, !value.isEmpty else {
       log("barcode candidate had empty stringValue")
@@ -732,7 +806,9 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
     request.recognitionLevel = .accurate
     request.usesLanguageCorrection = false
     request.recognitionLanguages = ["en-US"]
-    request.minimumTextHeight = 0.012
+    // Upright, the zone runs across the short side of the frame and its
+    // characters are smaller: let smaller text through.
+    request.minimumTextHeight = readingTurn == 0 ? 0.006 : 0.010
     log("mrz request configured minimumTextHeight=\(request.minimumTextHeight) cropRect=\(mrzCrop.normalizedFrameRect)")
 
     let handler = VNImageRequestHandler(cgImage: mrzCrop.cropImage, orientation: .up)
@@ -753,6 +829,19 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
         pendingDebugCapture = false
         lastHandledDebugCaptureToken = debugCaptureToken
         emitDebugCapture(mrzCrop, observations: observations)
+      }
+
+      if strictMrz {
+        // Every frame, with or without text, so JavaScript also knows when
+        // the zone has gone out of view.
+        let payload: [String: Any] = [
+          "lines": MrzTextDetector.rawLines(in: observations, cropRect: mrzCrop.normalizedFrameRect),
+          "imageWidth": Double(mrzCrop.imageSize.width),
+          "imageHeight": Double(mrzCrop.imageSize.height),
+        ]
+        DispatchQueue.main.async { [weak self] in
+          self?.onMrzCandidates(payload)
+        }
       }
 
       let analysis = analyzeMrzObservations(observations, imageSize: mrzCrop.imageSize, cropRect: mrzCrop.normalizedFrameRect)
@@ -805,13 +894,18 @@ class ExpoDocumentReaderView: ExpoView, AVCaptureMetadataOutputObjectsDelegate, 
           "longestFragment=\(analysis.longestFragmentLength)"
         )
 
-        let hasStableMrz = pendingMrzCount >= requiredStableMrzReads && passesEmitQuality
+        // In strict reading the zone is only "detected" once JavaScript
+        // says so; until then this view keeps reading.
+        let hasStableMrz = pendingMrzCount >= requiredStableMrzReads && passesEmitQuality && !strictMrz
         let guidanceToEmit = hasStableMrz ? "detected" : "reading"
         DispatchQueue.main.async { [weak self] in
           self?.emitGuidance(guidanceToEmit, candidateBox: analysis.feedbackBox)
         }
 
         guard hasStableMrz else {
+          if strictMrz {
+            return
+          }
           if pendingMrzCount < requiredStableMrzReads {
             log("mrz emit blocked reason=stability required=\(requiredStableMrzReads) current=\(pendingMrzCount)")
           }

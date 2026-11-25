@@ -1,4 +1,6 @@
 import { tHelper } from "@/translations/translationHelper";
+import { chipReaderAvailable } from "@/features/mrz/chipRead";
+import { Alert } from "react-native";
 import {
   createDrawerNavigator,
   DrawerNavigationOptions,
@@ -47,9 +49,24 @@ export default function BiographicsLayout() {
 
   const { getValue } = useAutofill();
 
-  const handleNavigate = (drawerNavigation: any, routeName: string) => {
-    drawerNavigation.navigate(routeName);
+  const handleNavigate = (
+    drawerNavigation: any,
+    routeName: string,
+    params?: Record<string, string>,
+  ) => {
+    drawerNavigation.navigate(routeName, params);
     drawerNavigation.closeDrawer();
+  };
+
+  // The NFC item, as on Android: scan the printed zone for the chip's key,
+  // then read the chip. Only on a phone that can read NFC at all.
+  const handleChipRead = async (drawerNavigation: any) => {
+    if (!(await chipReaderAvailable())) {
+      drawerNavigation.closeDrawer();
+      Alert.alert(tHelper("drawerNfcScan"), tHelper("nfcNotAvailable"));
+      return;
+    }
+    handleNavigate(drawerNavigation, "passport_scan", { chip: "1" });
   };
 
   const handleAutofill = (drawerNavigation: any) => {
@@ -123,9 +140,23 @@ export default function BiographicsLayout() {
                   {
                     label: tHelper("drawerMrzScan"),
                     icon: "passport",
+                    // The screen keeps its last parameters: say plainly
+                    // that this is the zone alone.
                     onPress: () =>
-                      handleNavigate(props.navigation, "passport_scan"),
+                      handleNavigate(props.navigation, "passport_scan", {
+                        chip: "0",
+                      }),
                   },
+                  // DoD only for now: DHS keeps the menu it had.
+                  ...(isDod
+                    ? [
+                        {
+                          label: tHelper("drawerNfcScan"),
+                          icon: "nfc" as const,
+                          onPress: () => void handleChipRead(props.navigation),
+                        },
+                      ]
+                    : []),
                   {
                     label: tHelper("drawerLicenseScan"),
                     icon: "qrcode-scan",

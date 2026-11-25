@@ -17,7 +17,11 @@ public class ExpoDocumentReaderModule: Module {
         view.debugCaptureToken = debugCaptureToken ?? 0
       }
 
-      Events("onBarcodeScanned", "onMrzScanned", "onScanFeedback", "onDebugCapture")
+      Prop("strictMrz") { (view: ExpoDocumentReaderView, strictMrz: Bool?) in
+        view.strictMrz = strictMrz ?? false
+      }
+
+      Events("onBarcodeScanned", "onMrzScanned", "onScanFeedback", "onDebugCapture", "onMrzCandidates")
     }
   }
 }

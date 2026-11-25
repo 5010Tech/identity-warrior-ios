@@ -92,6 +92,33 @@ enum MrzTextDetector {
     return MrzDetectionResult(fragments: fragments, rows: rows, guidanceRows: guidanceRows, detectedText: nil)
   }
 
+  /// Every line the recognizer read, exactly as it read it, with its other
+  /// readings and where it was: nothing collapsed, padded or repaired. The
+  /// strict parser (features/mrz, in JavaScript) works from these, so the
+  /// check digits it tests are the ones on the document. `cropRect` is the
+  /// part of the camera frame that was read; positions are given in the
+  /// whole frame (0 to 1, y upward), so they can be drawn over the preview.
+  static func rawLines(in observations: [VNRecognizedTextObservation], cropRect: CGRect) -> [[String: Any]] {
+    var lines: [[String: Any]] = []
+    for observation in observations {
+      let readings = observation.topCandidates(3).map { $0.string }
+      guard let best = readings.first, best.count >= 5 else {
+        continue
+      }
+      let box = observation.boundingBox
+      let line: [String: Any] = [
+        "text": best,
+        "alternates": Array(readings.dropFirst()),
+        "x": Double(cropRect.minX + box.minX * cropRect.width),
+        "y": Double(cropRect.minY + box.midY * cropRect.height),
+        "width": Double(box.width * cropRect.width),
+        "height": Double(box.height * cropRect.height),
+      ]
+      lines.append(line)
+    }
+    return lines
+  }
+
   static func normalize(_ text: String) -> String {
     let uppercased = text.uppercased()
     var normalized = ""
