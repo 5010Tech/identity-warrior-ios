@@ -64,6 +64,8 @@
 		<string>A0000002472001</string>
 		<string>00000000000000</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Identity Warrior uses Bluetooth to connect to fingerprint scanners</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Identity Warrior uses the camera to capture biometrics</string>
 	<key>NSFaceIDUsageDescription</key>

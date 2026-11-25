@@ -324,6 +324,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-IdentityWarrior/Pods-IdentityWarrior-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ExpoGrabba/GrabbaWirelessSDK.framework/GrabbaWirelessSDK",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework/OpenSSL",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/RNMrzscannerlib/MRZScannerSDK.framework/MRZScannerSDK",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/barkoder-react-native/Barkoder.framework/Barkoder",
@@ -334,6 +335,7 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GrabbaWirelessSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MRZScannerSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Barkoder.framework",

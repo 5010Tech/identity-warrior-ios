@@ -17,13 +17,15 @@ import { tHelper } from "@/translations/translationHelper";
 import { DeviceConnectionType } from "@/types/Device";
 import { ExpoNeoScanModule } from "@/modules/expo-neo-scan";
 import { AddDeviceDialog } from "@/features/devices/AddDeviceDialog";
+import { GrabbaTestScan } from "@/features/devices/GrabbaTestScan";
 
 export default function DevicesScreen() {
   const { devices, setActiveDevice, deleteDevice, addDevice } = useDevices();
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
-  const { connecting, disconnectFromDevice } = useActiveDevice();
+  const { connecting, disconnectFromDevice, grabba, forgetGrabba } =
+    useActiveDevice();
 
   const handleDelete = (i: number) => () => {
     const { modelNumber, serialNumber } = devices[i];
@@ -36,6 +38,9 @@ export default function DevicesScreen() {
         text: tHelper("delete"),
         style: "destructive",
         onPress: () => {
+          if (devices[i].connectionType === "grabba") {
+            forgetGrabba(Number(serialNumber));
+          }
           deleteDevice(i);
         },
       },
@@ -175,8 +180,18 @@ export default function DevicesScreen() {
             key={i}
             setActive={() => setActiveDevice(i)}
             onDelete={handleDelete(i)}
+            {...(device.connectionType === "grabba"
+              ? {
+                  hideToggle: true,
+                  status:
+                    grabba && String(grabba.serial) === device.serialNumber
+                      ? tHelper("grabbaConnected")
+                      : tHelper("grabbaNotInRange"),
+                }
+              : null)}
           />
         ))}
+        {grabba ? <GrabbaTestScan grabba={grabba} /> : null}
         <TouchableOpacity style={styles.newButton} onPress={handleAddDevice}>
           <H2>
             <FontAwesome name="plus" size={24} /> {tHelper("addDevice")}

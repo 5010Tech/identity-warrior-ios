@@ -272,6 +272,8 @@ PODS:
     - ExpoModulesCore
   - ExpoFont (14.0.11):
     - ExpoModulesCore
+  - ExpoGrabba (1.0.0):
+    - ExpoModulesCore
   - ExpoHead (6.0.23):
     - ExpoModulesCore
     - RNScreens
@@ -3314,6 +3316,7 @@ DEPENDENCIES:
   - ExpoDocumentReader (from `../modules/expo-document-reader/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
+  - ExpoGrabba (from `../modules/expo-grabba/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoIdentifi (from `../modules/expo-identifi/ios`)
   - ExpoImageManipulator (from `../node_modules/expo-image-manipulator/ios`)
@@ -3492,6 +3495,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
+  ExpoGrabba:
+    :path: "../modules/expo-grabba/ios"
   ExpoHead:
     :path: "../node_modules/expo-router/ios"
   ExpoIdentifi:
@@ -3729,6 +3734,7 @@ SPEC CHECKSUMS:
   ExpoDocumentReader: bbfd0ed38519b2835a210f8c7ee8c9f365e34026
   ExpoFileSystem: 858a44267a3e6e9057e0888ad7c7cfbf55d52063
   ExpoFont: f543ce20a228dd702813668b1a07b46f51878d47
+  ExpoGrabba: c70d37d90e7771775caca36ad5bf329b908ee43e
   ExpoHead: 7e19b2272edf492262acf8afb391a295198a6b23
   ExpoIdentifi: 99c516cc5c1fd87a1be9b8b7e73db19539fa2243
   ExpoImageManipulator: 607a5c8c88085381639458a46cc55fb9d3869148

@@ -1082,5 +1082,16 @@
   "irisStalled": "El escáner dejó de responder durante la captura de iris.",
   "scanningFailed": "Error de escaneo",
   "failedInit": "No se pudo inicializar el escáner",
-  "calibrate": "Calibrar sin contacto"
+  "calibrate": "Calibrar sin contacto",
+  "grabbaConnected": "Conectado",
+  "grabbaNotInRange": "Fuera de alcance",
+  "grabbaFoundTitle": "Nuevo Grabba encontrado",
+  "grabbaFoundText": "Hay un Grabba al alcance que este teléfono no ha usado antes. ¿Usarlo?",
+  "grabbaUseSerial": "Usar",
+  "grabbaTestScan": "Probar escaneo Grabba",
+  "grabbaGettingReady": "El escáner de huellas se está preparando…",
+  "grabbaTestPlace": "Coloque cuatro dedos en el escáner y manténgalos. La imagen puede tardar un minuto en llegar.",
+  "grabbaTestDone": "Escaneo recibido:",
+  "grabbaTestFailed": "El escaneo falló. Consulte el registro para más detalles.",
+  "grabbaTestStarting": "Iniciando el escáner…"
 }

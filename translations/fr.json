@@ -1082,5 +1082,16 @@
   "irisStalled": "Le scanner a cessé de répondre pendant la capture de l'iris.",
   "scanningFailed": "Échec de la numérisation",
   "failedInit": "Échec de l'initialisation du scanner",
-  "calibrate": "Calibrer sans contact"
+  "calibrate": "Calibrer sans contact",
+  "grabbaConnected": "Connecté",
+  "grabbaNotInRange": "Hors de portée",
+  "grabbaFoundTitle": "Nouveau Grabba détecté",
+  "grabbaFoundText": "Un Grabba que ce téléphone n'a jamais utilisé est à portée. L'utiliser ?",
+  "grabbaUseSerial": "Utiliser",
+  "grabbaTestScan": "Tester la capture Grabba",
+  "grabbaGettingReady": "Le lecteur d'empreintes se prépare…",
+  "grabbaTestPlace": "Placez quatre doigts sur le lecteur et maintenez-les. L'image peut mettre une minute à arriver.",
+  "grabbaTestDone": "Capture reçue :",
+  "grabbaTestFailed": "La capture a échoué. Consultez le journal pour plus de détails.",
+  "grabbaTestStarting": "Démarrage du lecteur…"
 }

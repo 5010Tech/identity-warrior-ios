@@ -100,7 +100,14 @@ const DHS_ACTIONS: CaptureAction[] = [
  * full-width colored tile per transaction (up to four fit without scrolling).
  */
 export default function HomeScreen() {
-  const { activeDevice } = useActiveDevice();
+  const { activeDevice, grabba } = useActiveDevice();
+  // The scanner named on this screen: an IdentiFI whose Wi-Fi the phone is
+  // on comes first, then a connected Grabba.
+  const scannerName = activeDevice
+    ? (activeDevice.modelNumber ?? tHelper("devices"))
+    : grabba
+      ? grabba.model || "Grabba"
+      : null;
   // DoD or DHS, chosen at the top of App Settings.
   const isDod = useAutofillSelector(
     (s) => s.appSettings?.collectionMode !== "DHS",
@@ -172,9 +179,7 @@ export default function HomeScreen() {
               adjustsFontSizeToFit
             >
               {/* The model only: the serial number is not for this screen. */}
-              {activeDevice
-                ? (activeDevice.modelNumber ?? tHelper("devices"))
-                : tHelper("contactlessEnabled")}
+              {scannerName ?? tHelper("contactlessEnabled")}
             </Text>
             <MaterialCommunityIcons
               name="chevron-right"
@@ -192,7 +197,7 @@ export default function HomeScreen() {
               ({ href }) => href !== "/latent" || license?.allowLatent !== false,
             )
             // Rolled prints need a scanner; contactless cannot take them.
-            .filter(({ needsScanner }) => !needsScanner || !!activeDevice)
+            .filter(({ needsScanner }) => !needsScanner || !!scannerName)
             .map((action) => (
             <RNView key={action.title} style={styles.row}>
               <Link href={action.href} asChild>

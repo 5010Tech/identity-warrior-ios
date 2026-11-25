@@ -53,7 +53,10 @@ export const DevicesProvider = ({ children }: PropsWithChildren) => {
     setDevices((prevDevices) =>
       storeDevices([
         device,
-        ...prevDevices.map((d) => ({ ...d, selected: false })),
+        // A device added as the one in use takes that over from the rest.
+        ...(device.selected
+          ? prevDevices.map((d) => ({ ...d, selected: false }))
+          : prevDevices),
       ]),
     );
   }, []);

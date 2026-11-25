@@ -1082,5 +1082,16 @@
   "irisStalled": "O scanner parou de responder durante a captura da íris.",
   "scanningFailed": "Falha na digitalização",
   "failedInit": "Falha ao inicializar o scanner",
-  "calibrate": "Calibrar sem contato"
+  "calibrate": "Calibrar sem contato",
+  "grabbaConnected": "Conectado",
+  "grabbaNotInRange": "Fora de alcance",
+  "grabbaFoundTitle": "Novo Grabba encontrado",
+  "grabbaFoundText": "Há um Grabba ao alcance que este telefone ainda não usou. Usá-lo?",
+  "grabbaUseSerial": "Usar",
+  "grabbaTestScan": "Testar leitura Grabba",
+  "grabbaGettingReady": "O leitor de impressões digitais está se preparando…",
+  "grabbaTestPlace": "Coloque quatro dedos no leitor e mantenha-os. A imagem pode levar um minuto para chegar.",
+  "grabbaTestDone": "Leitura recebida:",
+  "grabbaTestFailed": "A leitura falhou. Consulte o registro para mais detalhes.",
+  "grabbaTestStarting": "Iniciando o leitor…"
 }

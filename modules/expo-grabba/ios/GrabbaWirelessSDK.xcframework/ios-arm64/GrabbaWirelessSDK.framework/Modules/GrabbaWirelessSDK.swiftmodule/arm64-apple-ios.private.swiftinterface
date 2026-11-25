@@ -1,0 +1,271 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.4.2 effective-5.10 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)
+// swift-module-flags: -target arm64-apple-ios15.0 -enable-objc-interop -enable-library-evolution -language-mode 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name GrabbaWirelessSDK
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4.2
+import CoreBluetooth
+import CoreGraphics
+import Foundation
+@_exported import GrabbaWirelessSDK
+import MobileCoreServices
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os.log
+import os
+@objc public enum PassportDataGroup : Swift::Int, Swift::CaseIterable, Swift::CustomStringConvertible {
+  case com = 0x011E
+  case dg1 = 0x0101
+  case dg2 = 0x0102
+  case dg3 = 0x0103
+  case dg4 = 0x0104
+  case dg5 = 0x0105
+  case dg6 = 0x0106
+  case dg7 = 0x0107
+  case dg8 = 0x0108
+  case dg9 = 0x0109
+  case dg10 = 0x010A
+  case dg11 = 0x010B
+  case dg12 = 0x010C
+  case dg13 = 0x010D
+  case dg14 = 0x010E
+  case dg15 = 0x010F
+  case dg16 = 0x0110
+  case sod = 0x011D
+  case cardAccess = 0x011C
+  case atrInfo = 0x2F01
+  public var description: Swift::String {
+    get
+  }
+  public static func contains(rawValue: Swift::Int) -> Swift::Bool
+  public static func dataGroup(forTagValue tagValue: Swift::Int) -> GrabbaWirelessSDK::PassportDataGroup?
+  public static func isDataGroup(rawValue: Swift::Int) -> Swift::Bool
+  public init?(rawValue: Swift::Int)
+  public typealias AllCases = [GrabbaWirelessSDK::PassportDataGroup]
+  public typealias RawValue = Swift::Int
+  nonisolated public static var allCases: [GrabbaWirelessSDK::PassportDataGroup] {
+    get
+  }
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+extension UIKit::UIImage {
+  public func bmpData() -> Foundation::Data?
+}
+@_hasMissingDesignatedInitializers @objcMembers open class FingerprintInfo {
+  public enum ScanType : Swift::Int {
+    case FingerRoll
+    case OneFinger
+    case TwoFingers
+    case ThreeFingers
+    case FourFingers
+    public static let StringValues: [Swift::String]
+    public static func AsString(_ val: GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::ScanType) -> Swift::String
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+  public enum CompressionType : Swift::Int {
+    case None
+    case WSQ
+    public static let StringValues: [Swift::String]
+    public static func AsString(_ val: GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::CompressionType) -> Swift::String
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+  @objc deinit
+}
+@objc public protocol LoggerProtocol {
+  @objc func log(message: Swift::String, level: GrabbaWirelessSDK::LogLevel)
+}
+@objc public enum LogLevel : Swift::Int {
+  case off = 0, error, warn, info, debug
+  public struct LogString {
+    public static let OFF: Swift::String
+    public static let DEBUG: Swift::String
+    public static let INFO: Swift::String
+    public static let WARN: Swift::String
+    public static let ERROR: Swift::String
+  }
+  public func toString() -> Swift::String
+  public static func fromString(_ string: Swift::String) -> GrabbaWirelessSDK::LogLevel
+  public init?(rawValue: Swift::Int)
+  public typealias RawValue = Swift::Int
+  public var rawValue: Swift::Int {
+    get
+  }
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Log : ObjectiveC::NSObject, GrabbaWirelessSDK::LoggerProtocol {
+  public var logLevel: GrabbaWirelessSDK::LogLevel
+  public static let shared: GrabbaWirelessSDK::Log
+  public static func d(_ message: Swift::String)
+  public static func i(_ message: Swift::String)
+  public static func w(_ message: Swift::String)
+  public static func e(_ message: Swift::String)
+  @objc public func log(message: Swift::String, level: GrabbaWirelessSDK::LogLevel)
+  public func addLogger(_ logger: any GrabbaWirelessSDK::LoggerProtocol)
+  public func removeLogger(_ logger: any GrabbaWirelessSDK::LoggerProtocol)
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objcMembers open class GrabbaWireless : ObjectiveC::NSObject {
+  @objc public static let shared: GrabbaWirelessSDK::GrabbaWireless
+  @objc public var connectedDevice: GrabbaWirelessSDK::GrabbaDevice? {
+    @objc get
+  }
+  @objc public var delegate: (any GrabbaWirelessSDK::GrabbaWirelessDelegate)? {
+    @objc get
+    @objc set
+  }
+  @objc public func getSoftwareVersion() -> Swift::String
+  @objc public func reconnectToLastDevice(appGroup: Swift::String)
+  @objc public func forgetLastDevice()
+  @objc public func scanForGrabbas()
+  @objc public func scanForGrabbas(appGroup: Swift::String)
+  @objc public func stopScanning()
+  @objc public func isScanning() -> Swift::Bool
+  @objc public func connectToGrabbaDevice(_ grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc public func disconnectFromGrabbaDevice()
+  @objc public func isConnected() -> Swift::Bool
+  @objc public func wakeUpConnectedGrabbaDevice()
+  @objc public func readRSSIForGrabbaDevice(_ grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc public func scanFingerprint_raw_(scanType: Swift::Int, compressionType: Swift::Int)
+  public func scanFingerprint(scanType: GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::ScanType, compressionType: GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::CompressionType)
+  @objc public func stopFingerprintScanning()
+  @objc public func scanBarcode()
+  @objc public func stopBarcodeScanning()
+  @objc public func scanPassport()
+  @objc public func scanPassportDataFor(fieldId: Swift::Int)
+  @objc public func scanPassportDataFor(dataGroup: GrabbaWirelessSDK::PassportDataGroup)
+  @objc public func stopPassportScanning()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @objcMembers open class GrabbaPassportError : Foundation::NSError {
+  @objc public enum GrabbaPassportErrorCode : Swift::Int, Swift::Error {
+    case PASSPORT_NOT_FOUND = 0
+    case MRZ_NULL = 1
+    case MRZ_INVALID = 2
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public static var _nsErrorDomain: Swift::String {
+      get
+    }
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+  @objc override dynamic public init(domain: Swift::String, code: Swift::Int, userInfo dict: [Swift::String : Any]? = nil)
+  @objc required dynamic public init?(coder: Foundation::NSCoder)
+  @objc deinit
+}
+@objc @objcMembers public class FingerprintSegment : ObjectiveC::NSObject {
+  @objc public var x1: Swift::UInt16
+  @objc public var y1: Swift::UInt16
+  @objc public var x2: Swift::UInt16
+  @objc public var y2: Swift::UInt16
+  @objc public var x3: Swift::UInt16
+  @objc public var y3: Swift::UInt16
+  @objc public var x4: Swift::UInt16
+  @objc public var y4: Swift::UInt16
+  @objc public var topLeftX: Swift::UInt16
+  @objc public var topLeftY: Swift::UInt16
+  @objc public var width: Swift::UInt16
+  @objc public var height: Swift::UInt16
+  @objc public var nfiqScore: Swift::Int
+  @objc public init(rawData: [Swift::UInt8])
+  @objc deinit
+}
+@objc public protocol GrabbaWirelessDelegate {
+  @objc optional func grabbaWirelessDidDiscoverGrabbaDevice(_ grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc optional func grabbaWirelessDidConnect(to grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc optional func grabbaWirelessDidFailToConnect(to grabbaDevice: GrabbaWirelessSDK::GrabbaDevice, error: any Swift::Error)
+  @objc optional func grabbaWirelessDidDisconnect(from grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc optional func grabbaDevice(_ grabbaDevice: GrabbaWirelessSDK::GrabbaDevice, didReadRSSI RSSI: Foundation::NSNumber, error: (any Swift::Error)?)
+  @objc optional func grabbaWirelessDidRaiseError(_ error: Foundation::NSError)
+  @objc optional func connectedGrabbaDidSleep(_ grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc optional func connectedGrabbaDidWake(_ grabbaDevice: GrabbaWirelessSDK::GrabbaDevice)
+  @objc optional func connectedGrabbaBarcodeScanningIsReady()
+  @objc optional func connectedGrabbaDidScanBarcode(_ barcode: Foundation::Data)
+  @objc optional func connectedGrabbaBarcodeScanFailedWithError(_ error: any Swift::Error)
+  @objc optional func connectedGrabbaFingerprintScanningIsReady()
+  @objc optional func connectedGrabbaFingerprintScanStart()
+  @objc optional func connectedGrabbaDidScanFingerprint(_ image: Foundation::Data, _ isFinal: Swift::Bool, _ nistScore: Swift::Int, _ compressionType: Swift::Int)
+  @objc optional func connectedGrabbaDidSendFingerprintSegments(_ segmentsData: Foundation::Data)
+  @objc optional func connectedGrabbaFingerprintScanFailedWithError(_ error: any Swift::Error)
+  @objc optional func connectedGrabbaMRZIsReady()
+  @objc optional func connectedGrabbaDidScanMRZ(data: Foundation::Data)
+  @objc optional func connectedGrabbaMRZScanFailedWithError(_ error: any Swift::Error)
+  @objc optional func connectedGrabbaMagStripeIsReady()
+  @objc optional func connectedGrabbaDidScanMagStripe(tracks: [Foundation::Data])
+  @objc optional func connectedGrabbaMagStripeScanFailedWithError(_ error: any Swift::Error)
+  @objc optional func connectedGrabbaPassportScanningIsReady()
+  @objc optional func connectedGrabbaIsScanningPassport(progress: Swift::Int)
+  @objc optional func connectedGrabbaDidScanPassport(passport: Foundation::Data)
+  @objc optional func connectedGrabbaPassportScanFailedWithError(_ error: any Swift::Error)
+}
+@objc @objcMembers public class GrabbaDevice : ObjectiveC::NSObject {
+  @objc public var serialNumber: Swift::Int
+  @objc public var modelNumber: Swift::String?
+  @objc public var firmwareRevision: Swift::String?
+  @objc public var hardwareRevision: Swift::String?
+  @objc public var softwareRevision: Swift::String?
+  @objc public var manufacturerName: Swift::String?
+  @objc public init(serial: Swift::Int)
+  public static func == (lhs: GrabbaWirelessSDK::GrabbaDevice, rhs: GrabbaWirelessSDK::GrabbaDevice) -> Swift::Bool
+  @objc override dynamic public func isEqual(_ object: Any?) -> Swift::Bool
+  @objc public func isReady() -> Swift::Bool
+  @objc override dynamic public var description: Swift::String {
+    @objc get
+  }
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @objcMembers open class GrabbaError : Foundation::NSError {
+  @objc public enum ErrorCode : Swift::Int {
+    case GrabbaAlreadyConnected
+    case GrabbaDeviceObjectMalformed
+    case ConnectionFailed
+    case GrabbaNotConnected
+    case BluetoothDisabled
+    case BluetoothNotSupported
+    case BluetoothUnauthorised
+    case BluetoothAdapterNotReady
+    case BluetoothAdapterUnknownError
+    case TechnologyTimedOut
+    case DataCorrupted
+    case TechnologyNotReady
+    case TechnologyNotSupported
+    case DataGroupNotFoundOnPassport
+    public init?(rawValue: Swift::Int)
+    public typealias RawValue = Swift::Int
+    public var rawValue: Swift::Int {
+      get
+    }
+  }
+  @objc override dynamic public init(domain: Swift::String, code: Swift::Int, userInfo dict: [Swift::String : Any]? = nil)
+  @objc required dynamic public init?(coder: Foundation::NSCoder)
+  @objc deinit
+}
+extension GrabbaWirelessSDK::PassportDataGroup : Swift::Equatable {}
+extension GrabbaWirelessSDK::PassportDataGroup : Swift::Hashable {}
+extension GrabbaWirelessSDK::PassportDataGroup : Swift::RawRepresentable {}
+extension GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::ScanType : Swift::Equatable {}
+extension GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::ScanType : Swift::Hashable {}
+extension GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::ScanType : Swift::RawRepresentable {}
+extension GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::CompressionType : Swift::Equatable {}
+extension GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::CompressionType : Swift::Hashable {}
+extension GrabbaWirelessSDK::FingerprintInfo.GrabbaWirelessSDK::CompressionType : Swift::RawRepresentable {}
+extension GrabbaWirelessSDK::LogLevel : Swift::Equatable {}
+extension GrabbaWirelessSDK::LogLevel : Swift::Hashable {}
+extension GrabbaWirelessSDK::LogLevel : Swift::RawRepresentable {}
+extension GrabbaWirelessSDK::GrabbaPassportError.GrabbaWirelessSDK::GrabbaPassportErrorCode : Swift::Equatable {}
+extension GrabbaWirelessSDK::GrabbaPassportError.GrabbaWirelessSDK::GrabbaPassportErrorCode : Swift::Hashable {}
+extension GrabbaWirelessSDK::GrabbaPassportError.GrabbaWirelessSDK::GrabbaPassportErrorCode : Swift::RawRepresentable {}
+extension GrabbaWirelessSDK::GrabbaError.GrabbaWirelessSDK::ErrorCode : Swift::Equatable {}
+extension GrabbaWirelessSDK::GrabbaError.GrabbaWirelessSDK::ErrorCode : Swift::Hashable {}
+extension GrabbaWirelessSDK::GrabbaError.GrabbaWirelessSDK::ErrorCode : Swift::RawRepresentable {}

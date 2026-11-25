@@ -9,6 +9,9 @@ int comp_nfiq(int *onfiq, float *oconf, unsigned char *idata,
 int wsq_encode_mem(unsigned char **, int *, const float, unsigned char *,
                    const int, const int, const int, const int, char *);
 
+int wsq_decode_mem(unsigned char **odata, int *ow, int *oh, int *od, int *oppi,
+                   int *lossyflag, unsigned char *idata, const int ilen);
+
 //! Project version number for SlapshotCaptureSDK.
 FOUNDATION_EXPORT double SlapshotCaptureSDKVersionNumber;
 

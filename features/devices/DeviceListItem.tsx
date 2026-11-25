@@ -9,6 +9,10 @@ import { Swipeable } from "react-native-gesture-handler";
 interface DeviceListItemProps extends Device {
   setActive: () => Promise<void> | void;
   onDelete: () => void;
+  /** Shown under the name in place of a network name. */
+  status?: string;
+  /** A device that is used whenever it is in range has no switch. */
+  hideToggle?: boolean;
 }
 export const DeviceListItem = ({
   ssid,
@@ -17,6 +21,8 @@ export const DeviceListItem = ({
   selected,
   setActive,
   onDelete,
+  status,
+  hideToggle,
 }: DeviceListItemProps) => {
   const primaryColor = useThemeColor({}, "primary");
   const dangerColor = useThemeColor({}, "danger");
@@ -42,10 +48,12 @@ export const DeviceListItem = ({
           <H3>
             {modelNumber} - {serialNumber}
           </H3>
-          <Text>{ssid}</Text>
+          <Text>{status ?? ssid}</Text>
         </Col>
         <Col size={1}>
-          <InputToggle label="Active" onChange={setActive} value={selected} />
+          {hideToggle ? null : (
+            <InputToggle label="Active" onChange={setActive} value={selected} />
+          )}
         </Col>
       </Row>
     </Swipeable>

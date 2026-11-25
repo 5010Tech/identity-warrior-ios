@@ -1,0 +1,10 @@
+framework module GrabbaWirelessSDK {
+  umbrella header "GrabbaWirelessSDK.h"
+  export *
+
+  module * { export * }
+}
+
+module GrabbaWirelessSDK.Swift {
+  header "GrabbaWirelessSDK-Swift.h"
+}

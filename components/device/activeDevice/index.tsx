@@ -15,6 +15,8 @@ import WifiManager from "react-native-wifi-reborn";
 import { logEvent } from "@/util/fieldLog";
 import { useDevices } from "../devices";
 import { ExpoNeoScanModule } from "@/modules/expo-neo-scan";
+import { GrabbaInfo } from "@/modules/expo-grabba";
+import { useGrabbaLink } from "../useGrabbaLink";
 
 interface ActiveDeviceContextProps {
   activeDevice: Device | null;
@@ -24,6 +26,10 @@ interface ActiveDeviceContextProps {
   checkNetworkConnected: (showDialog: boolean) => Promise<void>;
   connectionFailed: boolean;
   closeConnectionFailedDialog: () => void;
+  /** The Grabba connected right now, if one is. */
+  grabba: GrabbaInfo | null;
+  /** A Grabba was removed from Devices: let go of it. */
+  forgetGrabba: (serial: number) => void;
 }
 const ActiveDeviceContext = createContext<ActiveDeviceContextProps>({
   activeDevice: null,
@@ -41,6 +47,10 @@ const ActiveDeviceContext = createContext<ActiveDeviceContextProps>({
   closeConnectionFailedDialog: function (): void {
     throw new Error("Function not implemented.");
   },
+  grabba: null,
+  forgetGrabba: function (): void {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const ActiveDeviceProvider = ({ children }: PropsWithChildren) => {
@@ -52,6 +62,10 @@ export const ActiveDeviceProvider = ({ children }: PropsWithChildren) => {
     addDevice,
     setActiveDevice,
   } = useDevices();
+
+  // A Grabba is found and connected to on its own (Bluetooth LE). Not yet
+  // the scanner a collection uses: capture with it comes next.
+  const { grabba, forgetGrabba } = useGrabbaLink(devices, addDevice);
 
   // The Wi-Fi network the phone is on right now. An IdentiFI scanner is its
   // own Wi-Fi network, so this is how one is detected.
@@ -276,6 +290,8 @@ export const ActiveDeviceProvider = ({ children }: PropsWithChildren) => {
       checkNetworkConnected,
       connectionFailed,
       closeConnectionFailedDialog,
+      grabba,
+      forgetGrabba,
     };
   }, [
     activeDevice,
@@ -285,6 +301,8 @@ export const ActiveDeviceProvider = ({ children }: PropsWithChildren) => {
     checkNetworkConnected,
     connectionFailed,
     closeConnectionFailedDialog,
+    grabba,
+    forgetGrabba,
   ]);
 
   return (

@@ -1082,5 +1082,16 @@
   "scannerCaptureFailed": "The fingerprint capture failed.",
   "irisLookIntoScanner": "Camera ready. Look into the scanner.",
   "irisReconnecting": "The scanner stopped responding. Reconnecting…",
-  "irisStalled": "The scanner stopped responding during the iris capture."
+  "irisStalled": "The scanner stopped responding during the iris capture.",
+  "grabbaConnected": "Connected",
+  "grabbaNotInRange": "Not in range",
+  "grabbaFoundTitle": "New Grabba Found",
+  "grabbaFoundText": "A Grabba that this phone has not used before is in range. Use it?",
+  "grabbaUseSerial": "Use",
+  "grabbaTestScan": "Test Grabba Scan",
+  "grabbaGettingReady": "The fingerprint scanner is getting ready…",
+  "grabbaTestPlace": "Place four fingers on the scanner and keep them there. The image can take a minute to arrive.",
+  "grabbaTestDone": "Scan received:",
+  "grabbaTestFailed": "The scan failed. See the log for details.",
+  "grabbaTestStarting": "Starting the scanner…"
 }

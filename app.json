@@ -34,6 +34,7 @@
         "UISupportedExternalAccessoryProtocols": [
           "com.nec.NeoScan"
         ],
+        "NSBluetoothAlwaysUsageDescription": "Identity Warrior uses Bluetooth to connect to fingerprint scanners",
         "NSCameraUsageDescription": "Identity Warrior uses the camera to capture biometrics",
         "NSLocalNetworkUsageDescription": "Identity Warrior requires access to your local network to connect to devices over Wi-Fi for seamless functionality.",
         "NSLocationWhenInUseUsageDescription": "Identity Warrior requires access to your location while it is in use to provide location-based features."
